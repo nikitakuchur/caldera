@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 
+#include "cpp_module/module.hpp"
+
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -37,6 +39,9 @@ void init() {
 }
 
 int main() {
+    // Just for a test
+    cpp_function();
+
     if (!glfwInit()) {
         return -1;
     }
