@@ -11,10 +11,9 @@ file(GLOB_RECURSE SOURCES "src/*.c")
 find_package(Vulkan REQUIRED)
 
 add_subdirectory(deps/glfw)
-add_subdirectory(deps/cglm)
 
 add_executable(c_game ${SOURCES})
 
-target_link_libraries(c_game glfw cglm Vulkan::Vulkan)
+target_link_libraries(c_game glfw Vulkan::Vulkan)
 
 include_directories(c_game PRIVATE src)
