@@ -11,7 +11,7 @@ void vec4_add(const vec4 a, const vec4 b, vec4 dest) {
     dest[3] = a[3] + b[3];
 }
 
-void vec4_scale(const vec4 v, const float s, vec4 dest) {
+void vec4_scale(const vec4 v, float s, vec4 dest) {
     dest[0] = v[0] * s;
     dest[1] = v[1] * s;
     dest[2] = v[2] * s;

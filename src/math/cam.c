@@ -6,9 +6,9 @@
 void ortho(float left, float right, float bottom, float top, float nearZ, float farZ, mat4 dest) {
     mat4_zero(dest);
 
-    const float rl = 1.0f / (right - left);
-    const float tb = 1.0f / (top - bottom);
-    const float fn = -1.0f / (farZ - nearZ);
+    float rl = 1.0f / (right - left);
+    float tb = 1.0f / (top - bottom);
+    float fn = -1.0f / (farZ - nearZ);
 
     dest[0][0] = 2.0f * rl;
     dest[1][1] = 2.0f * tb;
@@ -22,8 +22,8 @@ void ortho(float left, float right, float bottom, float top, float nearZ, float 
 void perspective(float fov_y, float aspect, float near_z, float far_z, mat4 dest) {
     mat4_zero(dest);
 
-    const float f = 1.0f / tanf(fov_y * 0.5f);
-    const float fn = 1.0f / (near_z - far_z);
+    float f = 1.0f / tanf(fov_y * 0.5f);
+    float fn = 1.0f / (near_z - far_z);
 
     dest[0][0] = f / aspect;
     dest[1][1] = f;
