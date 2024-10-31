@@ -1,7 +1,0 @@
-/Users/nikitakuchur/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=/Users/nikitakuchur/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/nikitakuchur/Desktop/c-game -B /Users/nikitakuchur/Desktop/c-game/cmake-build-release
--- Including Cocoa support
--- Could NOT find Doxygen (missing: DOXYGEN_EXECUTABLE) 
--- Documentation generation requires Doxygen 1.9.8 or later
--- Configuring done (0.1s)
--- Generating done (0.0s)
--- Build files have been written to: /Users/nikitakuchur/Desktop/c-game/cmake-build-release
