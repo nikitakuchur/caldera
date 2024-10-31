@@ -1,6 +1,7 @@
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <graphics/vulkan/vulkan_test.h>
 
 #include "cpp_module/module.hpp"
 
@@ -15,29 +16,6 @@ static void mouse_button_callback(GLFWwindow *window, int button, int action, in
     printf("mouse button: %d\n", button);
 }
 
-void init() {
-    VkInstance instance;
-
-    VkInstanceCreateInfo create_info = {};
-
-    create_info.enabledExtensionCount = 1;
-    const char *extensionNames[1] = {
-        VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME,
-    };
-    create_info.ppEnabledExtensionNames = extensionNames;
-
-    // macos specific
-    create_info.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
-
-    const VkResult result = vkCreateInstance(&create_info, nullptr, &instance);
-
-    if (result == VK_SUCCESS) {
-        printf("VkInstance created successfully!\n");
-    } else {
-        printf("Failed to create a VkI¢nstance: %d\n", result);
-    }
-}
-
 int main() {
     // Just for a test
     cpp_function();
@@ -50,7 +28,7 @@ int main() {
         return -1;
     }
 
-    init();
+    vk_init();
 
     GLFWwindow *window = glfwCreateWindow(640, 480, "Game", nullptr, nullptr);
     if (!window) {
