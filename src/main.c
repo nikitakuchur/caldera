@@ -1,52 +1,38 @@
-#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
 #include <stdio.h>
-#include <graphics/vulkan/vulkan_test.h>
+#include <window/window.h>
+#include <window/macos/macos_window.hpp>
 
-#include "cpp_module/module.hpp"
-
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+void key_callback(int key, int action) {
+    if (key == 256 && action == 1) {
+         window_close();
     }
     printf("key: %d\n", key);
 }
 
-static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods) {
-    printf("mouse button: %d\n", button);
+void mouse_btn_callback(int btn, int action) {
+    printf("mouse button: %d\n", btn);
 }
 
 int main() {
-    // Just for a test
-    cpp_function();
+    // bool created = window_create(640, 480, "Game");
+    // if (!created) {
+    //     printf("failed to create a window");
+    //     return -1;
+    // }
+    //
+    // window_set_key_callback(&key_callback);
+    // window_set_mouse_btn_callback(&mouse_btn_callback);
+    //
+    // while (!window_is_closed()) {
+    //
+    //     // Render here
+    //
+    //     window_swap_buffers();
+    //     window_poll_events();
+    // }
+    //
+    // window_destroy();
+    macos_window_create(640, 480, "Game");
 
-    if (!glfwInit()) {
-        return -1;
-    }
-
-    if (!glfwVulkanSupported()) {
-        return -1;
-    }
-
-    vk_init();
-
-    GLFWwindow *window = glfwCreateWindow(640, 480, "Game", nullptr, nullptr);
-    if (!window) {
-        glfwTerminate();
-        return -1;
-    }
-
-    glfwSetKeyCallback(window, &key_callback);
-    glfwSetMouseButtonCallback(window, &mouse_button_callback);
-    glfwMakeContextCurrent(window);
-
-    while (!glfwWindowShouldClose(window)) {
-        // Render here
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-
-    glfwTerminate();
     return 0;
 }

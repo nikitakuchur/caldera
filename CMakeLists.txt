@@ -13,7 +13,8 @@ add_executable(c_game ${SOURCES})
 find_package(Vulkan REQUIRED)
 
 add_subdirectory(deps/glfw)
+add_subdirectory(deps/metal)
 
-target_link_libraries(c_game glfw Vulkan::Vulkan)
+target_link_libraries(c_game glfw Vulkan::Vulkan metal-cpp)
 
 include_directories(c_game PRIVATE src)

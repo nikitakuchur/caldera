@@ -1,0 +1,24 @@
+#ifndef WINDOW_H
+#define WINDOW_H
+
+typedef void (*window_key_callback)(int key, int action);
+
+typedef void (*window_mouse_btn_callback)(int key, int action);
+
+bool window_create(int width, int height, const char *title);
+
+void window_set_key_callback(window_key_callback callback);
+
+void window_set_mouse_btn_callback(window_mouse_btn_callback callback);
+
+void window_swap_buffers();
+
+void window_poll_events();
+
+bool window_is_closed();
+
+void window_close();
+
+void window_destroy();
+
+#endif //WINDOW_H
