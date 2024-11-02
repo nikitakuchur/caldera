@@ -8,12 +8,12 @@
 #include <AppKit/AppKit.hpp>
 #include <QuartzCore/CAMetalLayer.hpp>
 
-typedef struct {
+struct mtl_context {
     MTL::Device *device;
     CA::MetalLayer *mtl_layer;
     NS::Window *ns_window;
     MTL::CommandQueue *command_queue;
-} mtl_context;
+};
 
 extern mtl_context metal_graphics_context;
 
