@@ -13,8 +13,6 @@ void window_set_key_callback(window_key_callback callback);
 
 void window_set_mouse_btn_callback(window_mouse_btn_callback callback);
 
-void window_swap_buffers();
-
 void window_poll_events();
 
 bool window_is_closed();

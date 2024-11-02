@@ -24,5 +24,6 @@ void mtl_renderer_draw() {
     command_buffer->presentDrawable(metalDrawable);
     command_buffer->commit();
     command_buffer->waitUntilCompleted();
+
     pool->release();
 }

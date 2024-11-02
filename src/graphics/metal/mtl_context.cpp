@@ -16,7 +16,7 @@ void mtl_context_init() {
     metal_graphics_context.mtl_layer->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
 
     // get the cocoa window using GLFW native
-    metal_graphics_context.ns_window = get_ns_window(
+    metal_graphics_context.ns_window = get_and_configure_ns_window(
         window_get_glfw_window(),
         metal_graphics_context.mtl_layer
     )->retain();

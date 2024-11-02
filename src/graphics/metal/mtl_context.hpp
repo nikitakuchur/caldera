@@ -1,5 +1,5 @@
-#ifndef GRAPHICS_CONTEXT_HPP
-#define GRAPHICS_CONTEXT_HPP
+#ifndef MTL_CONTEXT_HPP
+#define MTL_CONTEXT_HPP
 
 // this block should be available only to C++ code
 #ifdef __cplusplus
@@ -32,4 +32,4 @@ void mtl_context_destroy();
 }
 #endif
 
-#endif //GRAPHICS_CONTEXT_HPP
+#endif //MTL_CONTEXT_HPP

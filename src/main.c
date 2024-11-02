@@ -26,11 +26,7 @@ int main() {
     mtl_context_init();
 
     while (!window_is_closed()) {
-
-        // render here
         mtl_renderer_draw();
-
-        window_swap_buffers();
         window_poll_events();
     }
 

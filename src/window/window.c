@@ -53,10 +53,6 @@ void window_set_mouse_btn_callback(window_mouse_btn_callback callback) {
     context.mouse_btn_callback_func = callback;
 }
 
-void window_swap_buffers() {
-    // TODO
-}
-
 void window_poll_events() {
     glfwPollEvents();
 }

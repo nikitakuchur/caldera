@@ -3,12 +3,12 @@
 #define GLFW_EXPOSE_NATIVE_COCOA
 #include <GLFW/glfw3native.h>
 
-NS::Window* get_ns_window(GLFWwindow* glfwWindow, CA::MetalLayer* layer) {
-    CALayer* obj_layer = (__bridge CALayer*) layer;
-    NSWindow* obj_window = glfwGetCocoaWindow(glfwWindow);
+NS::Window* get_and_configure_ns_window(GLFWwindow* glfwWindow, CA::MetalLayer* layer) {
+    CALayer* ca_layer = (__bridge CALayer*) layer;
+    NSWindow* ns_window = glfwGetCocoaWindow(glfwWindow);
 
-    obj_window.contentView.layer = obj_layer;
-    obj_window.contentView.wantsLayer = YES;
+    ns_window.contentView.layer = ca_layer;
+    ns_window.contentView.wantsLayer = YES;
 
-    return (__bridge NS::Window*)obj_window;
+    return (__bridge NS::Window*)ns_window;
 }
