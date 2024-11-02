@@ -2,24 +2,28 @@
 
 #include "mtl_context.hpp"
 
-void mtl_renderer_draw() {
-    auto [device, mtl_layer, ns_window, command_queue] = metal_graphics_context;
+void mtl_renderer_draw_triangle() {
+    mtl_context ctx = metal_graphics_context;
 
-    NS::AutoreleasePool* pool = NS::AutoreleasePool::alloc()->init();
-    CA::MetalDrawable* metal_drawable = mtl_layer->nextDrawable();
+    NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
+    CA::MetalDrawable *metal_drawable = ctx.mtl_layer->nextDrawable();
 
-    auto command_buffer = command_queue->commandBuffer();
+    auto command_buffer = ctx.command_queue->commandBuffer();
 
-    MTL::RenderPassDescriptor* renderPassDescriptor = MTL::RenderPassDescriptor::alloc()->init();
+    MTL::RenderPassDescriptor *render_pass = MTL::RenderPassDescriptor::alloc()->init();
 
-    MTL::RenderPassColorAttachmentDescriptor* colorAttachment = renderPassDescriptor->colorAttachments()->object(0);
-    colorAttachment->setTexture(metal_drawable->texture());
-    colorAttachment->setLoadAction(MTL::LoadActionClear);
-    colorAttachment->setClearColor(MTL::ClearColor(0.6f, 0.2f, 0.5f, 1.0f));
-    colorAttachment->setStoreAction(MTL::StoreActionStore);
+    MTL::RenderPassColorAttachmentDescriptor *color_attachment = render_pass->colorAttachments()->object(0);
+    color_attachment->setTexture(metal_drawable->texture());
+    color_attachment->setLoadAction(MTL::LoadActionClear);
+    color_attachment->setClearColor(MTL::ClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+    color_attachment->setStoreAction(MTL::StoreActionStore);
 
-    MTL::RenderCommandEncoder* renderCommandEncoder = command_buffer->renderCommandEncoder(renderPassDescriptor);
-    renderCommandEncoder->endEncoding();
+    MTL::RenderCommandEncoder *encoder = command_buffer->renderCommandEncoder(render_pass);
+
+    // draw a triangle
+    encoder->setRenderPipelineState(ctx.render_pipeline_state);
+    encoder->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangle, static_cast<NS::UInteger>(0), 3);
+    encoder->endEncoding();
 
     command_buffer->presentDrawable(metal_drawable);
     command_buffer->commit();

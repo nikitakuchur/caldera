@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-void mtl_renderer_draw();
+void mtl_renderer_draw_triangle();
 
 #ifdef __cplusplus
 }

@@ -4,11 +4,58 @@
 
 extern "C" {
 #include <window/window.h>
+#include <utils/utils.h>
 }
 
 mtl_context metal_graphics_context = {};
 
-void mtl_context_init() {
+static MTL::RenderPipelineState* build_pipeline(const char *shader_filename) {
+    mtl_context ctx = metal_graphics_context;
+
+    char *str = read_file(shader_filename);
+    if (!str) {
+        printf("failed to read the metal shader: %s\n", shader_filename);
+        return nullptr;
+    }
+
+    NS::String *shader = NS::String::string(str, NS::StringEncoding::ASCIIStringEncoding);
+    free(str);
+
+    NS::Error *error = nullptr;
+    MTL::CompileOptions *options = nullptr;
+    MTL::Library* library = ctx.device->newLibrary(shader, options, &error);
+    if (!library) {
+        printf("failed to read a metal shader: %s\n", error->localizedDescription()->utf8String());
+        return nullptr;
+    }
+
+    NS::String* vertex_shader_name = NS::String::string("vertex_shader", NS::StringEncoding::ASCIIStringEncoding);
+    MTL::Function* vertex_func = library->newFunction(vertex_shader_name);
+
+    NS::String* fragment_shader_name = NS::String::string("fragment_shader", NS::StringEncoding::ASCIIStringEncoding);
+    MTL::Function* fragment_func = library->newFunction(fragment_shader_name);
+
+    MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
+    descriptor->setVertexFunction(vertex_func);
+    descriptor->setFragmentFunction(fragment_func);
+    descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm_sRGB);
+
+    MTL::RenderPipelineState* render_pipeline_state = ctx.device->newRenderPipelineState(descriptor, &error);
+    if (!render_pipeline_state) {
+        printf("failed to load a metal shader: %s\n", error->localizedDescription()->utf8String());
+        return nullptr;
+    }
+
+    // free resources
+    descriptor->release();
+    vertex_func->release();
+    fragment_func->release();
+    library->release();
+
+    return render_pipeline_state;
+}
+
+void mtl_context_init(const char *shader_filename) {
     metal_graphics_context.device = MTL::CreateSystemDefaultDevice();
 
     metal_graphics_context.mtl_layer = CA::MetalLayer::layer()->retain();
@@ -22,9 +69,12 @@ void mtl_context_init() {
     )->retain();
 
     metal_graphics_context.command_queue = metal_graphics_context.device->newCommandQueue()->retain();
+
+    metal_graphics_context.render_pipeline_state = build_pipeline(shader_filename);
 }
 
 void mtl_context_destroy() {
+    metal_graphics_context.render_pipeline_state->release();
     metal_graphics_context.command_queue->release();
     metal_graphics_context.mtl_layer->release();
     metal_graphics_context.ns_window->release();

@@ -13,6 +13,7 @@ struct mtl_context {
     CA::MetalLayer *mtl_layer;
     NS::Window *ns_window;
     MTL::CommandQueue *command_queue;
+    MTL::RenderPipelineState* render_pipeline_state;
 };
 
 extern mtl_context metal_graphics_context;
@@ -24,7 +25,7 @@ extern mtl_context metal_graphics_context;
 extern "C" {
 #endif
 
-void mtl_context_init();
+void mtl_context_init(const char *shader_filename);
 
 void mtl_context_destroy();
 

@@ -15,7 +15,7 @@ void mouse_btn_callback(int btn, int action) {
 }
 
 int main() {
-    if (!window_init(640, 480, "Metal Test")) {
+    if (!window_init(640, 480, "Metal Triangle")) {
         printf("failed to init a window");
         return -1;
     }
@@ -23,10 +23,10 @@ int main() {
     window_set_key_callback(&key_callback);
     window_set_mouse_btn_callback(&mouse_btn_callback);
 
-    mtl_context_init();
+    mtl_context_init("../res/shaders/metal/triangle.metal");
 
     while (!window_is_closed()) {
-        mtl_renderer_draw();
+        mtl_renderer_draw_triangle();
         window_poll_events();
     }
 
