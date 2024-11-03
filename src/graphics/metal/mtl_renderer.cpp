@@ -1,9 +1,13 @@
 #include "mtl_renderer.hpp"
 
-#include "mtl_context.hpp"
+#include "mtl_graphics_context.hpp"
 
-void mtl_renderer_draw_triangle() {
-    mtl_context ctx = metal_graphics_context;
+extern "C" {
+#include <graphics/api/renderer.h>
+}
+
+void renderer_draw_triangle() {
+    mtl_graphics_context ctx = metal_graphics_context;
 
     NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
     CA::MetalDrawable *metal_drawable = ctx.mtl_layer->nextDrawable();

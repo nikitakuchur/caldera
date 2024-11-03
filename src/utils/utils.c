@@ -7,7 +7,6 @@ char* read_file(const char* filename) {
     FILE *file = fopen(filename, "r");
 
     if (!file) {
-        printf("Error: could not open file %s\n", filename);
         return nullptr;
     }
 

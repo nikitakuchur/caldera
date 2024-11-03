@@ -1,16 +1,20 @@
-#include "mtl_context.hpp"
+#include "mtl_graphics_context.hpp"
+
+#include <Metal/MTLDevice.hpp>
 
 #include "cocoa_adapter.hpp"
 
 extern "C" {
+#include <graphics/api/graphics_context.h>
+
 #include <window/window.h>
 #include <utils/utils.h>
 }
 
-mtl_context metal_graphics_context = {};
+mtl_graphics_context metal_graphics_context = {};
 
 static MTL::RenderPipelineState* build_pipeline(const char *shader_filename) {
-    mtl_context ctx = metal_graphics_context;
+    mtl_graphics_context ctx = metal_graphics_context;
 
     char *str = read_file(shader_filename);
     if (!str) {
@@ -55,7 +59,7 @@ static MTL::RenderPipelineState* build_pipeline(const char *shader_filename) {
     return render_pipeline_state;
 }
 
-void mtl_context_init(const char *shader_filename) {
+void graphics_context_init(const char *shader_filename) {
     metal_graphics_context.device = MTL::CreateSystemDefaultDevice();
 
     metal_graphics_context.mtl_layer = CA::MetalLayer::layer()->retain();
@@ -73,7 +77,7 @@ void mtl_context_init(const char *shader_filename) {
     metal_graphics_context.render_pipeline_state = build_pipeline(shader_filename);
 }
 
-void mtl_context_destroy() {
+void graphics_context_destroy() {
     metal_graphics_context.render_pipeline_state->release();
     metal_graphics_context.command_queue->release();
     metal_graphics_context.mtl_layer->release();

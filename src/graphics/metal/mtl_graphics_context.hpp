@@ -1,14 +1,13 @@
 #ifndef MTL_CONTEXT_HPP
 #define MTL_CONTEXT_HPP
 
-// this block should be available only to C++ code
-#ifdef __cplusplus
+// platform specific API
 
 #include <Metal/Metal.hpp>
 #include <AppKit/AppKit.hpp>
 #include <QuartzCore/CAMetalLayer.hpp>
 
-struct mtl_context {
+struct mtl_graphics_context {
     MTL::Device *device;
     CA::MetalLayer *mtl_layer;
     NS::Window *ns_window;
@@ -16,21 +15,6 @@ struct mtl_context {
     MTL::RenderPipelineState* render_pipeline_state;
 };
 
-extern mtl_context metal_graphics_context;
-
-#endif
-
-// C API
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void mtl_context_init(const char *shader_filename);
-
-void mtl_context_destroy();
-
-#ifdef __cplusplus
-}
-#endif
+extern mtl_graphics_context metal_graphics_context;
 
 #endif //MTL_CONTEXT_HPP

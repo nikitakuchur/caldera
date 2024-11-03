@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <window/window.h>
-#include <graphics/metal/mtl_context.hpp>
-#include <graphics/metal/mtl_renderer.hpp>
+#include <graphics/api/graphics_context.h>
+#include <graphics/api/renderer.h>
 
 void key_callback(int key, int action) {
     if (key == 256 && action == 1) {
@@ -15,7 +15,7 @@ void mouse_btn_callback(int btn, int action) {
 }
 
 int main() {
-    if (!window_init(640, 480, "Metal Triangle")) {
+    if (!window_init(640, 480, "Triangle")) {
         printf("failed to init a window");
         return -1;
     }
@@ -23,14 +23,14 @@ int main() {
     window_set_key_callback(&key_callback);
     window_set_mouse_btn_callback(&mouse_btn_callback);
 
-    mtl_context_init("../res/shaders/metal/triangle.metal");
+    graphics_context_init("../res/shaders/metal/triangle.metal");
 
     while (!window_is_closed()) {
-        mtl_renderer_draw_triangle();
+        renderer_draw_triangle();
         window_poll_events();
     }
 
-    mtl_context_destroy();
+    graphics_context_destroy();
     window_destroy();
 
     return 0;

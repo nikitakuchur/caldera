@@ -1,9 +1,10 @@
-#include "vulkan_test.h"
+#include "vk_graphics_context.h"
+#include <graphics/api/graphics_context.h>
 
 #include <vulkan/vulkan.h>
 #include <stdio.h>
 
-void vk_init() {
+void graphics_context_init(const char *shader_filename) {
     VkInstance instance;
 
     VkInstanceCreateInfo create_info = {};
@@ -20,8 +21,12 @@ void vk_init() {
     const VkResult result = vkCreateInstance(&create_info, nullptr, &instance);
 
     if (result == VK_SUCCESS) {
-        printf("VkInstance created successfully!\n");
+        printf("vulkan instance created successfully!\n");
     } else {
-        printf("Failed to create a VkI¢nstance: %d\n", result);
+        printf("failed to create a new vulkan instance: %d\n", result);
     }
+}
+
+void graphics_context_destroy() {
+    printf("graphics_context_destroy not supported");
 }
