@@ -12,7 +12,7 @@ struct mtl_graphics_context {
     CA::MetalLayer *mtl_layer;
     NS::Window *ns_window;
     MTL::CommandQueue *command_queue;
-    MTL::RenderPipelineState* render_pipeline_state;
+    MTL::RenderPipelineState* render_pipeline;
 };
 
 extern mtl_graphics_context metal_graphics_context;

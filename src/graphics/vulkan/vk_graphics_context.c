@@ -1,10 +1,9 @@
-#include "vk_graphics_context.h"
 #include <graphics/api/graphics_context.h>
 
 #include <vulkan/vulkan.h>
 #include <stdio.h>
 
-void graphics_context_init(const char *shader_filename) {
+void graphics_context_init() {
     VkInstance instance;
 
     VkInstanceCreateInfo create_info = {};
