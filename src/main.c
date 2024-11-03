@@ -45,22 +45,22 @@ int main() {
     while (!window_is_closed()) {
         renderer_begin();
 
-        if (glfwGetKey(window_get_glfw_window(), GLFW_KEY_W) == GLFW_PRESS) {
+        if (window_get_key(GLFW_KEY_W) == GLFW_PRESS) {
             triangle[0].pos[1] += 0.01f;
             triangle[1].pos[1] += 0.01f;
             triangle[2].pos[1] += 0.01f;
         }
-        if (glfwGetKey(window_get_glfw_window(), GLFW_KEY_D) == GLFW_PRESS) {
+        if (window_get_key(GLFW_KEY_D) == GLFW_PRESS) {
             triangle[0].pos[0] += 0.01f;
             triangle[1].pos[0] += 0.01f;
             triangle[2].pos[0] += 0.01f;
         }
-        if (glfwGetKey(window_get_glfw_window(), GLFW_KEY_A) == GLFW_PRESS) {
+        if (window_get_key(GLFW_KEY_A) == GLFW_PRESS) {
             triangle[0].pos[0] -= 0.01f;
             triangle[1].pos[0] -= 0.01f;
             triangle[2].pos[0] -= 0.01f;
         }
-        if (glfwGetKey(window_get_glfw_window(), GLFW_KEY_S) == GLFW_PRESS) {
+        if (window_get_key(GLFW_KEY_S) == GLFW_PRESS) {
             triangle[0].pos[1] -= 0.01f;
             triangle[1].pos[1] -= 0.01f;
             triangle[2].pos[1] -= 0.01f;

@@ -1,13 +1,11 @@
 #include "window.h"
 
-typedef struct {
+static struct {
     GLFWwindow *window;
 
     window_key_callback key_callback_func;
     window_mouse_btn_callback mouse_btn_callback_func;
-} window_context;
-
-static window_context context = {nullptr};
+} context;
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (context.key_callback_func) {
@@ -51,6 +49,10 @@ void window_set_key_callback(window_key_callback callback) {
 
 void window_set_mouse_btn_callback(window_mouse_btn_callback callback) {
     context.mouse_btn_callback_func = callback;
+}
+
+int window_get_key(int key) {
+    return glfwGetKey(context.window, key);
 }
 
 void window_poll_events() {
