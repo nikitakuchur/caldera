@@ -1,5 +1,3 @@
-#include "mtl_renderer.hpp"
-
 #include "mtl_graphics_context.hpp"
 
 extern "C" {
@@ -58,41 +56,46 @@ void renderer_init() {
     metal_graphics_context.render_pipeline = build_pipeline("../res/shaders/metal/general.metal");
 }
 
-void renderer_begin() {
-}
+static struct {
+    NS::AutoreleasePool *pool;
+    CA::MetalDrawable *metal_drawable;
+    MTL::CommandBuffer *command_buffer;
+    MTL::RenderCommandEncoder *encoder;
+} renderer_context;
 
-void renderer_submit(vertex_buffer vb, uint32_t vertex_count) {
+void renderer_begin() {
     mtl_graphics_context ctx = metal_graphics_context;
 
-    NS::AutoreleasePool *pool = NS::AutoreleasePool::alloc()->init();
-    CA::MetalDrawable *metal_drawable = ctx.mtl_layer->nextDrawable();
+    renderer_context.pool = NS::AutoreleasePool::alloc()->init();
+    renderer_context.metal_drawable = ctx.mtl_layer->nextDrawable();
 
-    auto command_buffer = ctx.command_queue->commandBuffer();
+    renderer_context.command_buffer = ctx.command_queue->commandBuffer();
 
     MTL::RenderPassDescriptor *render_pass = MTL::RenderPassDescriptor::alloc()->init();
 
     MTL::RenderPassColorAttachmentDescriptor *color_attachment = render_pass->colorAttachments()->object(0);
-    color_attachment->setTexture(metal_drawable->texture());
+    color_attachment->setTexture(renderer_context.metal_drawable->texture());
     color_attachment->setLoadAction(MTL::LoadActionClear);
     color_attachment->setClearColor(MTL::ClearColor(0.1f, 0.1f, 0.1f, 1.0f));
     color_attachment->setStoreAction(MTL::StoreActionStore);
 
-    MTL::RenderCommandEncoder *encoder = command_buffer->renderCommandEncoder(render_pass);
+    renderer_context.encoder = renderer_context.command_buffer->renderCommandEncoder(render_pass);
+    renderer_context.encoder->setRenderPipelineState(ctx.render_pipeline);
+}
 
-    // draw the mesh
-    encoder->setRenderPipelineState(ctx.render_pipeline);
+void renderer_submit(vertex_buffer vb, uint32_t vertex_count) {
+    MTL::RenderCommandEncoder *encoder = renderer_context.encoder;
     encoder->setVertexBuffer(static_cast<MTL::Buffer *>(vb.platform_buffer), 0, 0);
-    encoder->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangle, static_cast<NS::UInteger>(0), vertex_count);
-    encoder->endEncoding();
-
-    command_buffer->presentDrawable(metal_drawable);
-    command_buffer->commit();
-    command_buffer->waitUntilCompleted();
-
-    pool->release();
+    encoder->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangle, NS::UInteger(0), vertex_count);
 }
 
 void renderer_end() {
+    renderer_context.encoder->endEncoding();
+    renderer_context.command_buffer->presentDrawable(renderer_context.metal_drawable);
+    renderer_context.command_buffer->commit();
+    renderer_context.command_buffer->waitUntilCompleted();
+
+    renderer_context.pool->release();
 }
 
 void renderer_destroy() {

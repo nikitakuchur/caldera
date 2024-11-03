@@ -39,8 +39,17 @@ int main() {
         {{0.0f, 0.75f}, {0.0f, 0.0f, 1.0f}}
     };
 
+    vertex triangle2[3] = {
+        {{-0.75f, -0.75f}, {1.0f, 0.0f, 0.0f}},
+        {{0.75f, -0.75f}, {1.0f, 0.0f, 0.0f}},
+        {{1.0f, 0.75f}, {1.0f, 0.0f, 0.0f}}
+    };
+
     vertex_buffer vb = vertex_buffer_create(3 * sizeof(vertex));
     vertex_buffer_set(vb, triangle, 3 * sizeof(vertex));
+
+    vertex_buffer vb2 = vertex_buffer_create(3 * sizeof(vertex));
+    vertex_buffer_set(vb2, triangle2, 3 * sizeof(vertex));
 
     while (!window_is_closed()) {
         renderer_begin();
@@ -68,6 +77,7 @@ int main() {
 
         vertex_buffer_set(vb, triangle, 3 * sizeof(triangle));
         renderer_submit(vb, 3);
+        renderer_submit(vb2, 3);
 
         renderer_end();
 
