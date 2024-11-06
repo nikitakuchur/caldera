@@ -2,12 +2,19 @@
 
 extern "C" {
 #include <graphics/api/renderer.h>
-#include <graphics/api/vertex_buffer.h>
 #include <utils/utils.h>
 }
 
+static struct {
+    MTL::RenderPipelineState *render_pipeline;
+    NS::AutoreleasePool *pool;
+    CA::MetalDrawable *metal_drawable;
+    MTL::CommandBuffer *command_buffer;
+    MTL::RenderCommandEncoder *encoder;
+} renderer_context;
+
 static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
-    mtl_graphics_context ctx = metal_graphics_context;
+    mtl_graphics_context ctx = graphics_context;
 
     char *str = read_file(shader_filename);
     if (!str) {
@@ -53,18 +60,11 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
 }
 
 void renderer_init() {
-    metal_graphics_context.render_pipeline = build_pipeline("../res/shaders/metal/general.metal");
+    renderer_context.render_pipeline = build_pipeline("../res/shaders/metal/general.metal");
 }
 
-static struct {
-    NS::AutoreleasePool *pool;
-    CA::MetalDrawable *metal_drawable;
-    MTL::CommandBuffer *command_buffer;
-    MTL::RenderCommandEncoder *encoder;
-} renderer_context;
-
 void renderer_begin() {
-    mtl_graphics_context ctx = metal_graphics_context;
+    mtl_graphics_context ctx = graphics_context;
 
     renderer_context.pool = NS::AutoreleasePool::alloc()->init();
     renderer_context.metal_drawable = ctx.mtl_layer->nextDrawable();
@@ -80,17 +80,25 @@ void renderer_begin() {
     color_attachment->setStoreAction(MTL::StoreActionStore);
 
     renderer_context.encoder = renderer_context.command_buffer->renderCommandEncoder(render_pass);
-    renderer_context.encoder->setRenderPipelineState(ctx.render_pipeline);
+    renderer_context.encoder->setRenderPipelineState(renderer_context.render_pipeline);
 }
 
-void renderer_submit(vertex_buffer vb, uint32_t vertex_count) {
+void renderer_submit(vertex_buffer vb, uint32_t vertex_count, index_buffer ib) {
     MTL::RenderCommandEncoder *encoder = renderer_context.encoder;
     encoder->setVertexBuffer(static_cast<MTL::Buffer *>(vb.platform_buffer), 0, 0);
-    encoder->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangle, NS::UInteger(0), vertex_count);
+    encoder->drawIndexedPrimitives(
+        MTL::PrimitiveType::PrimitiveTypeTriangle,
+        ib.count,
+        MTL::IndexType::IndexTypeUInt32,
+        static_cast<MTL::Buffer *>(ib.platform_buffer),
+        0,
+        1
+    );
 }
 
 void renderer_end() {
     renderer_context.encoder->endEncoding();
+
     renderer_context.command_buffer->presentDrawable(renderer_context.metal_drawable);
     renderer_context.command_buffer->commit();
     renderer_context.command_buffer->waitUntilCompleted();
@@ -99,4 +107,5 @@ void renderer_end() {
 }
 
 void renderer_destroy() {
+    renderer_context.render_pipeline->release();
 }

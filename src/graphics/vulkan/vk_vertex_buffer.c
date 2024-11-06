@@ -7,10 +7,10 @@ vertex_buffer vertex_buffer_create(uint32_t size) {
     return vb;
 }
 
-void vertex_buffer_set(vertex_buffer buffer, const void *data, uint32_t size) {
+void vertex_buffer_set(vertex_buffer vb, const void *data, uint32_t size) {
     printf("vertex_buffer_set not supported");
 }
 
-void vertex_buffer_destroy(vertex_buffer buffer) {
+void vertex_buffer_destroy(vertex_buffer vb) {
     printf("vertex_buffer_destroy not supported");
 }

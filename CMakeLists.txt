@@ -14,7 +14,6 @@ set_property(CACHE RENDER_API PROPERTY STRINGS "VULKAN" "METAL")
 file(GLOB_RECURSE SOURCES "src/*.c")
 list(FILTER SOURCES EXCLUDE REGEX "src/graphics/metal/.*")
 list(FILTER SOURCES EXCLUDE REGEX "src/graphics/vulkan/.*")
-message(STATUS "Filtered Source Files: ${SOURCES}")
 
 # Add GLFW
 add_subdirectory(deps/glfw)

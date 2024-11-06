@@ -2,7 +2,7 @@
 #include <window/window.h>
 #include <graphics/api/graphics_context.h>
 #include <graphics/api/renderer.h>
-#include <graphics/api/vertex_buffer.h>
+#include <graphics/api/index_buffer.h>
 #include <math/types.h>
 
 typedef struct {
@@ -33,58 +33,30 @@ int main() {
     graphics_context_init();
     renderer_init();
 
-    vertex triangle[3] = {
+    vertex quad[4] = {
         {{-0.75f, -0.75f}, {1.0f, 0.0f, 0.0f}},
-        {{0.75f, -0.75f}, {0.0f, 1.0f, 0.0f}},
-        {{0.0f, 0.75f}, {0.0f, 0.0f, 1.0f}}
+        {{ 0.75f, -0.75f}, {0.0f, 1.0f, 0.0f}},
+        {{ 0.75f, 0.75f}, {0.0f, 0.0f, 1.0f}},
+        {{-0.75f, 0.75f}, {1.0f, 1.0f, 1.0f}}
     };
+    vertex_buffer vb = vertex_buffer_create(4 * sizeof(vertex));
+    vertex_buffer_set(vb, quad, 4 * sizeof(vertex));
 
-    vertex triangle2[3] = {
-        {{-0.75f, -0.75f}, {1.0f, 0.0f, 0.0f}},
-        {{0.75f, -0.75f}, {1.0f, 0.0f, 0.0f}},
-        {{1.0f, 0.75f}, {1.0f, 0.0f, 0.0f}}
-    };
-
-    vertex_buffer vb = vertex_buffer_create(3 * sizeof(vertex));
-    vertex_buffer_set(vb, triangle, 3 * sizeof(vertex));
-
-    vertex_buffer vb2 = vertex_buffer_create(3 * sizeof(vertex));
-    vertex_buffer_set(vb2, triangle2, 3 * sizeof(vertex));
+    u_int32_t indices[6] = {0, 1, 2, 2, 3, 0};
+    index_buffer ib = index_buffer_create(6);
+    index_buffer_set(ib, indices);
 
     while (!window_is_closed()) {
         renderer_begin();
-
-        if (window_get_key(GLFW_KEY_W) == GLFW_PRESS) {
-            triangle[0].pos[1] += 0.01f;
-            triangle[1].pos[1] += 0.01f;
-            triangle[2].pos[1] += 0.01f;
-        }
-        if (window_get_key(GLFW_KEY_D) == GLFW_PRESS) {
-            triangle[0].pos[0] += 0.01f;
-            triangle[1].pos[0] += 0.01f;
-            triangle[2].pos[0] += 0.01f;
-        }
-        if (window_get_key(GLFW_KEY_A) == GLFW_PRESS) {
-            triangle[0].pos[0] -= 0.01f;
-            triangle[1].pos[0] -= 0.01f;
-            triangle[2].pos[0] -= 0.01f;
-        }
-        if (window_get_key(GLFW_KEY_S) == GLFW_PRESS) {
-            triangle[0].pos[1] -= 0.01f;
-            triangle[1].pos[1] -= 0.01f;
-            triangle[2].pos[1] -= 0.01f;
-        }
-
-        vertex_buffer_set(vb, triangle, 3 * sizeof(triangle));
-        renderer_submit(vb, 3);
-        renderer_submit(vb2, 3);
-
+        renderer_submit(vb, 4, ib);
         renderer_end();
 
         window_poll_events();
     }
 
     vertex_buffer_destroy(vb);
+    index_buffer_destroy(ib);
+
     renderer_destroy();
     graphics_context_destroy();
 
