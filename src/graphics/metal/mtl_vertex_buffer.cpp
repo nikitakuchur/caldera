@@ -1,5 +1,5 @@
 extern "C" {
-#include <graphics/api/vertex_buffer.h>
+#include <graphics/backend/vertex_buffer.h>
 }
 
 #include "mtl_graphics_context.hpp"

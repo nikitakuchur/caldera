@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <graphics/api/vertex_buffer.h>
+#include <graphics/backend/vertex_buffer.h>
 
 vertex_buffer vertex_buffer_create(uint32_t size) {
     printf("vertex_buffer_create not supported");

@@ -10,7 +10,7 @@ typedef struct index_buffer {
 
 index_buffer index_buffer_create(uint32_t count);
 
-void index_buffer_set(index_buffer buffer, const uint32_t *indices);
+void index_buffer_set(index_buffer buffer, const uint32_t *indices, uint32_t count);
 
 void index_buffer_destroy(index_buffer buffer);
 

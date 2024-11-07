@@ -2,9 +2,10 @@
 
 #include <Metal/MTLDevice.hpp>
 #include "cocoa_adapter.hpp"
+#include "GLFW/glfw3native.h"
 
 extern "C" {
-#include <graphics/api/graphics_context.h>
+#include <graphics/backend/graphics_context.h>
 #include <window/window.h>
 }
 

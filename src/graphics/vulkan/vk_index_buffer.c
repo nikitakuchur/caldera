@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <graphics/api/index_buffer.h>
+#include <graphics/backend/index_buffer.h>
 
 index_buffer index_buffer_create(uint32_t count) {
     printf("index_buffer_create not supported");

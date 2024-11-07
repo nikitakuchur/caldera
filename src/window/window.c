@@ -3,9 +3,16 @@
 static struct {
     GLFWwindow *window;
 
+    window_resize_callback resize_callback_func;
     window_key_callback key_callback_func;
     window_mouse_btn_callback mouse_btn_callback_func;
 } context;
+
+static void size_callback(GLFWwindow *window, int width, int height) {
+    if (context.resize_callback_func) {
+        context.resize_callback_func(width, height);
+    }
+}
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (context.key_callback_func) {
@@ -37,10 +44,15 @@ bool window_init(int width, int height, const char *title) {
         return false;
     }
 
+    glfwSetWindowSizeCallback(context.window, &size_callback);
     glfwSetKeyCallback(context.window, &key_callback);
     glfwSetMouseButtonCallback(context.window, &mouse_btn_callback);
 
     return true;
+}
+
+void window_set_resize_callback(window_resize_callback callback) {
+    context.resize_callback_func = callback;
 }
 
 void window_set_key_callback(window_key_callback callback) {
