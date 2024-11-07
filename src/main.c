@@ -31,14 +31,29 @@ int main() {
     sprite s1 = {{0.0f, 0.0f}, {0, 0}, {300.f, 200.f}, {0.8f, 0.3f, 0.0f, 1.0f}};
     sprite s2 = {{-250.f, -100.f}, {0, 0}, {200.f, 150.f}, {0.3f, 0.3f, 0.6f, 1.0f}};
 
+    sprite s3 = {{0.0f, -100.0f}, {0, 0}, {30.f, 40.f}, {0.9f, 0.1f, 0.2f, 1.0f}};
+    sprite s4 = {{-30.f, -100.f}, {0, 0}, {20.f, 20.f}, {0.9f, 0.1f, 0.2f, 1.0f}};
+
     renderer_init();
     renderer_set_size(680, 480);
 
+    batch b1 = renderer_batch_create();
+    batch b2 = renderer_batch_create();
+
     while (!window_is_closed()) {
-        renderer_begin();
-        renderer_draw_sprite(s1);
-        renderer_draw_sprite(s2);
-        renderer_end();
+        renderer_frame_begin();
+
+        renderer_batch_begin(&b1);
+        renderer_batch_submit(&b1, s1);
+        renderer_batch_submit(&b1, s2);
+        renderer_batch_end(&b1);
+
+        renderer_batch_begin(&b2);
+        renderer_batch_submit(&b2, s3);
+        renderer_batch_submit(&b2, s4);
+        renderer_batch_end(&b2);
+
+        renderer_frame_end();
 
         window_poll_events();
     }

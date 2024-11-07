@@ -1,7 +1,13 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <graphics/backend/index_buffer.h>
+#include <graphics/backend/vertex_buffer.h>
 #include <math/types.h>
+
+#define SPRITE_MAX_COUNT 1024
+#define VERTEX_MAX_COUNT (1024 * 4)
+#define INDEX_MAX_COUNT (1024 * 6)
 
 typedef struct sprite {
     vec2 position;
@@ -10,15 +16,39 @@ typedef struct sprite {
     vec4 color;
 } sprite;
 
-void renderer_init();
+typedef struct vertex {
+    vec2 pos;
+    vec4 color;
+} vertex;
 
-void renderer_begin();
+typedef struct batch {
+    vertex vertices[VERTEX_MAX_COUNT];
+    uint32_t vertex_count;
+
+    uint32_t indices[INDEX_MAX_COUNT];
+    uint32_t index_count;
+
+    vertex_buffer vb;
+    index_buffer ib;
+} batch;
+
+void renderer_init();
 
 void renderer_set_size(int width, int height);
 
-void renderer_draw_sprite(sprite s);
+void renderer_frame_begin();
 
-void renderer_end();
+batch renderer_batch_create();
+
+void renderer_batch_begin(batch *b);
+
+void renderer_batch_submit(batch *b, sprite s);
+
+void renderer_batch_end(batch *b);
+
+void renderer_batch_destroy(batch *b);
+
+void renderer_frame_end();
 
 void renderer_destroy();
 
