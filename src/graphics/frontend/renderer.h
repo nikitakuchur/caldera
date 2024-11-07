@@ -14,7 +14,7 @@ void renderer_init();
 
 void renderer_begin();
 
-void renderer_set_viewport(int width, int height);
+void renderer_set_size(int width, int height);
 
 void renderer_draw_sprite(sprite s);
 

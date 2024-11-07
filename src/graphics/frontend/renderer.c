@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <graphics/backend/graphics_context.h>
 #include <graphics/backend/renderer_backend.h>
+#include <math/cam.h>
+#include <math/mat4.h>
 #include <math/vec2.h>
 
 #define SPRITE_MAX_COUNT 1024
@@ -40,8 +42,17 @@ void renderer_begin() {
     renderer_backend_begin();
 }
 
-void renderer_set_viewport(int width, int height) {
-    renderer_backend_set_viewport(width, height);
+void renderer_set_size(int width, int height) {
+    mat4 proj_mat;
+    ortho(
+        -(float) width / 2,
+        (float) width / 2,
+        -(float) height / 2,
+        (float) height / 2,
+        0, 1,
+        proj_mat
+    );
+    renderer_backend_set_proj_mat(proj_mat);
 }
 
 void renderer_draw_sprite(sprite s) {
@@ -91,6 +102,10 @@ void renderer_draw_sprite(sprite s) {
 void renderer_end() {
     vertex_buffer_set(context.vb, context.vertices, context.vertex_count * sizeof(vertex));
     index_buffer_set(context.ib, context.indices, context.index_count);
+
+    mat4 identity_mat;
+    mat4_identity(identity_mat);
+
     renderer_backend_submit(context.vb, context.ib, context.index_count);
     renderer_backend_end();
 }

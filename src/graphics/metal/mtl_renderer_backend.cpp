@@ -3,22 +3,24 @@
 extern "C" {
 #include <graphics/backend/renderer_backend.h>
 #include <utils/utils.h>
+#include <math/cam.h>
+#include <math/mat4.h>
 }
 
 static struct {
-    int width;
-    int height;
-
     MTL::RenderPipelineState *render_pipeline;
 
     NS::AutoreleasePool *pool;
     CA::MetalDrawable *metal_drawable;
     MTL::CommandBuffer *command_buffer;
     MTL::RenderCommandEncoder *encoder;
-} context{
-    .width = 1,
-    .height = 1
-};
+
+    struct {
+        mat4 model_mat;
+        mat4 view_mat;
+        mat4 proj_mat;
+    } uniforms;
+} context;
 
 static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
     mtl_graphics_context ctx = graphics_context;
@@ -49,7 +51,7 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
     MTL::RenderPipelineDescriptor *descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
     descriptor->setVertexFunction(vertex_func);
     descriptor->setFragmentFunction(fragment_func);
-    descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm_sRGB);
+    descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
 
     MTL::RenderPipelineState *render_pipeline_state = ctx.device->newRenderPipelineState(descriptor, &error);
     if (!render_pipeline_state) {
@@ -68,6 +70,22 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
 
 void renderer_backend_init() {
     context.render_pipeline = build_pipeline("../res/shaders/metal/general.metal");
+
+    mat4_identity(context.uniforms.model_mat);
+    mat4_identity(context.uniforms.view_mat);
+    ortho(-1, 1, -1, 1, 0, 1, context.uniforms.proj_mat);
+}
+
+void renderer_backend_set_model_mat(mat4 model_mat) {
+    mat4_copy(model_mat, context.uniforms.model_mat);
+}
+
+void renderer_backend_set_view_mat(mat4 view_mat) {
+    mat4_copy(view_mat, context.uniforms.view_mat);
+}
+
+void renderer_backend_set_proj_mat(mat4 proj_mat) {
+    mat4_copy(proj_mat, context.uniforms.proj_mat);
 }
 
 void renderer_backend_begin() {
@@ -86,19 +104,12 @@ void renderer_backend_begin() {
 
     context.encoder = context.command_buffer->renderCommandEncoder(render_pass);
     context.encoder->setRenderPipelineState(context.render_pipeline);
-
-    context.encoder->setViewport({0, 0, (double) context.width, (double) context.height, 0, 1});
-    //context.encoder->setScissorRect({0, 0, (uint32_t) context.width, (uint32_t) context.height});
-}
-
-void renderer_backend_set_viewport(int width, int height) {
-    context.width = width;
-    context.height = height;
 }
 
 void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_count) {
     MTL::RenderCommandEncoder *encoder = context.encoder;
     encoder->setVertexBuffer(static_cast<MTL::Buffer *>(vb.platform_buffer), 0, 0);
+    encoder->setVertexBytes(&context.uniforms, sizeof(context.uniforms), 1);
     encoder->drawIndexedPrimitives(
         MTL::PrimitiveType::PrimitiveTypeTriangle,
         index_count,

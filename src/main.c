@@ -4,7 +4,7 @@
 
 void resize_callback(int width, int height) {
     printf("size: %d, %d\n", width, height);
-    //renderer_set_viewport(width, height);
+    renderer_set_size(width, height);
 }
 
 void key_callback(int key, int action) {
@@ -19,7 +19,7 @@ void mouse_btn_callback(int btn, int action) {
 }
 
 int main() {
-    if (!window_init(480, 480, "Game")) {
+    if (!window_init(680, 480, "Game")) {
         printf("failed to init a window");
         return -1;
     }
@@ -28,10 +28,11 @@ int main() {
     window_set_key_callback(&key_callback);
     window_set_mouse_btn_callback(&mouse_btn_callback);
 
-    sprite s1 = {{0.0f, 0.0f}, {0, 0}, {0.5f, 0.5f}, {0.8f, 0.3f, 0.0f, 1.0f}};
-    sprite s2 = {{-0.4f, 0.1f}, {0, 0}, {0.2f, 0.3f}, {0.3f, 0.3f, 0.6f, 1.0f}};
+    sprite s1 = {{0.0f, 0.0f}, {0, 0}, {300.f, 200.f}, {0.8f, 0.3f, 0.0f, 1.0f}};
+    sprite s2 = {{-250.f, -100.f}, {0, 0}, {200.f, 150.f}, {0.3f, 0.3f, 0.6f, 1.0f}};
+
     renderer_init();
-    renderer_set_viewport(480, 480);
+    renderer_set_size(680, 480);
 
     while (!window_is_closed()) {
         renderer_begin();

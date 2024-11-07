@@ -4,11 +4,17 @@
 #include "index_buffer.h"
 #include "vertex_buffer.h"
 
+#include <math/types.h>
+
 void renderer_backend_init();
 
 void renderer_backend_begin();
 
-void renderer_backend_set_viewport(int width, int height);
+void renderer_backend_set_model_mat(mat4 model_mat);
+
+void renderer_backend_set_view_mat(mat4 view_mat);
+
+void renderer_backend_set_proj_mat(mat4 proj_mat);
 
 void renderer_backend_submit(vertex_buffer vb, index_buffer io, uint32_t index_count);
 

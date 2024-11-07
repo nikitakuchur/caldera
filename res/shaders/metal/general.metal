@@ -12,10 +12,20 @@ struct vertex_output {
     half4 color;
 };
 
-vertex vertex_output vertex_shader(uint vertex_id [[vertex_id]], device const vertex_input* vertices [[buffer(0)]]) {
+struct uniform_input {
+    float4x4 model_mat;
+    float4x4 view_mat;
+    float4x4 proj_mat;
+};
+
+vertex vertex_output vertex_shader(uint vertex_id [[vertex_id]],
+                                   device const vertex_input* vertices [[buffer(0)]],
+                                   constant uniform_input &uniforms [[buffer(1)]]) {
     vertex_output output;
 
-    output.position = float4(vertices[vertex_id].position, 0.0, 1.0);
+    float4 world_pos = uniforms.model_mat * float4(vertices[vertex_id].position, 0.0, 1.0);
+    output.position = uniforms.proj_mat * uniforms.view_mat * world_pos;
+
     output.color = half4(vertices[vertex_id].color);
     
     return output;
