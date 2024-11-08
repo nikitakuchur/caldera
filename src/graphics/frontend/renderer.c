@@ -12,16 +12,20 @@ void renderer_init() {
 }
 
 void renderer_set_size(int width, int height) {
+    // FIXME
+    float w = (float) width / 3;
+    float h = (float) height / 3;
     mat4 proj_mat;
     ortho(
-        -(float) width / 2,
-        (float) width / 2,
-        -(float) height / 2,
-        (float) height / 2,
+        -w / 2,
+        w / 2,
+        -h / 2,
+        h / 2,
         0, 1,
         proj_mat
     );
     renderer_backend_set_proj_mat(proj_mat);
+    renderer_backend_set_size(width, height);
 }
 
 void renderer_frame_begin() {

@@ -16,6 +16,8 @@ void renderer_backend_set_view_mat(mat4 view_mat);
 
 void renderer_backend_set_proj_mat(mat4 proj_mat);
 
+void renderer_backend_set_size(int width, int height);
+
 void renderer_backend_submit(vertex_buffer vb, index_buffer io, uint32_t index_count);
 
 void renderer_backend_end();

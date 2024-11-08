@@ -4,7 +4,7 @@
 #include <window/window.h>
 #include <graphics/frontend/renderer.h>
 
-#define SPRITE_COUNT 8192
+#define SPRITE_COUNT 500
 
 void resize_callback(int width, int height) {
     printf("size: %d, %d\n", width, height);
@@ -47,7 +47,7 @@ int main() {
         sprites[i] = (sprite){
             {x, y},
             {0, 0},
-            {2.f, 2.f}
+            {1.f, 1.f}
         };
         random_color(sprites[i].color);
     }

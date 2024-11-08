@@ -88,6 +88,10 @@ void renderer_backend_set_proj_mat(mat4 proj_mat) {
     mat4_copy(proj_mat, context.uniforms.proj_mat);
 }
 
+void renderer_backend_set_size(int width, int height) {
+    graphics_context.mtl_layer->setDrawableSize({(float) width, (float) height});
+}
+
 void renderer_backend_begin() {
     context.pool = NS::AutoreleasePool::alloc()->init();
     context.metal_drawable = graphics_context.mtl_layer->nextDrawable();
