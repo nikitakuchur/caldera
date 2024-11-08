@@ -3,8 +3,8 @@
 using namespace metal;
 
 struct vertex_input {
-    packed_float2 position;
-    packed_float4 color;
+    float2 position [[attribute(0)]];
+    float4 color [[attribute(1)]];
 };
 
 struct vertex_output {
@@ -18,12 +18,11 @@ struct uniform_input {
     float4x4 proj_mat;
 };
 
-vertex vertex_output vertex_shader(uint vertex_id [[vertex_id]],
-                                   device const vertex_input* vertices [[buffer(0)]],
+vertex vertex_output vertex_shader(vertex_input input [[stage_in]],
                                    constant uniform_input &uniforms [[buffer(1)]]) {
     vertex_output output;
 
-    packed_float2 vert_position = vertices[vertex_id].position;
+    float2 vert_position = input.position;
 
     // we need this to create an effect of pixel snapping
     vert_position.x = (int) rint(vert_position.x);
@@ -32,7 +31,7 @@ vertex vertex_output vertex_shader(uint vertex_id [[vertex_id]],
     float4 world_pos = uniforms.model_mat * float4(vert_position, 0.0, 1.0);
     output.position = uniforms.proj_mat * uniforms.view_mat * world_pos;
 
-    output.color = half4(vertices[vertex_id].color);
+    output.color = half4(input.color);
     
     return output;
 }

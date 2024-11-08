@@ -52,7 +52,7 @@ int main() {
         random_color(particles[i].color);
     }
 
-    sprite quad = {0, 0, 0, 0, 1, 1, {1, 1, 1, 1}};
+    sprite quad = {{0, 0}, {0.5f, 0.5f}, {20, 26}, {1, 1, 1, 1}};
 
     renderer_init();
     renderer_set_size(680, 480);
@@ -71,16 +71,16 @@ int main() {
         }
 
         if (window_get_key(GLFW_KEY_A) == GLFW_PRESS) {
-            quad.position[0] -= 0.1f;
+            quad.position[0] -= 0.8f;
         }
         if (window_get_key(GLFW_KEY_D) == GLFW_PRESS) {
-            quad.position[0] += 0.1f;
+            quad.position[0] += 0.8f;
         }
         if (window_get_key(GLFW_KEY_W) == GLFW_PRESS) {
-            quad.position[1] += 0.1f;
+            quad.position[1] += 0.8f;
         }
         if (window_get_key(GLFW_KEY_S) == GLFW_PRESS) {
-            quad.position[1] -= 0.1f;
+            quad.position[1] -= 0.8f;
         }
 
         renderer_batch_submit(&b, quad);

@@ -48,19 +48,39 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
     NS::String *fragment_shader_name = NS::String::string("fragment_shader", NS::StringEncoding::ASCIIStringEncoding);
     MTL::Function *fragment_func = library->newFunction(fragment_shader_name);
 
-    MTL::RenderPipelineDescriptor *descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-    descriptor->setVertexFunction(vertex_func);
-    descriptor->setFragmentFunction(fragment_func);
-    descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
+    MTL::RenderPipelineDescriptor *pipeline_descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
+    pipeline_descriptor->setVertexFunction(vertex_func);
+    pipeline_descriptor->setFragmentFunction(fragment_func);
+    pipeline_descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
 
-    MTL::RenderPipelineState *render_pipeline_state = ctx.device->newRenderPipelineState(descriptor, &error);
+    MTL::VertexDescriptor* vertex_descriptor = MTL::VertexDescriptor::alloc()->init();
+    auto attributes = vertex_descriptor->attributes();
+
+    // attribute 1: position
+    auto position_descriptor = attributes->object(0);
+    position_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat2);
+    position_descriptor->setBufferIndex(0);
+    position_descriptor->setOffset(0);
+
+    // attribute 2: color
+    auto color_descriptor = attributes->object(1);
+    color_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat4);
+    color_descriptor->setBufferIndex(0);
+    color_descriptor->setOffset(2 * sizeof(float));
+
+    auto layoutDescriptor = vertex_descriptor->layouts()->object(0);
+    layoutDescriptor->setStride(6 * sizeof(float));
+
+    pipeline_descriptor->setVertexDescriptor(vertex_descriptor);
+
+    MTL::RenderPipelineState *render_pipeline_state = ctx.device->newRenderPipelineState(pipeline_descriptor, &error);
     if (!render_pipeline_state) {
         printf("failed to load a metal shader: %s\n", error->localizedDescription()->utf8String());
         return nullptr;
     }
 
     // free resources
-    descriptor->release();
+    pipeline_descriptor->release();
     vertex_func->release();
     fragment_func->release();
     library->release();
@@ -89,7 +109,7 @@ void renderer_backend_set_proj_mat(mat4 proj_mat) {
 }
 
 void renderer_backend_set_size(int width, int height) {
-    graphics_context.mtl_layer->setDrawableSize({(float) width, (float) height});
+    graphics_context.mtl_layer->setDrawableSize({static_cast<float>(width), static_cast<float>(height)});
 }
 
 void renderer_backend_begin() {
