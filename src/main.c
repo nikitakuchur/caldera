@@ -39,18 +39,20 @@ int main() {
     window_set_key_callback(&key_callback);
     window_set_mouse_btn_callback(&mouse_btn_callback);
 
-    sprite sprites[SPRITE_COUNT];
+    sprite particles[SPRITE_COUNT];
 
     for (int i = 0; i < SPRITE_COUNT; i++) {
         float x = rand() % 640 - 320;
         float y = rand() % 480 - 240;
-        sprites[i] = (sprite){
+        particles[i] = (sprite){
             {x, y},
             {0, 0},
             {1.f, 1.f}
         };
-        random_color(sprites[i].color);
+        random_color(particles[i].color);
     }
+
+    sprite quad = {0, 0, 0, 0, 1, 1, {1, 1, 1, 1}};
 
     renderer_init();
     renderer_set_size(680, 480);
@@ -63,10 +65,25 @@ int main() {
         renderer_batch_begin(&b);
         for (int i = 0; i < SPRITE_COUNT; i++) {
             float k = (float) (i % 10) + 1;
-            sprites[i].position[0] += 0.5f * sinf(sprites[i].position[1] * 0.08f * k);
-            sprites[i].position[1] += 0.5f * cosf(sprites[i].position[0] * 0.08f * k);
-            renderer_batch_submit(&b, sprites[i]);
+            particles[i].position[0] += 0.5f * sinf(particles[i].position[1] * 0.08f * k);
+            particles[i].position[1] += 0.5f * cosf(particles[i].position[0] * 0.08f * k);
+            renderer_batch_submit(&b, particles[i]);
         }
+
+        if (window_get_key(GLFW_KEY_A) == GLFW_PRESS) {
+            quad.position[0] -= 0.1f;
+        }
+        if (window_get_key(GLFW_KEY_D) == GLFW_PRESS) {
+            quad.position[0] += 0.1f;
+        }
+        if (window_get_key(GLFW_KEY_W) == GLFW_PRESS) {
+            quad.position[1] += 0.1f;
+        }
+        if (window_get_key(GLFW_KEY_S) == GLFW_PRESS) {
+            quad.position[1] -= 0.1f;
+        }
+
+        renderer_batch_submit(&b, quad);
         renderer_batch_end(&b);
 
         renderer_frame_end();

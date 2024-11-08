@@ -13,8 +13,8 @@ void renderer_init() {
 
 void renderer_set_size(int width, int height) {
     // FIXME
-    float w = (float) width / 3;
-    float h = (float) height / 3;
+    float w = (float) width / 8;
+    float h = (float) height / 8;
     mat4 proj_mat;
     ortho(
         -w / 2,
