@@ -5,9 +5,9 @@
 #include <graphics/backend/vertex_buffer.h>
 #include <math/types.h>
 
-#define SPRITE_MAX_COUNT 1024
-#define VERTEX_MAX_COUNT (1024 * 4)
-#define INDEX_MAX_COUNT (1024 * 6)
+#define SPRITE_MAX_COUNT 8192
+#define VERTEX_MAX_COUNT (SPRITE_MAX_COUNT * 4)
+#define INDEX_MAX_COUNT (SPRITE_MAX_COUNT * 6)
 
 typedef struct sprite {
     vec2 position;

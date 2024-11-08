@@ -5,7 +5,6 @@
 #include <graphics/backend/renderer_backend.h>
 #include <math/cam.h>
 #include <math/mat4.h>
-#include <math/vec2.h>
 
 void renderer_init() {
     graphics_context_init();
