@@ -34,7 +34,14 @@ typedef struct batch {
 
 void renderer_init();
 
-void renderer_set_size(int width, int height);
+/**
+* Updates the projection matrix based on the screen dimensions and a reference size.
+*
+* @param width the width of the screen in pixels
+* @param height the height of the screen in pixels
+* @param size the reference dimension in pixels (applies to the smaller of width or height)
+*/
+void renderer_set_size(int width, int height, float size);
 
 void renderer_frame_begin();
 

@@ -8,7 +8,7 @@
 
 void resize_callback(int width, int height) {
     printf("size: %d, %d\n", width, height);
-    renderer_set_size(width, height);
+    renderer_set_size(width, height, 400);
 }
 
 void key_callback(int key, int action) {
@@ -24,7 +24,7 @@ void mouse_btn_callback(int btn, int action) {
 
 void random_color(vec4 color) {
     color[0] = 1.0f;
-    color[1] = fmin(0.7f * (float) rand() / (float) RAND_MAX, 1.f);
+    color[1] = fminf(0.7f * (float) rand() / (float) RAND_MAX, 1.f);
     color[2] = 0.3f;
     color[3] = 1.f;
 }
@@ -55,7 +55,7 @@ int main() {
     sprite quad = {{0, 0}, {0.5f, 0.5f}, {20, 26}, {1, 1, 1, 1}};
 
     renderer_init();
-    renderer_set_size(680, 480);
+    renderer_set_size(680, 480, 400);
 
     batch b = renderer_batch_create();
 

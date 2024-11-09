@@ -11,12 +11,21 @@ void renderer_init() {
     renderer_backend_init();
 }
 
-void renderer_set_size(int width, int height) {
-    // FIXME
-    float w = (float) width / 2;
-    float h = (float) height / 2;
+void renderer_set_size(int width, int height, float size) {
+    float ratio = (float) width / (float) height;
+
+    float w = size;
+    float h = size;
+
+    if (width < height) {
+        h /= ratio;
+    } else {
+        w *= ratio;
+    }
+
     mat4 proj_mat;
     ortho(-w / 2, w / 2, -h / 2, h / 2, 0, 1, proj_mat);
+
     renderer_backend_set_proj_mat(proj_mat);
     renderer_backend_set_size(width, height);
 }
