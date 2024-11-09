@@ -4,6 +4,13 @@ void vec4_zero(vec4 v) {
     v[0] = v[1] = v[2] = v[3] = 0.0f;
 }
 
+void vec4_copy(vec4 v1, const vec4 v2) {
+    v1[0] = v2[0];
+    v1[1] = v2[1];
+    v1[2] = v2[2];
+    v1[3] = v2[3];
+}
+
 void vec4_add(const vec4 a, const vec4 b, vec4 dest) {
     dest[0] = a[0] + b[0];
     dest[1] = a[1] + b[1];

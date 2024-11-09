@@ -37,11 +37,18 @@ void renderer_init();
 /**
 * Updates the projection matrix based on the screen dimensions and a reference size.
 *
-* @param width the width of the screen in pixels
+* @param width  the width of the screen in pixels
 * @param height the height of the screen in pixels
-* @param size the reference dimension in pixels (applies to the smaller of width or height)
+* @param size   the reference dimension in pixels (applies to the smaller of width or height)
 */
 void renderer_set_size(int width, int height, float size);
+
+/**
+* Sets the color that will be used to clear the screen.
+*
+* @param color the color that needs to be set
+*/
+void renderer_set_clear_color(vec4 color);
 
 void renderer_frame_begin();
 

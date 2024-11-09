@@ -5,6 +5,7 @@ extern "C" {
 #include <utils/utils.h>
 #include <math/cam.h>
 #include <math/mat4.h>
+#include <math/vec4.h>
 }
 
 static struct {
@@ -14,6 +15,8 @@ static struct {
     CA::MetalDrawable *metal_drawable;
     MTL::CommandBuffer *command_buffer;
     MTL::RenderCommandEncoder *encoder;
+
+    vec4 clear_color;
 
     struct {
         mat4 model_mat;
@@ -51,7 +54,16 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
     MTL::RenderPipelineDescriptor *pipeline_descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
     pipeline_descriptor->setVertexFunction(vertex_func);
     pipeline_descriptor->setFragmentFunction(fragment_func);
-    pipeline_descriptor->colorAttachments()->object(0)->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
+
+    auto color_attachment = pipeline_descriptor->colorAttachments()->object(0);
+    color_attachment->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
+    color_attachment->setBlendingEnabled(true);
+    color_attachment->setRgbBlendOperation(MTL::BlendOperationAdd);
+    color_attachment->setAlphaBlendOperation(MTL::BlendOperationAdd);
+    color_attachment->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
+    color_attachment->setSourceAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
+    color_attachment->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+    color_attachment->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
 
     MTL::VertexDescriptor* vertex_descriptor = MTL::VertexDescriptor::alloc()->init();
     auto attributes = vertex_descriptor->attributes();
@@ -112,6 +124,10 @@ void renderer_backend_set_size(int width, int height) {
     graphics_context.mtl_layer->setDrawableSize({static_cast<float>(width), static_cast<float>(height)});
 }
 
+void renderer_backend_set_clear_color(vec4 clear_color) {
+    vec4_copy(context.clear_color, clear_color);
+}
+
 void renderer_backend_begin() {
     context.pool = NS::AutoreleasePool::alloc()->init();
     context.metal_drawable = graphics_context.mtl_layer->nextDrawable();
@@ -123,7 +139,8 @@ void renderer_backend_begin() {
     MTL::RenderPassColorAttachmentDescriptor *color_attachment = render_pass->colorAttachments()->object(0);
     color_attachment->setTexture(context.metal_drawable->texture());
     color_attachment->setLoadAction(MTL::LoadActionClear);
-    color_attachment->setClearColor(MTL::ClearColor(0.1f, 0.1f, 0.1f, 1.0f));
+    auto clear_color = context.clear_color;
+    color_attachment->setClearColor(MTL::ClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
     color_attachment->setStoreAction(MTL::StoreActionStore);
 
     context.encoder = context.command_buffer->renderCommandEncoder(render_pass);

@@ -4,7 +4,7 @@
 #include <window/window.h>
 #include <graphics/frontend/renderer.h>
 
-#define SPRITE_COUNT 500
+#define SPRITE_COUNT 100
 
 void resize_callback(int width, int height) {
     printf("size: %d, %d\n", width, height);
@@ -22,11 +22,11 @@ void mouse_btn_callback(int btn, int action) {
     printf("mouse button: %d\n", btn);
 }
 
-void random_color(vec4 color) {
-    color[0] = 1.0f;
-    color[1] = fminf(0.7f * (float) rand() / (float) RAND_MAX, 1.f);
-    color[2] = 0.3f;
-    color[3] = 1.f;
+void random_star_color(vec4 color) {
+    color[0] = 1.f;
+    color[1] = 1.f;
+    color[2] = 1.f;
+    color[3] = (float) rand() / (float) RAND_MAX;
 }
 
 int main() {
@@ -49,13 +49,16 @@ int main() {
             {0, 0},
             {1.f, 1.f}
         };
-        random_color(particles[i].color);
+        random_star_color(particles[i].color);
     }
 
     sprite quad = {{0, 0}, {0.5f, 0.5f}, {20, 26}, {1, 1, 1, 1}};
 
     renderer_init();
     renderer_set_size(680, 480, 400);
+
+    vec4 clear_color = {0.11f, 0.1f, 0.15f, 1.0f};
+    renderer_set_clear_color(clear_color);
 
     batch b = renderer_batch_create();
 
@@ -65,8 +68,8 @@ int main() {
         renderer_batch_begin(&b);
         for (int i = 0; i < SPRITE_COUNT; i++) {
             float k = (float) (i % 10) + 1;
-            particles[i].position[0] += 0.5f * sinf(particles[i].position[1] * 0.08f * k);
-            particles[i].position[1] += 0.5f * cosf(particles[i].position[0] * 0.08f * k);
+            particles[i].position[0] += 0.01f * sinf(particles[i].position[1] * 0.08f * k);
+            particles[i].position[1] += 0.01f * cosf(particles[i].position[0] * 0.08f * k);
             renderer_batch_submit(&b, particles[i]);
         }
 

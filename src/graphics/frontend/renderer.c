@@ -30,6 +30,10 @@ void renderer_set_size(int width, int height, float size) {
     renderer_backend_set_size(width, height);
 }
 
+void renderer_set_clear_color(vec4 color) {
+    renderer_backend_set_clear_color(color);
+}
+
 void renderer_frame_begin() {
     renderer_backend_begin();
 }
