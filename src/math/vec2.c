@@ -34,6 +34,14 @@ void vec2_scale(const vec2 v, float s, vec2 dest) {
     dest[1] = v[1] * s;
 }
 
+void vec2_rotate(const vec2 v, float angle, vec2 dest) {
+    float c = cosf(angle);
+    float s = sinf(angle);
+
+    dest[0] = c * v[0] - s * v[1];
+    dest[1] = s * v[0] + c * v[1];
+}
+
 void vec2_mul(const vec2 a, const vec2 b, vec2 dest) {
     dest[0] = a[0] * b[0];
     dest[1] = a[1] * b[1];

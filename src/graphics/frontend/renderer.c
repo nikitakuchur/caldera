@@ -60,34 +60,24 @@ void renderer_batch_submit(batch *b, sprite s) {
         printf("Failed to draw a sprite! Maximum number of sprites reached! (%d)", SPRITE_MAX_COUNT);
     }
 
-    vec2 bottom_left = {
-        s.position[0] - s.origin[0] * s.scale[0],
-        s.position[1] - s.origin[1] * s.scale[1]
-    };
-
-    float w = s.scale[0];
-    float h = s.scale[1];
-
-    vec2 bottom_right = {bottom_left[0] + w, bottom_left[1]};
-    vec2 top_right = {bottom_left[0] + w, bottom_left[1] + h};
-    vec2 top_left = {bottom_left[0], bottom_left[1] + h};
-
     uint32_t index_offset = b->vertex_count;
 
+    rect r = sprite_to_rect(s);
+
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {bottom_left[0], bottom_left[1]},
+        .pos = {r.bottom_left[0], r.bottom_left[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
     };
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {bottom_right[0], bottom_right[1]},
+        .pos = {r.bottom_right[0], r.bottom_right[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
     };
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {top_right[0], top_right[1]},
+        .pos = {r.top_right[0], r.top_right[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
     };
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {top_left[0], top_left[1]},
+        .pos = {r.top_left[0], r.top_left[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
     };
 

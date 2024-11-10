@@ -5,16 +5,11 @@
 #include <graphics/backend/vertex_buffer.h>
 #include <math/types.h>
 
+#include "sprite.h"
+
 #define SPRITE_MAX_COUNT 8192
 #define VERTEX_MAX_COUNT (SPRITE_MAX_COUNT * 4)
 #define INDEX_MAX_COUNT (SPRITE_MAX_COUNT * 6)
-
-typedef struct sprite {
-    vec2 position;
-    vec2 origin;
-    vec2 scale;
-    vec4 color;
-} sprite;
 
 typedef struct vertex {
     vec2 pos;

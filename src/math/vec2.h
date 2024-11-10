@@ -15,6 +15,8 @@ void vec2_add(const vec2 a, const vec2 b, vec2 dest);
 
 void vec2_scale(const vec2 v, float s, vec2 dest);
 
+void vec2_rotate(const vec2 v, float angle, vec2 dest);
+
 void vec2_mul(const vec2 a, const vec2 b, vec2 dest);
 
 #endif //MATH_VEC2_H

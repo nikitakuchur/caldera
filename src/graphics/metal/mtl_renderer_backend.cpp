@@ -25,6 +25,36 @@ static struct {
     } uniforms;
 } context;
 
+static void configure_color_attachment(MTL::RenderPipelineColorAttachmentDescriptor *color_attachment) {
+    color_attachment->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
+    color_attachment->setBlendingEnabled(true);
+    color_attachment->setRgbBlendOperation(MTL::BlendOperationAdd);
+    color_attachment->setAlphaBlendOperation(MTL::BlendOperationAdd);
+    color_attachment->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
+    color_attachment->setSourceAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
+    color_attachment->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+    color_attachment->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+}
+
+static void configure_vertex_descriptor(MTL::VertexDescriptor *vertex_descriptor) {
+    auto attributes = vertex_descriptor->attributes();
+
+    // attribute 1: position
+    auto position_descriptor = attributes->object(0);
+    position_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat2);
+    position_descriptor->setBufferIndex(0);
+    position_descriptor->setOffset(0);
+
+    // attribute 2: color
+    auto color_descriptor = attributes->object(1);
+    color_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat4);
+    color_descriptor->setBufferIndex(0);
+    color_descriptor->setOffset(2 * sizeof(float));
+
+    auto layoutDescriptor = vertex_descriptor->layouts()->object(0);
+    layoutDescriptor->setStride(6 * sizeof(float));
+}
+
 static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
     mtl_graphics_context ctx = graphics_context;
 
@@ -56,33 +86,10 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
     pipeline_descriptor->setFragmentFunction(fragment_func);
 
     auto color_attachment = pipeline_descriptor->colorAttachments()->object(0);
-    color_attachment->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
-    color_attachment->setBlendingEnabled(true);
-    color_attachment->setRgbBlendOperation(MTL::BlendOperationAdd);
-    color_attachment->setAlphaBlendOperation(MTL::BlendOperationAdd);
-    color_attachment->setSourceRGBBlendFactor(MTL::BlendFactorSourceAlpha);
-    color_attachment->setSourceAlphaBlendFactor(MTL::BlendFactorSourceAlpha);
-    color_attachment->setDestinationRGBBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
-    color_attachment->setDestinationAlphaBlendFactor(MTL::BlendFactorOneMinusSourceAlpha);
+    configure_color_attachment(color_attachment);
 
-    MTL::VertexDescriptor* vertex_descriptor = MTL::VertexDescriptor::alloc()->init();
-    auto attributes = vertex_descriptor->attributes();
-
-    // attribute 1: position
-    auto position_descriptor = attributes->object(0);
-    position_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat2);
-    position_descriptor->setBufferIndex(0);
-    position_descriptor->setOffset(0);
-
-    // attribute 2: color
-    auto color_descriptor = attributes->object(1);
-    color_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat4);
-    color_descriptor->setBufferIndex(0);
-    color_descriptor->setOffset(2 * sizeof(float));
-
-    auto layoutDescriptor = vertex_descriptor->layouts()->object(0);
-    layoutDescriptor->setStride(6 * sizeof(float));
-
+    MTL::VertexDescriptor *vertex_descriptor = MTL::VertexDescriptor::alloc()->init();
+    configure_vertex_descriptor(vertex_descriptor);
     pipeline_descriptor->setVertexDescriptor(vertex_descriptor);
 
     MTL::RenderPipelineState *render_pipeline_state = ctx.device->newRenderPipelineState(pipeline_descriptor, &error);
@@ -92,6 +99,7 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
     }
 
     // free resources
+    vertex_descriptor->release();
     pipeline_descriptor->release();
     vertex_func->release();
     fragment_func->release();

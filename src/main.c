@@ -45,14 +45,25 @@ int main() {
         float x = rand() % 640 - 320;
         float y = rand() % 480 - 240;
         particles[i] = (sprite){
-            {x, y},
-            {0, 0},
-            {1.f, 1.f}
+            .size = {1.f, 1.f},
+            .position = {x, y},
+            .rotation = 0,
+            .scale = {1.f, 1.f},
+            .origin = {0, 0},
         };
         random_star_color(particles[i].color);
     }
 
-    sprite quad = {{0, 0}, {0.5f, 0.5f}, {20, 26}, {1, 1, 1, 1}};
+    sprite quad = {
+        .size = {20, 26},
+        .color = {1, 1, 1, 1},
+
+        .position = {0, 0},
+        .rotation = 0,
+        .scale = {1.f, 1.f},
+
+        .origin = {10, 13}
+    };
 
     renderer_init();
     renderer_set_size(680, 480, 400);
@@ -66,11 +77,19 @@ int main() {
         renderer_frame_begin();
 
         renderer_batch_begin(&b);
+
         for (int i = 0; i < SPRITE_COUNT; i++) {
             float k = (float) (i % 10) + 1;
             particles[i].position[0] += 0.01f * sinf(particles[i].position[1] * 0.08f * k);
             particles[i].position[1] += 0.01f * cosf(particles[i].position[0] * 0.08f * k);
             renderer_batch_submit(&b, particles[i]);
+        }
+
+        if (window_get_key(GLFW_KEY_Q) == GLFW_PRESS) {
+            quad.rotation += 0.05f;
+        }
+        if (window_get_key(GLFW_KEY_E) == GLFW_PRESS) {
+            quad.rotation -= 0.05f;
         }
 
         if (window_get_key(GLFW_KEY_A) == GLFW_PRESS) {
