@@ -5,10 +5,11 @@
 #include <graphics/frontend/renderer.h>
 
 #define SPRITE_COUNT 100
+#define RENDER_SCALE 200
 
 void resize_callback(int width, int height) {
     printf("size: %d, %d\n", width, height);
-    renderer_set_size(width, height, 400);
+    renderer_set_size(width, height, RENDER_SCALE);
 }
 
 void key_callback(int key, int action) {
@@ -66,7 +67,7 @@ int main() {
     };
 
     renderer_init();
-    renderer_set_size(680, 480, 400);
+    renderer_set_size(680, 480, RENDER_SCALE);
 
     vec4 clear_color = {0.11f, 0.1f, 0.15f, 1.0f};
     renderer_set_clear_color(clear_color);

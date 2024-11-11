@@ -9,24 +9,30 @@ extern "C" {
 }
 
 static struct {
-    MTL::RenderPipelineState *render_pipeline;
+    MTL::RenderPipelineState *g_buffer_render_pipeline;
 
-    NS::AutoreleasePool *pool;
-    CA::MetalDrawable *metal_drawable;
-    MTL::CommandBuffer *command_buffer;
-    MTL::RenderCommandEncoder *encoder;
+    int g_buffer_width;
+    int g_buffer_height;
 
     vec4 clear_color;
+
+    NS::AutoreleasePool *pool;
+    MTL::Texture *g_buffer;
+    MTL::CommandBuffer *command_buffer;
+    MTL::RenderCommandEncoder *batch_encoder;
 
     struct {
         mat4 model_mat;
         mat4 view_mat;
         mat4 proj_mat;
     } uniforms;
+
+    // the final render pipeline that draws the result on the screen
+    MTL::RenderPipelineState *final_render_pipeline;
 } context;
 
 static void configure_color_attachment(MTL::RenderPipelineColorAttachmentDescriptor *color_attachment) {
-    color_attachment->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
+    color_attachment->setPixelFormat(MTL::PixelFormat::PixelFormatRGBA8Unorm);
     color_attachment->setBlendingEnabled(true);
     color_attachment->setRgbBlendOperation(MTL::BlendOperationAdd);
     color_attachment->setAlphaBlendOperation(MTL::BlendOperationAdd);
@@ -55,12 +61,12 @@ static void configure_vertex_descriptor(MTL::VertexDescriptor *vertex_descriptor
     layoutDescriptor->setStride(6 * sizeof(float));
 }
 
-static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
+static MTL::RenderPipelineState *build_pipeline(const char *filename, const char *vertex, const char *fragment) {
     mtl_graphics_context ctx = graphics_context;
 
-    char *str = read_file(shader_filename);
+    char *str = read_file(filename);
     if (!str) {
-        printf("failed to read the metal shader: %s\n", shader_filename);
+        printf("failed to read the metal shader: %s\n", filename);
         return nullptr;
     }
 
@@ -75,11 +81,8 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
         return nullptr;
     }
 
-    NS::String *vertex_shader_name = NS::String::string("vertex_shader", NS::StringEncoding::ASCIIStringEncoding);
-    MTL::Function *vertex_func = library->newFunction(vertex_shader_name);
-
-    NS::String *fragment_shader_name = NS::String::string("fragment_shader", NS::StringEncoding::ASCIIStringEncoding);
-    MTL::Function *fragment_func = library->newFunction(fragment_shader_name);
+    auto vertex_func = library->newFunction(NS::String::string(vertex, NS::StringEncoding::ASCIIStringEncoding));
+    auto fragment_func = library->newFunction(NS::String::string(fragment, NS::StringEncoding::ASCIIStringEncoding));
 
     MTL::RenderPipelineDescriptor *pipeline_descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
     pipeline_descriptor->setVertexFunction(vertex_func);
@@ -109,7 +112,16 @@ static MTL::RenderPipelineState *build_pipeline(const char *shader_filename) {
 }
 
 void renderer_backend_init() {
-    context.render_pipeline = build_pipeline("../res/shaders/metal/general.metal");
+    context.g_buffer_render_pipeline = build_pipeline(
+        "../res/shaders/metal/g_buffer.metal",
+        "g_buffer_vertex_shader",
+        "g_buffer_fragment_shader"
+    );
+    context.final_render_pipeline = build_pipeline(
+        "../res/shaders/metal/final.metal",
+        "final_vertex_shader",
+        "final_fragment_shader"
+    );
 
     mat4_identity(context.uniforms.model_mat);
     mat4_identity(context.uniforms.view_mat);
@@ -128,8 +140,13 @@ void renderer_backend_set_proj_mat(mat4 proj_mat) {
     mat4_copy(proj_mat, context.uniforms.proj_mat);
 }
 
-void renderer_backend_set_size(int width, int height) {
+void renderer_backend_set_screen_size(int width, int height) {
     graphics_context.mtl_layer->setDrawableSize({static_cast<float>(width), static_cast<float>(height)});
+}
+
+void renderer_backend_set_pixel_size(int width, int height) {
+    context.g_buffer_width = width;
+    context.g_buffer_height = height;
 }
 
 void renderer_backend_set_clear_color(vec4 clear_color) {
@@ -138,25 +155,31 @@ void renderer_backend_set_clear_color(vec4 clear_color) {
 
 void renderer_backend_begin() {
     context.pool = NS::AutoreleasePool::alloc()->init();
-    context.metal_drawable = graphics_context.mtl_layer->nextDrawable();
 
     context.command_buffer = graphics_context.command_queue->commandBuffer();
 
-    MTL::RenderPassDescriptor *render_pass = MTL::RenderPassDescriptor::alloc()->init();
+    auto texture_descriptor = MTL::TextureDescriptor::texture2DDescriptor(
+        MTL::PixelFormatRGBA8Unorm,
+        context.g_buffer_width,
+        context.g_buffer_height,
+        false
+    );
+    context.g_buffer = graphics_context.device->newTexture(texture_descriptor);
 
+    MTL::RenderPassDescriptor *render_pass = MTL::RenderPassDescriptor::alloc()->init();
     MTL::RenderPassColorAttachmentDescriptor *color_attachment = render_pass->colorAttachments()->object(0);
-    color_attachment->setTexture(context.metal_drawable->texture());
+    color_attachment->setTexture(context.g_buffer);
     color_attachment->setLoadAction(MTL::LoadActionClear);
     auto clear_color = context.clear_color;
     color_attachment->setClearColor(MTL::ClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
     color_attachment->setStoreAction(MTL::StoreActionStore);
 
-    context.encoder = context.command_buffer->renderCommandEncoder(render_pass);
-    context.encoder->setRenderPipelineState(context.render_pipeline);
+    context.batch_encoder = context.command_buffer->renderCommandEncoder(render_pass);
+    context.batch_encoder->setRenderPipelineState(context.g_buffer_render_pipeline);
 }
 
 void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_count) {
-    MTL::RenderCommandEncoder *encoder = context.encoder;
+    MTL::RenderCommandEncoder *encoder = context.batch_encoder;
     encoder->setVertexBuffer(static_cast<MTL::Buffer *>(vb.platform_buffer), 0, 0);
     encoder->setVertexBytes(&context.uniforms, sizeof(context.uniforms), 1);
     encoder->drawIndexedPrimitives(
@@ -169,16 +192,47 @@ void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_c
     );
 }
 
-void renderer_backend_end() {
-    context.encoder->endEncoding();
+static void renderer_draw_final() {
+    auto drawable = graphics_context.mtl_layer->nextDrawable();
+    auto command_buffer = graphics_context.command_queue->commandBuffer();
 
-    context.command_buffer->presentDrawable(context.metal_drawable);
+    MTL::RenderPassDescriptor *render_pass = MTL::RenderPassDescriptor::alloc()->init();
+    MTL::RenderPassColorAttachmentDescriptor *color_attachment = render_pass->colorAttachments()->object(0);
+    color_attachment->setTexture(drawable->texture());
+    color_attachment->setLoadAction(MTL::LoadActionClear);
+    color_attachment->setClearColor(MTL::ClearColor(1, 1, 1, 1));
+    color_attachment->setStoreAction(MTL::StoreActionStore);
+
+    MTL::RenderCommandEncoder *encoder = command_buffer->renderCommandEncoder(render_pass);
+    encoder->setRenderPipelineState(context.final_render_pipeline);
+
+    auto sampler_descriptor = MTL::SamplerDescriptor::alloc()->init();
+    sampler_descriptor->setMinFilter(MTL::SamplerMinMagFilterNearest);
+    sampler_descriptor->setMagFilter(MTL::SamplerMinMagFilterNearest);
+
+    auto sampler_state = graphics_context.device->newSamplerState(sampler_descriptor);
+    encoder->setFragmentSamplerState(sampler_state, 0);
+
+    encoder->setFragmentTexture(context.g_buffer, 0);
+    encoder->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangle, NS::UInteger(0), 6);
+    encoder->endEncoding();
+
+    command_buffer->presentDrawable(drawable);
+    command_buffer->commit();
+    command_buffer->waitUntilCompleted();
+}
+
+void renderer_backend_end() {
+    context.batch_encoder->endEncoding();
+
     context.command_buffer->commit();
     context.command_buffer->waitUntilCompleted();
+
+    renderer_draw_final();
 
     context.pool->release();
 }
 
 void renderer_backend_destroy() {
-    context.render_pipeline->release();
+    context.g_buffer_render_pipeline->release();
 }

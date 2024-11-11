@@ -16,7 +16,9 @@ void renderer_backend_set_view_mat(mat4 view_mat);
 
 void renderer_backend_set_proj_mat(mat4 proj_mat);
 
-void renderer_backend_set_size(int width, int height);
+void renderer_backend_set_screen_size(int width, int height);
+
+void renderer_backend_set_pixel_size(int width, int height);
 
 void renderer_backend_set_clear_color(vec4 clear_color);
 

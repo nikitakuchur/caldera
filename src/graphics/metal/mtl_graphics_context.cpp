@@ -16,7 +16,7 @@ void graphics_context_init() {
 
     graphics_context.mtl_layer = CA::MetalLayer::layer()->retain();
     graphics_context.mtl_layer->setDevice(graphics_context.device);
-    graphics_context.mtl_layer->setPixelFormat(MTL::PixelFormat::PixelFormatBGRA8Unorm);
+    graphics_context.mtl_layer->setPixelFormat(MTL::PixelFormat::PixelFormatRGBA8Unorm);
 
     // get the cocoa window using GLFW native
     graphics_context.ns_window = get_and_configure_ns_window(

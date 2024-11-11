@@ -14,20 +14,21 @@ void renderer_init() {
 void renderer_set_size(int width, int height, float size) {
     float ratio = (float) width / (float) height;
 
-    float w = size;
-    float h = size;
+    float w_px = size;
+    float h_px = size;
 
     if (width < height) {
-        h /= ratio;
+        h_px /= ratio;
     } else {
-        w *= ratio;
+        w_px *= ratio;
     }
 
     mat4 proj_mat;
-    ortho(-w / 2, w / 2, -h / 2, h / 2, 0, 1, proj_mat);
+    ortho(-w_px / 2, w_px / 2, -h_px / 2, h_px / 2, 0, 1, proj_mat);
 
     renderer_backend_set_proj_mat(proj_mat);
-    renderer_backend_set_size(width, height);
+    renderer_backend_set_screen_size(width, height);
+    renderer_backend_set_pixel_size((int) w_px, (int) h_px);
 }
 
 void renderer_set_clear_color(vec4 color) {

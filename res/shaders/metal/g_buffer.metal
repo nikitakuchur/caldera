@@ -18,17 +18,11 @@ struct uniform_input {
     float4x4 proj_mat;
 };
 
-vertex vertex_output vertex_shader(vertex_input input [[stage_in]],
-                                   constant uniform_input &uniforms [[buffer(1)]]) {
+vertex vertex_output g_buffer_vertex_shader(vertex_input input [[stage_in]],
+                                            constant uniform_input &uniforms [[buffer(1)]]) {
     vertex_output output;
 
-    float2 vert_position = input.position;
-
-    // we need this to create an effect of pixel snapping
-    vert_position.x = (int) rint(vert_position.x);
-    vert_position.y = (int) rint(vert_position.y);
-
-    float4 world_pos = uniforms.model_mat * float4(vert_position, 0.0, 1.0);
+    float4 world_pos = uniforms.model_mat * float4(input.position, 0.0, 1.0);
     output.position = uniforms.proj_mat * uniforms.view_mat * world_pos;
 
     output.color = half4(input.color);
@@ -36,6 +30,6 @@ vertex vertex_output vertex_shader(vertex_input input [[stage_in]],
     return output;
 }
 
-fragment half4 fragment_shader(vertex_output frag [[stage_in]]) {
+fragment half4 g_buffer_fragment_shader(vertex_output frag [[stage_in]]) {
     return frag.color;
 }
