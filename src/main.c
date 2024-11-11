@@ -1,9 +1,6 @@
-#include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <game/game.h>
 #include <window/window.h>
-#include <graphics/frontend/renderer.h>
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
