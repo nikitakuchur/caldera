@@ -23,7 +23,7 @@ void graphics_context_init() {
         window_get_glfw_window(),
         graphics_context.mtl_layer
     )->retain();
-
+    
     graphics_context.command_queue = graphics_context.device->newCommandQueue()->retain();
 }
 

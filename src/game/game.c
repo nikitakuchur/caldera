@@ -7,11 +7,11 @@
 #include <graphics/frontend/renderer.h>
 #include <window/window.h>
 
-#define SPRITE_COUNT 100
+#define STARS_COUNT 100
 
 static float render_size = 200;
 
-static sprite particles[SPRITE_COUNT];
+static sprite stars[STARS_COUNT];
 static sprite quad;
 
 static batch main_batch;
@@ -38,17 +38,17 @@ void game_init() {
     renderer_init();
     update_render_size();
 
-    for (int i = 0; i < SPRITE_COUNT; i++) {
+    for (int i = 0; i < STARS_COUNT; i++) {
         float x = rand() % 640 - 320;
         float y = rand() % 480 - 240;
-        particles[i] = (sprite){
+        stars[i] = (sprite){
             .size = {1.f, 1.f},
             .position = {x, y},
             .rotation = 0,
             .scale = {1.f, 1.f},
             .origin = {0, 0},
         };
-        random_star_color(particles[i].color);
+        random_star_color(stars[i].color);
     }
 
     quad = (sprite){
@@ -65,38 +65,43 @@ void game_init() {
     main_batch = renderer_batch_create();
 }
 
-void game_update() {
-    for (int i = 0; i < SPRITE_COUNT; i++) {
+void game_update(float delta_time) {
+    for (int i = 0; i < STARS_COUNT; i++) {
         float k = (float) (i % 10) + 1;
-        particles[i].position[0] += 0.01f * sinf(particles[i].position[1] * 0.08f * k);
-        particles[i].position[1] += 0.01f * cosf(particles[i].position[0] * 0.08f * k);
+        stars[i].position[0] += 0.1f * sinf(stars[i].position[1] * 0.08f * k) * delta_time;
+        stars[i].position[1] += 0.1f * cosf(stars[i].position[0] * 0.08f * k) * delta_time;
     }
 
     if (window_get_key(GLFW_KEY_Q) == GLFW_PRESS) {
-        quad.rotation += 0.05f;
+        quad.rotation += 5.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_E) == GLFW_PRESS) {
-        quad.rotation -= 0.05f;
+        quad.rotation -= 5.f * delta_time;
     }
 
     if (window_get_key(GLFW_KEY_A) == GLFW_PRESS) {
-        quad.position[0] -= 0.8f;
+        quad.position[0] -= 50.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_D) == GLFW_PRESS) {
-        quad.position[0] += 0.8f;
+        quad.position[0] += 50.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_W) == GLFW_PRESS) {
-        quad.position[1] += 0.8f;
+        quad.position[1] += 50.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_S) == GLFW_PRESS) {
-        quad.position[1] -= 0.8f;
+        quad.position[1] -= 50.f * delta_time;
     }
 
-    if (window_get_key(GLFW_KEY_EQUAL) == GLFW_PRESS && render_size > 5) {
-        render_size -= 5;
+    float new_render_size = render_size;
+    if (window_get_key(GLFW_KEY_EQUAL) == GLFW_PRESS) {
+        new_render_size -= 100.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_MINUS) == GLFW_PRESS) {
-        render_size += 5;
+        new_render_size += 100.f * delta_time;
+    }
+
+    if (new_render_size > 1) {
+        render_size = new_render_size;
     }
 
     update_render_size();
@@ -108,8 +113,8 @@ void game_draw() {
 
     renderer_batch_begin(&main_batch);
 
-    for (int i = 0; i < SPRITE_COUNT; i++) {
-        renderer_batch_submit(&main_batch, particles[i]);
+    for (int i = 0; i < STARS_COUNT; i++) {
+        renderer_batch_submit(&main_batch, stars[i]);
     }
 
     renderer_batch_submit(&main_batch, quad);
