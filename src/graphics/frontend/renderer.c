@@ -11,11 +11,11 @@ void renderer_init() {
     renderer_backend_init();
 }
 
-void renderer_set_size(int width, int height, float size) {
+void renderer_set_size(int width, int height, float render_size) {
     float ratio = (float) width / (float) height;
 
-    float w_px = size;
-    float h_px = size;
+    float w_px = render_size;
+    float h_px = render_size;
 
     if (width < height) {
         h_px /= ratio;

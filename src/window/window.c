@@ -71,6 +71,10 @@ void window_poll_events() {
     glfwPollEvents();
 }
 
+void window_get_size(int *width, int *height) {
+    glfwGetWindowSize(context.window, width, height);
+}
+
 bool window_is_closed() {
     return glfwWindowShouldClose(context.window);
 }

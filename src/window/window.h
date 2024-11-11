@@ -21,6 +21,8 @@ int window_get_key(int key);
 
 void window_poll_events();
 
+void window_get_size(int *width, int *height);
+
 bool window_is_closed();
 
 void window_close();
