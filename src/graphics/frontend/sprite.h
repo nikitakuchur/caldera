@@ -2,6 +2,7 @@
 #define SPRITE_H
 
 #include <math/types.h>
+#include <graphics/backend/texture.h>
 
 typedef struct sprite {
     vec2 size;
@@ -12,6 +13,8 @@ typedef struct sprite {
     vec2 scale;
 
     vec2 origin;
+
+    texture texture;
 } sprite;
 
 typedef struct rect {

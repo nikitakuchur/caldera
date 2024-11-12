@@ -1671,7 +1671,7 @@ STBIWDEF int stbi_write_jpg(char const *filename, int x, int y, int comp, const 
       0.95 (2014-08-17)
              add monochrome TGA output
       0.94 (2014-05-31)
-             rename private functions to avoid conflicts with stb_image.h
+             rename private functions to avoid conflicts with stb_image.c
       0.93 (2014-05-27)
              warning fixes
       0.92 (2010-08-01)

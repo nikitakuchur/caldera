@@ -9,10 +9,15 @@
 
 #define STARS_COUNT 100
 
-static float render_size = 200;
+static float render_size = 400;
 
 static sprite stars[STARS_COUNT];
-static sprite quad;
+
+static texture planet_texture;
+static sprite planet;
+
+static texture ship_texture;
+static sprite ship;
 
 static batch main_batch;
 
@@ -35,8 +40,8 @@ static void update_render_size() {
 }
 
 void game_init() {
-    renderer_init();
     update_render_size();
+    renderer_init();
 
     for (int i = 0; i < STARS_COUNT; i++) {
         float x = rand() % 640 - 320;
@@ -47,19 +52,35 @@ void game_init() {
             .rotation = 0,
             .scale = {1.f, 1.f},
             .origin = {0, 0},
+            .texture = texture_create_empty()
         };
         random_star_color(stars[i].color);
     }
 
-    quad = (sprite){
-        .size = {20, 26},
+    planet_texture = texture_create("../res/textures/green-planet.png");
+    planet = (sprite){
+        .size = {256, 256},
+        .color = {1, 1, 1, 1},
+
+        .position = {100, 50},
+        .rotation = 0,
+        .scale = {1.0f, 1.0f},
+
+        .origin = {128, 128},
+        .texture = planet_texture
+    };
+
+    ship_texture = texture_create("../res/textures/ship.png");
+    ship = (sprite){
+        .size = {64, 64},
         .color = {1, 1, 1, 1},
 
         .position = {0, 0},
         .rotation = 0,
-        .scale = {1.f, 1.f},
+        .scale = {1.0f, 1.0f},
 
-        .origin = {10, 13}
+        .origin = {32, 24},
+        .texture = ship_texture
     };
 
     main_batch = renderer_batch_create();
@@ -73,23 +94,23 @@ void game_update(float delta_time) {
     }
 
     if (window_get_key(GLFW_KEY_Q) == GLFW_PRESS) {
-        quad.rotation += 5.f * delta_time;
+        ship.rotation += 5.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_E) == GLFW_PRESS) {
-        quad.rotation -= 5.f * delta_time;
+        ship.rotation -= 5.f * delta_time;
     }
 
     if (window_get_key(GLFW_KEY_A) == GLFW_PRESS) {
-        quad.position[0] -= 50.f * delta_time;
+        ship.position[0] -= 50.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_D) == GLFW_PRESS) {
-        quad.position[0] += 50.f * delta_time;
+        ship.position[0] += 50.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_W) == GLFW_PRESS) {
-        quad.position[1] += 50.f * delta_time;
+        ship.position[1] += 50.f * delta_time;
     }
     if (window_get_key(GLFW_KEY_S) == GLFW_PRESS) {
-        quad.position[1] -= 50.f * delta_time;
+        ship.position[1] -= 50.f * delta_time;
     }
 
     float new_render_size = render_size;
@@ -117,7 +138,8 @@ void game_draw() {
         renderer_batch_submit(&main_batch, stars[i]);
     }
 
-    renderer_batch_submit(&main_batch, quad);
+    renderer_batch_submit(&main_batch, planet);
+    renderer_batch_submit(&main_batch, ship);
 
     renderer_batch_end(&main_batch);
 
@@ -125,6 +147,8 @@ void game_draw() {
 }
 
 void game_destroy() {
+    texture_destroy(ship_texture);
+    texture_destroy(planet_texture);
     renderer_batch_destroy(&main_batch);
     renderer_destroy();
 }

@@ -10,10 +10,13 @@
 #define SPRITE_MAX_COUNT 8192
 #define VERTEX_MAX_COUNT (SPRITE_MAX_COUNT * 4)
 #define INDEX_MAX_COUNT (SPRITE_MAX_COUNT * 6)
+#define TEXTURE_MAX_COUNT 10
 
 typedef struct vertex {
     vec2 pos;
     vec4 color;
+    vec2 tex_coords;
+    int32_t tex_index;
 } vertex;
 
 typedef struct batch {
@@ -25,6 +28,9 @@ typedef struct batch {
 
     vertex_buffer vb;
     index_buffer ib;
+
+    texture textures[TEXTURE_MAX_COUNT];
+    uint32_t texture_count;
 } batch;
 
 void renderer_init();

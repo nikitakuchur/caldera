@@ -15,8 +15,8 @@ file(GLOB_RECURSE SOURCES "src/*.c")
 list(FILTER SOURCES EXCLUDE REGEX "src/graphics/metal/.*")
 list(FILTER SOURCES EXCLUDE REGEX "src/graphics/vulkan/.*")
 
-# Add GLFW
 add_subdirectory(deps/glfw)
+add_subdirectory(deps/stb_image)
 
 # API-specific sources
 if(RENDER_API STREQUAL "VULKAN")
@@ -37,9 +37,9 @@ add_executable(c_game ${SOURCES} ${GRAPHICS_SOURCES})
 
 # Link libraries based on the API
 if(RENDER_API STREQUAL "VULKAN")
-    target_link_libraries(c_game PRIVATE glfw Vulkan::Vulkan)
+    target_link_libraries(c_game PRIVATE glfw stb_image Vulkan::Vulkan)
     target_compile_definitions(c_game PRIVATE USE_VULKAN)
 elseif(RENDER_API STREQUAL "METAL")
-    target_link_libraries(c_game PRIVATE glfw metal_cpp)
+    target_link_libraries(c_game PRIVATE glfw stb_image metal_cpp)
     target_compile_definitions(c_game PRIVATE USE_METAL)
 endif()

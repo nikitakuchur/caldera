@@ -47,6 +47,7 @@ batch renderer_batch_create() {
 
     b.vertex_count = 0;
     b.index_count = 0;
+    b.texture_count = 0;
 
     return b;
 }
@@ -54,11 +55,31 @@ batch renderer_batch_create() {
 void renderer_batch_begin(batch *b) {
     b->vertex_count = 0;
     b->index_count = 0;
+    b->texture_count = 0;
 }
 
 void renderer_batch_submit(batch *b, sprite s) {
-    if (b->vertex_count > VERTEX_MAX_COUNT) {
+    if (b->vertex_count >= VERTEX_MAX_COUNT) {
         printf("Failed to draw a sprite! Maximum number of sprites reached! (%d)", SPRITE_MAX_COUNT);
+        return;
+    }
+    if (b->texture_count >= TEXTURE_MAX_COUNT) {
+        printf("Failed to draw a sprite! Maximum number of textures reached! (%d)", TEXTURE_MAX_COUNT);
+        return;
+    }
+
+    int tex_index = -1;
+    if (s.texture.id != -1) {
+        for (int i = 0; i < b->texture_count; i++) {
+            if (b->textures[i].id == s.texture.id) {
+                tex_index = i;
+                break;
+            }
+        }
+        if (tex_index == -1) {
+            tex_index = b->texture_count++;
+            b->textures[tex_index] = s.texture;
+        }
     }
 
     uint32_t index_offset = b->vertex_count;
@@ -67,19 +88,27 @@ void renderer_batch_submit(batch *b, sprite s) {
 
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.bottom_left[0], r.bottom_left[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
+        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
+        .tex_coords = {0, 0},
+        .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.bottom_right[0], r.bottom_right[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
+        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
+        .tex_coords = {1, 0},
+        .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.top_right[0], r.top_right[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
+        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
+        .tex_coords = {1, 1},
+        .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.top_left[0], r.top_left[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]}
+        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
+        .tex_coords = {0, 1},
+        .tex_index = tex_index
     };
 
     b->indices[b->index_count++] = index_offset + 0;
@@ -97,7 +126,7 @@ void renderer_batch_end(batch *b) {
     mat4 identity_mat;
     mat4_identity(identity_mat);
 
-    renderer_backend_submit(b->vb, b->ib, b->index_count);
+    renderer_backend_submit(b->vb, b->ib, b->index_count, b->textures, b->texture_count);
 }
 
 void renderer_batch_destroy(batch *b) {
