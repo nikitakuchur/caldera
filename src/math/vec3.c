@@ -16,7 +16,7 @@ float vec3_dot(const vec3 a, const vec3 b) {
     return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-float vec3_norm(const vec3 v) {
+float vec3_len(const vec3 v) {
     return sqrtf(vec3_dot(v, v));
 }
 
@@ -58,11 +58,11 @@ void vec3_rotate(vec3 v, float angle, vec3 axis) {
 }
 
 void vec3_normalize_to(const vec3 v, vec3 dest) {
-    float norm = vec3_norm(v);
+    float len = vec3_len(v);
 
-    if (norm == 0.0f) {
+    if (len == 0.0f) {
         vec3_zero(dest);
         return;
     }
-    vec3_scale(v, 1.0f / norm, dest);
+    vec3_scale(v, 1.0f / len, dest);
 }

@@ -3,10 +3,17 @@
 
 static rect rotate_rect(rect r, float angle) {
     rect result;
-    vec2_rotate(r.bottom_left, angle, result.bottom_left);
-    vec2_rotate(r.bottom_right, angle, result.bottom_right);
-    vec2_rotate(r.top_right, angle, result.top_right);
-    vec2_rotate(r.top_left, angle, result.top_left);
+
+    vec2_copy(result.bottom_left, r.bottom_left);
+    vec2_copy(result.bottom_right, r.bottom_right);
+    vec2_copy(result.top_left, r.top_left);
+    vec2_copy(result.top_right, r.top_right);
+
+    vec2_rotate(result.bottom_left, angle);
+    vec2_rotate(result.bottom_right, angle);
+    vec2_rotate(result.top_right, angle);
+    vec2_rotate(result.top_left, angle);
+
     return result;
 }
 
@@ -54,5 +61,3 @@ rect sprite_to_rect(sprite s) {
 
     return result;
 }
-
-

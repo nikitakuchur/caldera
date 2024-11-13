@@ -15,8 +15,16 @@ float vec2_dot(const vec2 a, const vec2 b) {
     return a[0] * b[0] + a[1] * b[1];
 }
 
-float vec2_norm(const vec2 v) {
+float vec2_len(const vec2 v) {
     return sqrtf(vec2_dot(v, v));
+}
+
+void vec2_normalize(vec2 v) {
+    float len = vec2_len(v);
+    if (len != 0) {
+        v[0] /= len;
+        v[1] /= len;
+    }
 }
 
 void vec2_add(const vec2 a, const vec2 b, vec2 dest) {
@@ -34,12 +42,17 @@ void vec2_scale(const vec2 v, float s, vec2 dest) {
     dest[1] = v[1] * s;
 }
 
-void vec2_rotate(const vec2 v, float angle, vec2 dest) {
+void vec2_rotate(vec2 v, float angle) {
     float c = cosf(angle);
     float s = sinf(angle);
 
-    dest[0] = c * v[0] - s * v[1];
-    dest[1] = s * v[0] + c * v[1];
+    vec2 result = {
+        c * v[0] - s * v[1],
+        s * v[0] + c * v[1]
+    };
+
+    v[0] = result[0];
+    v[1] = result[1];
 }
 
 void vec2_mul(const vec2 a, const vec2 b, vec2 dest) {

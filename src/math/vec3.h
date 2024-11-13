@@ -9,7 +9,7 @@ void vec3_copy(vec3 v1, const vec3 v2);
 
 float vec3_dot(const vec3 a, const vec3 b);
 
-float vec3_norm(const vec3 v);
+float vec3_len(const vec3 v);
 
 void vec3_cross(const vec3 a, const vec3 b, vec3 dest);
 
