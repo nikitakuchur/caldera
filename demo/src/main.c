@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <game/game.h>
+#include "game.h"
 #include <window/window.h>
 
 #define WINDOW_WIDTH 640
@@ -13,7 +13,7 @@ void key_callback(int key, int action) {
 }
 
 int main() {
-    if (!window_init(WINDOW_WIDTH, WINDOW_HEIGHT, "Game")) {
+    if (!window_init(WINDOW_WIDTH, WINDOW_HEIGHT, "Demo")) {
         printf("failed to init a window");
         return -1;
     }

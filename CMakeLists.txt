@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(c_game LANGUAGES C CXX)
+project(caldera LANGUAGES C CXX)
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
@@ -17,6 +17,7 @@ list(FILTER SOURCES EXCLUDE REGEX "src/graphics/vulkan/.*")
 
 add_subdirectory(deps/glfw)
 add_subdirectory(deps/stb_image)
+add_subdirectory(demo)
 
 # API-specific sources
 if(RENDER_API STREQUAL "VULKAN")
@@ -32,14 +33,17 @@ else()
     message(FATAL_ERROR "Invalid RENDER_API selected. Choose from VULKAN or METAL.")
 endif()
 
-include_directories(c_game PRIVATE src)
-add_executable(c_game ${SOURCES} ${GRAPHICS_SOURCES})
+# Create a static library
+add_library(caldera STATIC ${SOURCES} ${GRAPHICS_SOURCES})
+target_include_directories(caldera PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 # Link libraries based on the API
 if(RENDER_API STREQUAL "VULKAN")
-    target_link_libraries(c_game PRIVATE glfw stb_image Vulkan::Vulkan)
-    target_compile_definitions(c_game PRIVATE USE_VULKAN)
+    # TODO: make glfw private in the future
+    target_link_libraries(caldera PUBLIC glfw PRIVATE glfw stb_image Vulkan::Vulkan)
+    target_compile_definitions(caldera PRIVATE USE_VULKAN)
 elseif(RENDER_API STREQUAL "METAL")
-    target_link_libraries(c_game PRIVATE glfw stb_image metal_cpp)
-    target_compile_definitions(c_game PRIVATE USE_METAL)
+    # TODO: make glfw private in the future
+    target_link_libraries(caldera PUBLIC glfw PRIVATE stb_image metal_cpp)
+    target_compile_definitions(caldera PRIVATE USE_METAL)
 endif()
