@@ -3,4 +3,6 @@
 
 float rad(float deg);
 
+float deg(float rad);
+
 #endif //MATH_UTIL_H

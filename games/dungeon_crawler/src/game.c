@@ -1,22 +1,35 @@
 #include "game.h"
 
+#include <math.h>
 #include <caldera/graphics/frontend/sprite.h>
 
 #include <caldera/graphics/frontend/renderer.h>
 #include <caldera/math/vec2.h>
 #include <caldera/window/window.h>
 
+#include "caldera/math/util.h"
 #include "caldera/window/input.h"
 
-static float render_size = 100;
+static float render_size = 120;
 
 struct {
     texture texture;
     sprite sprite;
-    vec2 velocity;
 
+    int direction;
     float walk_speed;
 } player;
+
+typedef enum {
+    DIR_RIGHT = 0,
+    DIR_UP_RIGHT,
+    DIR_UP,
+    DIR_UP_LEFT,
+    DIR_LEFT,
+    DIR_DOWN_LEFT,
+    DIR_DOWN,
+    DIR_DOWN_RIGHT,
+} direction;
 
 static batch main_batch;
 
@@ -31,28 +44,86 @@ static void update_render_size() {
     window_set_resize_callback(&resize_callback);
 }
 
+static direction compute_player_direction(const vec2 v) {
+    if (v[0] == 0 && v[1] == 0) {
+        return player.direction;
+    }
+
+    const float vx = v[0];
+    const float vy = v[1];
+
+    const float rad = atan2f(vy, vx); // screen Y often flipped, adjust as needed
+    int angle = (int) deg(rad); // to degrees
+
+    if (angle < 0) angle += 360;
+    angle += 22;
+
+    return angle / 45;
+}
+
+static void update_player_direction(vec2 velocity) {
+    player.direction = compute_player_direction(velocity);
+    const uint32_t row_offset = player.direction * 25;
+    player.sprite.texture_rect = (irect){
+        0, row_offset,
+        25, row_offset,
+        25, 25 + row_offset,
+        0, 25 + row_offset
+    };
+}
+
 void game_init() {
     renderer_init();
     update_render_size();
 
     player.texture = texture_create("../res/textures/character.png");
-    sprite_init(&player.sprite, (vec2) {25.f, 25.f}, player.texture);
-    player.sprite.texture_rect = (irect) {
-        0, 0,
-        25, 0,
-        25, 25,
-        0, 25
-    };
+    sprite_init(&player.sprite, (vec2){25.0f, 25.0f}, player.texture);
 
+    player.direction = 5;
     player.walk_speed = 30.f;
-    vec2_zero(player.velocity);
+    update_player_direction((vec2){-1, -1});
 
     main_batch = renderer_batch_create();
 }
 
-void game_update(const float delta_time) {
-    sprite *player_sprite = &player.sprite;
+/*
+ * This function deals with jittering during diagonal movement.
+ * If remainder in X is larger → move full X pixels, adjust Y accordingly
+ * If remainder in Y is larger → move full Y pixels, adjust X accordingly
+ * Remainder accumulates sub-pixel values until enough to move a whole pixel.
+ */
+static void move_player(vec2 velocity) {
+    static vec2 remainder = {0, 0};
 
+    remainder[0] += velocity[0];
+    remainder[1] += velocity[1];
+
+    float abs_dx = fabsf(remainder[0]);
+    float abs_dy = fabsf(remainder[1]);
+
+    if (abs_dx == 0.0f && abs_dy == 0.0f) {
+        return; // no movement needed
+    }
+
+    int dominant_axis = abs_dx > abs_dy ? 0 : 1;
+    int secondary_axis = 1 - dominant_axis;
+
+    int move_pixels = (int) remainder[dominant_axis];
+    if (move_pixels == 0) {
+        return; // not enough remainder to move whole pixels yet
+    }
+
+    float slope = velocity[dominant_axis] == 0 ? 0.f : velocity[secondary_axis] / velocity[dominant_axis];
+    float move_secondary = slope * (float) move_pixels;
+
+    player.sprite.position[dominant_axis] += (float) move_pixels;
+    player.sprite.position[secondary_axis] += move_secondary;
+
+    remainder[dominant_axis] -= (float) move_pixels;
+    remainder[secondary_axis] -= move_secondary;
+}
+
+void game_update(const float delta_time) {
     vec2 velocity;
     vec2_zero(velocity);
 
@@ -70,14 +141,10 @@ void game_update(const float delta_time) {
     }
 
     vec2_normalize(velocity);
-    vec2_rotate(velocity, player_sprite->rotation);
-    vec2_scale(velocity, 1.f, velocity);
+    vec2_scale(velocity, player.walk_speed * delta_time, velocity);
 
-    player.velocity[0] = velocity[0] * player.walk_speed;
-    player.velocity[1] = velocity[1] * player.walk_speed;
-
-    player_sprite->position[0] += player.velocity[0] * delta_time;
-    player_sprite->position[1] += player.velocity[1] * delta_time;
+    update_player_direction(velocity);
+    move_player(velocity);
 }
 
 void game_draw() {

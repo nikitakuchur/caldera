@@ -1,6 +1,7 @@
 #include "renderer.h"
 
 #include <stdio.h>
+#include <math.h>
 #include <caldera/graphics/backend/graphics_context.h>
 #include <caldera/graphics/backend/renderer_backend.h>
 #include <caldera/math/cam.h>
@@ -9,6 +10,20 @@
 void renderer_init() {
     graphics_context_init();
     renderer_backend_init();
+}
+
+// Function to find the closest even number
+int closest_even(int n) {
+    if (n % 2 == 0) {
+        return n;
+    }
+    int lower = n - 1;
+    int upper = n + 1;
+
+    if (fabs(n - lower) <= fabs(upper - n)) {
+        return lower;
+    }
+    return upper;
 }
 
 void renderer_set_size(int width, int height, float render_size) {
@@ -23,8 +38,15 @@ void renderer_set_size(int width, int height, float render_size) {
         w_px *= ratio;
     }
 
+    w_px = (float) closest_even((int)w_px);
+    h_px = (float) closest_even((int)h_px);
+
     mat4 proj_mat;
-    ortho(-w_px / 2, w_px / 2, -h_px / 2, h_px / 2, 0, 1, proj_mat);
+
+    float half_width = w_px / 2;
+    float half_height = h_px / 2;
+
+    ortho(-half_width, half_width, -half_height, half_height, 0, 1, proj_mat);
 
     renderer_backend_set_proj_mat(proj_mat);
     renderer_backend_set_screen_size(width, height);

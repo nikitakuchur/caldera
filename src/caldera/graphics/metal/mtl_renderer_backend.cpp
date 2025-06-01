@@ -19,8 +19,6 @@ static struct {
 
     vec4 clear_color;
 
-    MTL::SamplerState *sampler;
-
     NS::AutoreleasePool *pool;
     MTL::Texture *g_buffer;
     MTL::CommandBuffer *command_buffer;
@@ -131,12 +129,6 @@ static MTL::RenderPipelineState *build_pipeline(const char *filename, const char
 }
 
 void renderer_backend_init() {
-    auto sampler_descriptor = MTL::SamplerDescriptor::alloc()->init();
-    sampler_descriptor->setMinFilter(MTL::SamplerMinMagFilterNearest);
-    sampler_descriptor->setMagFilter(MTL::SamplerMinMagFilterNearest);
-
-    context.sampler = graphics_context.device->newSamplerState(sampler_descriptor);
-
     context.g_buffer_render_pipeline = build_pipeline(
         "../res/shaders/metal/g_buffer.metal",
         "g_buffer_vertex_shader",
@@ -215,7 +207,6 @@ void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_c
     for (int i = 0; i < texture_count; i++) {
         encoder->setFragmentTexture(static_cast<MTL::Texture *>(textures[i].platform_texture), i);
     }
-    encoder->setFragmentSamplerState(context.sampler, 0);
 
     encoder->drawIndexedPrimitives(
         MTL::PrimitiveType::PrimitiveTypeTriangle,
@@ -242,7 +233,6 @@ static void renderer_draw_final() {
     encoder->setRenderPipelineState(context.final_render_pipeline);
 
     encoder->setFragmentTexture(context.g_buffer, 0);
-    encoder->setFragmentSamplerState(context.sampler, 0);
     encoder->drawPrimitives(MTL::PrimitiveType::PrimitiveTypeTriangle, NS::UInteger(0), 6);
     encoder->endEncoding();
 
@@ -265,7 +255,6 @@ void renderer_backend_end() {
 }
 
 void renderer_backend_destroy() {
-    context.sampler->release();
     context.g_buffer_render_pipeline->release();
     context.final_render_pipeline->release();
 }

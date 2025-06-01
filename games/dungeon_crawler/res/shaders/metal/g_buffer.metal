@@ -37,11 +37,9 @@ vertex vertex_output g_buffer_vertex_shader(vertex_input input [[stage_in]],
 }
 
 fragment float4 g_buffer_fragment_shader(vertex_output frag [[stage_in]],
-                                         array<texture2d<float>, 10> textures [[ texture(0) ]],
-                                         sampler nearest_sampler [[ sampler(0) ]]) {
+                                         array<texture2d<float>, 10> textures [[ texture(0) ]]) {
     if (frag.tex_index < 0) {
         return frag.color;
     }
-    
     return textures[frag.tex_index].read(uint2(frag.tex_coords)) * frag.color;
 }
