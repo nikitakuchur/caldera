@@ -42,5 +42,6 @@ fragment float4 g_buffer_fragment_shader(vertex_output frag [[stage_in]],
     if (frag.tex_index < 0) {
         return frag.color;
     }
-    return textures[frag.tex_index].sample(nearest_sampler, frag.tex_coords) * frag.color;
+    
+    return textures[frag.tex_index].read(uint2(frag.tex_coords)) * frag.color;
 }

@@ -84,30 +84,30 @@ void renderer_batch_submit(batch *b, sprite s) {
 
     uint32_t index_offset = b->vertex_count;
 
-    rect r = sprite_to_rect(s);
+    rect r = sprite_to_rect(&s);
 
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.bottom_left[0], r.bottom_left[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {0, 0},
+        .tex_coords = {s.texture_rect.bottom_left[0], s.texture_rect.bottom_left[1]},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.bottom_right[0], r.bottom_right[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {1, 0},
+        .tex_coords = {s.texture_rect.bottom_right[0], s.texture_rect.bottom_right[1]},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.top_right[0], r.top_right[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {1, 1},
+        .tex_coords = {s.texture_rect.top_right[0], s.texture_rect.top_right[1]},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.top_left[0], r.top_left[1]},
         .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {0, 1},
+        .tex_coords = {s.texture_rect.top_left[0], s.texture_rect.top_left[1]},
         .tex_index = tex_index
     };
 

@@ -1,5 +1,22 @@
 #include <caldera/graphics/frontend/sprite.h>
 #include <caldera/math/vec2.h>
+#include <caldera/math/vec4.h>
+
+void sprite_init(sprite *s, vec2 size, texture t) {
+    vec2_copy(s->size, size);
+    vec4_copy(s->color, (vec4){1.f, 1.f, 1.f, 1.f});
+    vec2_copy(s->position, (vec2){0.f, 0.f});
+    s->rotation = 0;
+    vec2_copy(s->scale, (vec2){1.f, 1.f});
+    vec2_copy(s->origin, (vec2){12.f, 5.f});
+    s->texture = t;
+    s->texture_rect = (irect){
+        0, 0,
+        t.width, 0,
+        t.width, t.height,
+        0, t.height
+    };
+}
 
 static rect rotate_rect(rect r, float angle) {
     rect result;
@@ -35,29 +52,29 @@ static rect scale_rect(rect r, vec2 v) {
     return result;
 }
 
-rect sprite_to_rect(sprite s) {
+rect sprite_to_rect(sprite *s) {
     rect result;
 
     // build a rect
     result.bottom_left[0] = 0.f;
     result.bottom_left[1] = 0.f;
 
-    result.bottom_right[0] = s.size[0];
+    result.bottom_right[0] = s->size[0];
     result.bottom_right[1] = 0.f;
 
-    result.top_right[0] = s.size[0];
-    result.top_right[1] = s.size[1];
+    result.top_right[0] = s->size[0];
+    result.top_right[1] = s->size[1];
 
     result.top_left[0] = 0.f;
-    result.top_left[1] = s.size[1];
+    result.top_left[1] = s->size[1];
 
     // apply transformations
     vec2 v;
-    vec2_scale(s.origin, -1, v);
+    vec2_scale(s->origin, -1, v);
     result = move_rect(result, v);
-    result = scale_rect(result, s.scale);
-    result = rotate_rect(result, s.rotation);
-    result = move_rect(result, s.position);
+    result = scale_rect(result, s->scale);
+    result = rotate_rect(result, s->rotation);
+    result = move_rect(result, s->position);
 
     return result;
 }

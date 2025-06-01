@@ -13,10 +13,10 @@
 #define TEXTURE_MAX_COUNT 10
 
 typedef struct vertex {
-    vec2 pos;
-    vec4 color;
-    vec2 tex_coords;
-    int32_t tex_index;
+    vec2 pos;           // 8 bytes
+    vec4 color;         // 16 bytes
+    vec2 tex_coords;    // 8 bytes
+    int32_t tex_index;  // 4 bytes
 } vertex;
 
 typedef struct batch {

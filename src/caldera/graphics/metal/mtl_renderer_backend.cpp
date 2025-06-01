@@ -60,25 +60,25 @@ static void configure_vertex_descriptor(MTL::VertexDescriptor *vertex_descriptor
     auto color_descriptor = attributes->object(1);
     color_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat4);
     color_descriptor->setBufferIndex(0);
-    color_descriptor->setOffset(2 * sizeof(float));
+    color_descriptor->setOffset(8);
 
     // attribute 2: texture coordinates
     auto tex_coords_descriptor = attributes->object(2);
     tex_coords_descriptor->setFormat(MTL::VertexFormat::VertexFormatFloat2);
     tex_coords_descriptor->setBufferIndex(0);
-    tex_coords_descriptor->setOffset(6 * sizeof(float));
+    tex_coords_descriptor->setOffset(24);
 
     // attribute 3: texture index
     auto tex_index_descriptor = attributes->object(3);
     tex_index_descriptor->setFormat(MTL::VertexFormat::VertexFormatInt);
     tex_index_descriptor->setBufferIndex(0);
-    tex_index_descriptor->setOffset(8 * sizeof(float));
+    tex_index_descriptor->setOffset(32);
 
     auto layoutDescriptor = vertex_descriptor->layouts()->object(0);
-    layoutDescriptor->setStride(8 * sizeof(float) + sizeof(int32_t));
+    layoutDescriptor->setStride(36);
 }
 
-static MTL::RenderPipelineState *build_pipeline(const char *filename, const char *vertex, const char *fragment) {
+static MTL::RenderPipelineState *build_pipeline(const char *filename, const char *vertex, const char *fragment, bool use_vertex_descriptor) {
     mtl_graphics_context ctx = graphics_context;
 
     char *str = read_file(filename);
@@ -108,9 +108,12 @@ static MTL::RenderPipelineState *build_pipeline(const char *filename, const char
     auto color_attachment = pipeline_descriptor->colorAttachments()->object(0);
     configure_color_attachment(color_attachment);
 
-    MTL::VertexDescriptor *vertex_descriptor = MTL::VertexDescriptor::alloc()->init();
-    configure_vertex_descriptor(vertex_descriptor);
-    pipeline_descriptor->setVertexDescriptor(vertex_descriptor);
+    if (use_vertex_descriptor) {
+        MTL::VertexDescriptor *vertex_descriptor = MTL::VertexDescriptor::alloc()->init();
+        configure_vertex_descriptor(vertex_descriptor);
+        pipeline_descriptor->setVertexDescriptor(vertex_descriptor);
+        vertex_descriptor->release();
+    }
 
     MTL::RenderPipelineState *render_pipeline_state = ctx.device->newRenderPipelineState(pipeline_descriptor, &error);
     if (!render_pipeline_state) {
@@ -119,7 +122,6 @@ static MTL::RenderPipelineState *build_pipeline(const char *filename, const char
     }
 
     // free resources
-    vertex_descriptor->release();
     pipeline_descriptor->release();
     vertex_func->release();
     fragment_func->release();
@@ -138,12 +140,14 @@ void renderer_backend_init() {
     context.g_buffer_render_pipeline = build_pipeline(
         "../res/shaders/metal/g_buffer.metal",
         "g_buffer_vertex_shader",
-        "g_buffer_fragment_shader"
+        "g_buffer_fragment_shader",
+        true
     );
     context.final_render_pipeline = build_pipeline(
         "../res/shaders/metal/final.metal",
         "final_vertex_shader",
-        "final_fragment_shader"
+        "final_fragment_shader",
+        false
     );
 
     mat4_identity(context.uniforms.model_mat);
@@ -187,6 +191,7 @@ void renderer_backend_begin() {
         context.g_buffer_height,
         false
     );
+    g_buffer_descriptor->setUsage(MTL::TextureUsageShaderRead | MTL::TextureUsageRenderTarget);
     context.g_buffer = graphics_context.device->newTexture(g_buffer_descriptor);
 
     MTL::RenderPassDescriptor *render_pass = MTL::RenderPassDescriptor::renderPassDescriptor();

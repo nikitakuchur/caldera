@@ -8,12 +8,14 @@
 
 #include "caldera/window/input.h"
 
-static float render_size = 400;
+static float render_size = 100;
 
 struct {
     texture texture;
     sprite sprite;
     vec2 velocity;
+
+    float walk_speed;
 } player;
 
 static batch main_batch;
@@ -30,80 +32,52 @@ static void update_render_size() {
 }
 
 void game_init() {
-    update_render_size();
     renderer_init();
+    update_render_size();
 
-    player.texture = texture_create("../res/textures/ship.png");
-    player.sprite = (sprite){
-        .size = {64, 64},
-        .color = {1, 1, 1, 1},
-
-        .position = {0, 0},
-        .rotation = 0,
-        .scale = {1.0f, 1.0f},
-
-        .origin = {32, 28},
-        .texture = player.texture
+    player.texture = texture_create("../res/textures/character.png");
+    sprite_init(&player.sprite, (vec2) {25.f, 25.f}, player.texture);
+    player.sprite.texture_rect = (irect) {
+        0, 0,
+        25, 0,
+        25, 25,
+        0, 25
     };
+
+    player.walk_speed = 30.f;
     vec2_zero(player.velocity);
 
     main_batch = renderer_batch_create();
 }
 
-void game_update(float delta_time) {
-    sprite *ship = &player.sprite;
+void game_update(const float delta_time) {
+    sprite *player_sprite = &player.sprite;
 
     vec2 velocity;
     vec2_zero(velocity);
 
-    if (window_get_key(CALDERA_KEY_Q) == CALDERA_PRESS) {
-        ship->rotation += 5.f * delta_time;
-    }
-    if (window_get_key(CALDERA_KEY_E) == CALDERA_PRESS) {
-        ship->rotation -= 5.f * delta_time;
-    }
-
     if (window_get_key(CALDERA_KEY_W) == CALDERA_PRESS) {
         velocity[1] += 1.0f;
     }
+    if (window_get_key(CALDERA_KEY_S) == CALDERA_PRESS) {
+        velocity[1] -= 1.0f;
+    }
+    if (window_get_key(CALDERA_KEY_A) == CALDERA_PRESS) {
+        velocity[0] -= 1.0f;
+    }
+    if (window_get_key(CALDERA_KEY_D) == CALDERA_PRESS) {
+        velocity[0] += 1.0f;
+    }
 
     vec2_normalize(velocity);
-    vec2_rotate(velocity, ship->rotation);
+    vec2_rotate(velocity, player_sprite->rotation);
     vec2_scale(velocity, 1.f, velocity);
 
-    player.velocity[0] += velocity[0];
-    player.velocity[1] += velocity[1];
+    player.velocity[0] = velocity[0] * player.walk_speed;
+    player.velocity[1] = velocity[1] * player.walk_speed;
 
-    float speed_limit = 180.f;
-    if (vec2_len(player.velocity) > speed_limit) {
-        vec2_normalize(player.velocity);
-        vec2_scale(player.velocity, speed_limit, player.velocity);
-    }
-
-    ship->position[0] += player.velocity[0] * delta_time;
-    ship->position[1] += player.velocity[1] * delta_time;
-
-    if (vec2_len(velocity) == 0 && vec2_len(player.velocity) > 0) {
-        float friction = 2.f;
-        vec2 negative_velocity;
-        vec2_scale(player.velocity, -1 * friction * delta_time, negative_velocity);
-        vec2_add(player.velocity, negative_velocity, player.velocity);
-    }
-
-
-    float new_render_size = render_size;
-    if (window_get_key(CALDERA_KEY_EQUAL) == CALDERA_PRESS) {
-        new_render_size -= 100.f * delta_time;
-    }
-    if (window_get_key(CALDERA_KEY_MINUS) == CALDERA_PRESS) {
-        new_render_size += 100.f * delta_time;
-    }
-
-    if (new_render_size > 1) {
-        render_size = new_render_size;
-    }
-
-    update_render_size();
+    player_sprite->position[0] += player.velocity[0] * delta_time;
+    player_sprite->position[1] += player.velocity[1] * delta_time;
 }
 
 void game_draw() {
