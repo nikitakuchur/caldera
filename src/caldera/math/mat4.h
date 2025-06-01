@@ -16,4 +16,8 @@ void mat4_identity(mat4 m);
 
 void mat4_mul(const mat4 m1, const mat4 m2, mat4 dest);
 
+void mat4_mulv(const mat4 m, const vec4 v, vec4 dest);
+
+void mat4_inv(mat4 mat, mat4 dest);
+
 #endif //MATH_MAT4_H

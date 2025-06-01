@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include <math.h>
+#include <stdio.h>
 #include <caldera/graphics/frontend/sprite.h>
 
 #include <caldera/graphics/frontend/renderer.h>
@@ -56,13 +57,15 @@ static direction compute_player_direction(const vec2 v) {
     int angle = (int) deg(rad); // to degrees
 
     if (angle < 0) angle += 360;
-    angle += 22;
+    angle = (angle + 23) % 360;
+
+    //printf("angle=%d, dir=%d\n", angle, angle / 45);
 
     return angle / 45;
 }
 
-static void update_player_direction(vec2 velocity) {
-    player.direction = compute_player_direction(velocity);
+static void update_player_direction(vec2 v) {
+    player.direction = compute_player_direction(v);
     const uint32_t row_offset = player.direction * 25;
     player.sprite.texture_rect = (irect){
         0, row_offset,
@@ -92,7 +95,7 @@ void game_init() {
  * If remainder in Y is larger → move full Y pixels, adjust X accordingly
  * Remainder accumulates sub-pixel values until enough to move a whole pixel.
  */
-static void move_player(vec2 velocity) {
+static void move_player(const vec2 velocity) {
     static vec2 remainder = {0, 0};
 
     remainder[0] += velocity[0];
@@ -143,8 +146,17 @@ void game_update(const float delta_time) {
     vec2_normalize(velocity);
     vec2_scale(velocity, player.walk_speed * delta_time, velocity);
 
-    update_player_direction(velocity);
+    vec2 cursor_position;
+    window_get_cursor_position(cursor_position);
+    renderer_screen_to_world(cursor_position, cursor_position);
+    //printf("cursor_x=%f, cursor_y=%f\n", cursor_position[0], cursor_position[1]);
+
+    vec2 dir_vector;
+    vec2_sub(cursor_position, player.sprite.position, dir_vector);
+
+    update_player_direction(dir_vector);
     move_player(velocity);
+    //printf("player_x=%f, player_y=%f\n", player.sprite.position[0], player.sprite.position[1]);
 }
 
 void game_draw() {

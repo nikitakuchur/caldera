@@ -1,6 +1,8 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include "caldera/math/types.h"
+
 typedef void (*window_resize_callback)(int width, int height);
 
 typedef void (*window_key_callback)(int key, int action);
@@ -16,6 +18,8 @@ void window_set_key_callback(window_key_callback callback);
 void window_set_mouse_btn_callback(window_mouse_btn_callback callback);
 
 int window_get_key(int key);
+
+void window_get_cursor_position(vec2 dest);
 
 void window_poll_events();
 

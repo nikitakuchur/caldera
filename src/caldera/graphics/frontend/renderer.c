@@ -7,6 +7,15 @@
 #include <caldera/math/cam.h>
 #include <caldera/math/mat4.h>
 
+#include "caldera/window/window.h"
+
+static struct {
+    float ortho_left;
+    float ortho_right;
+    float ortho_bottom;
+    float ortho_top;
+} context;
+
 void renderer_init() {
     graphics_context_init();
     renderer_backend_init();
@@ -38,15 +47,29 @@ void renderer_set_size(int width, int height, float render_size) {
         w_px *= ratio;
     }
 
-    w_px = (float) closest_even((int)w_px);
-    h_px = (float) closest_even((int)h_px);
+    w_px = (float) closest_even((int) w_px);
+    h_px = (float) closest_even((int) h_px);
 
     mat4 proj_mat;
 
     float half_width = w_px / 2;
     float half_height = h_px / 2;
 
-    ortho(-half_width, half_width, -half_height, half_height, 0, 1, proj_mat);
+    // saving this for later use (see renderer_screen_to_world)
+    context.ortho_left = -half_width;
+    context.ortho_right = half_width;
+    context.ortho_bottom = -half_height;
+    context.ortho_top = half_height;
+
+    ortho(
+        context.ortho_left,
+        context.ortho_right,
+        context.ortho_bottom,
+        context.ortho_top,
+        0,
+        1,
+        proj_mat
+    );
 
     renderer_backend_set_proj_mat(proj_mat);
     renderer_backend_set_screen_size(width, height);
@@ -163,4 +186,17 @@ void renderer_frame_end() {
 void renderer_destroy() {
     renderer_backend_destroy();
     graphics_context_destroy();
+}
+
+void renderer_screen_to_world(const vec2 source, vec2 dest) {
+    int screen_width, screen_height;
+    window_get_size(&screen_width, &screen_height);
+
+    const float left = context.ortho_left;
+    const float right = context.ortho_right;
+    const float bottom = context.ortho_bottom;
+    const float top = context.ortho_top;
+
+    dest[0] = left + (right - left) * (source[0] / (float) screen_width);
+    dest[1] = bottom + (top - bottom) * (1.f - source[1] / (float) screen_height);
 }

@@ -69,6 +69,13 @@ int window_get_key(int key) {
     return glfwGetKey(context.window, key);
 }
 
+void window_get_cursor_position(vec2 dest) {
+    double x, y;
+    glfwGetCursorPos(context.window, &x, &y);
+    dest[0] = (float) x;
+    dest[1] = (float) y;
+}
+
 void window_poll_events() {
     glfwPollEvents();
 }

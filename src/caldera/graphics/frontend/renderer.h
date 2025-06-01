@@ -67,4 +67,6 @@ void renderer_frame_end();
 
 void renderer_destroy();
 
+void renderer_screen_to_world(const vec2 source, vec2 dest);
+
 #endif //RENDERER_H

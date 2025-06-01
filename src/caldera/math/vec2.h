@@ -15,6 +15,8 @@ void vec2_normalize(vec2 v);
 
 void vec2_add(const vec2 a, const vec2 b, vec2 dest);
 
+void vec2_sub(const vec2 a, const vec2 b, vec2 dest);
+
 void vec2_scale(const vec2 v, float s, vec2 dest);
 
 void vec2_rotate(vec2 v, float angle);
