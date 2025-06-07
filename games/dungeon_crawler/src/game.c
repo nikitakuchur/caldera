@@ -11,8 +11,6 @@
 #include "caldera/math/util.h"
 #include "caldera/window/input.h"
 
-static float render_size = 120;
-
 struct {
     texture texture;
     sprite sprite;
@@ -22,11 +20,11 @@ struct {
 } player;
 
 typedef enum {
-    DIR_RIGHT = 0,
-    DIR_UP_RIGHT,
+    //DIR_RIGHT = 0,
+    DIR_UP_RIGHT = 0,
     DIR_UP,
     DIR_UP_LEFT,
-    DIR_LEFT,
+    //DIR_LEFT,
     DIR_DOWN_LEFT,
     DIR_DOWN,
     DIR_DOWN_RIGHT,
@@ -35,13 +33,13 @@ typedef enum {
 static batch main_batch;
 
 static void resize_callback(int width, int height) {
-    renderer_set_size(width, height, render_size);
+    renderer_set_size(width, height, 100.f);
 }
 
 static void update_render_size() {
     int width, height;
     window_get_size(&width, &height);
-    renderer_set_size(width, height, render_size);
+    renderer_set_size(width, height, 100.f);
     window_set_resize_callback(&resize_callback);
 }
 
@@ -57,21 +55,22 @@ static direction compute_player_direction(const vec2 v) {
     int angle = (int) deg(rad); // to degrees
 
     if (angle < 0) angle += 360;
-    angle = (angle + 23) % 360;
+    //angle = (angle + 30) % 360;
 
     //printf("angle=%d, dir=%d\n", angle, angle / 45);
 
-    return angle / 45;
+    return angle / 60;
 }
 
 static void update_player_direction(vec2 v) {
     player.direction = compute_player_direction(v);
-    const uint32_t row_offset = player.direction * 25;
+    //printf("direction=%d\n", player.direction);
+    const uint32_t row_offset = player.direction * 32;
     player.sprite.texture_rect = (irect){
         0, row_offset,
-        25, row_offset,
-        25, 25 + row_offset,
-        0, 25 + row_offset
+        32, row_offset,
+        32, 32 + row_offset,
+        0, 32 + row_offset
     };
 }
 
@@ -79,8 +78,8 @@ void game_init() {
     renderer_init();
     update_render_size();
 
-    player.texture = texture_create("../res/textures/character.png");
-    sprite_init(&player.sprite, (vec2){25.0f, 25.0f}, player.texture);
+    player.texture = texture_create("../res/textures/character_v3.png");
+    sprite_init(&player.sprite, (vec2){32.0f, 32.0f}, player.texture);
 
     player.direction = 5;
     player.walk_speed = 30.f;
@@ -89,58 +88,21 @@ void game_init() {
     main_batch = renderer_batch_create();
 }
 
-/*
- * This function deals with jittering during diagonal movement.
- * If remainder in X is larger → move full X pixels, adjust Y accordingly
- * If remainder in Y is larger → move full Y pixels, adjust X accordingly
- * Remainder accumulates sub-pixel values until enough to move a whole pixel.
- */
-static void move_player(const vec2 velocity) {
-    static vec2 remainder = {0, 0};
-
-    remainder[0] += velocity[0];
-    remainder[1] += velocity[1];
-
-    float abs_dx = fabsf(remainder[0]);
-    float abs_dy = fabsf(remainder[1]);
-
-    if (abs_dx == 0.0f && abs_dy == 0.0f) {
-        return; // no movement needed
-    }
-
-    int dominant_axis = abs_dx > abs_dy ? 0 : 1;
-    int secondary_axis = 1 - dominant_axis;
-
-    int move_pixels = (int) remainder[dominant_axis];
-    if (move_pixels == 0) {
-        return; // not enough remainder to move whole pixels yet
-    }
-
-    float slope = velocity[dominant_axis] == 0 ? 0.f : velocity[secondary_axis] / velocity[dominant_axis];
-    float move_secondary = slope * (float) move_pixels;
-
-    player.sprite.position[dominant_axis] += (float) move_pixels;
-    player.sprite.position[secondary_axis] += move_secondary;
-
-    remainder[dominant_axis] -= (float) move_pixels;
-    remainder[secondary_axis] -= move_secondary;
-}
-
 void game_update(const float delta_time) {
     vec2 velocity;
     vec2_zero(velocity);
 
     if (window_get_key(CALDERA_KEY_W) == CALDERA_PRESS) {
-        velocity[1] += 1.0f;
+        velocity[1] += 1.f;
     }
     if (window_get_key(CALDERA_KEY_S) == CALDERA_PRESS) {
-        velocity[1] -= 1.0f;
+        velocity[1] -= 1.f;
     }
     if (window_get_key(CALDERA_KEY_A) == CALDERA_PRESS) {
-        velocity[0] -= 1.0f;
+        velocity[0] -= 1.f;
     }
     if (window_get_key(CALDERA_KEY_D) == CALDERA_PRESS) {
-        velocity[0] += 1.0f;
+        velocity[0] += 1.f;
     }
 
     vec2_normalize(velocity);
@@ -155,7 +117,9 @@ void game_update(const float delta_time) {
     vec2_sub(cursor_position, player.sprite.position, dir_vector);
 
     update_player_direction(dir_vector);
-    move_player(velocity);
+
+    player.sprite.position[0] += velocity[0];
+    player.sprite.position[1] += velocity[1];
     //printf("player_x=%f, player_y=%f\n", player.sprite.position[0], player.sprite.position[1]);
 }
 

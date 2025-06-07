@@ -1,3 +1,4 @@
+#include <math.h>
 #include <caldera/graphics/frontend/sprite.h>
 #include <caldera/math/vec2.h>
 #include <caldera/math/vec4.h>
@@ -74,7 +75,11 @@ rect sprite_to_rect(sprite *s) {
     result = move_rect(result, v);
     result = scale_rect(result, s->scale);
     result = rotate_rect(result, s->rotation);
-    result = move_rect(result, s->position);
+
+    vec2 rounded_position;
+    vec2_copy(rounded_position, (vec2){s->position[0], s->position[1]});
+
+    result = move_rect(result, rounded_position);
 
     return result;
 }

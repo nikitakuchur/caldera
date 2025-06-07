@@ -21,39 +21,14 @@ void renderer_init() {
     renderer_backend_init();
 }
 
-// Function to find the closest even number
-int closest_even(int n) {
-    if (n % 2 == 0) {
-        return n;
-    }
-    int lower = n - 1;
-    int upper = n + 1;
+void renderer_set_size(int width, int height, float size) {
+    const float ratio = (float) width / (float) height;
 
-    if (fabs(n - lower) <= fabs(upper - n)) {
-        return lower;
-    }
-    return upper;
-}
+    const float ortho_height = size * 2;
+    const float ortho_width = ortho_height * ratio;
 
-void renderer_set_size(int width, int height, float render_size) {
-    float ratio = (float) width / (float) height;
-
-    float w_px = render_size;
-    float h_px = render_size;
-
-    if (width < height) {
-        h_px /= ratio;
-    } else {
-        w_px *= ratio;
-    }
-
-    w_px = (float) closest_even((int) w_px);
-    h_px = (float) closest_even((int) h_px);
-
-    mat4 proj_mat;
-
-    float half_width = w_px / 2;
-    float half_height = h_px / 2;
+    const float half_width = (float) ortho_width / 2;
+    const float half_height = (float) ortho_height / 2;
 
     // saving this for later use (see renderer_screen_to_world)
     context.ortho_left = -half_width;
@@ -61,6 +36,7 @@ void renderer_set_size(int width, int height, float render_size) {
     context.ortho_bottom = -half_height;
     context.ortho_top = half_height;
 
+    mat4 proj_mat;
     ortho(
         context.ortho_left,
         context.ortho_right,
@@ -73,7 +49,7 @@ void renderer_set_size(int width, int height, float render_size) {
 
     renderer_backend_set_proj_mat(proj_mat);
     renderer_backend_set_screen_size(width, height);
-    renderer_backend_set_pixel_size((int) w_px, (int) h_px);
+    renderer_backend_set_pixel_size(width, height);
 }
 
 void renderer_set_clear_color(vec4 color) {

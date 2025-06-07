@@ -40,7 +40,6 @@ void renderer_init();
 *
 * @param width  the width of the screen in pixels
 * @param height the height of the screen in pixels
-* @param size   the reference dimension in pixels (applies to the smaller of width or height)
 */
 void renderer_set_size(int width, int height, float size);
 
