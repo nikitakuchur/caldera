@@ -13,6 +13,8 @@ typedef struct dynamic_array {
 // initializes the dynamic array
 void dynamic_array_init(dynamic_array *dynamic_array, size_t element_size, size_t capacity);
 
+void dynamic_array_free(dynamic_array *dynamic_array);
+
 // creates a new element at the end of the array and returns its address
 void* dynamic_array_add(dynamic_array *dynamic_array);
 
