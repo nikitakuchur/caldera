@@ -48,3 +48,13 @@ elseif(RENDER_API STREQUAL "METAL")
     target_link_libraries(caldera PRIVATE glfw stb_image metal_cpp)
     target_compile_definitions(caldera PRIVATE USE_METAL)
 endif()
+
+# Testing binary
+add_executable(c_test src/test.c)
+target_link_libraries(c_test PRIVATE caldera)
+
+# Enable testing functionality
+enable_testing()
+
+# Define tests
+add_test(NAME c_test COMMAND $<TARGET_FILE:c_test>)

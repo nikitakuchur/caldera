@@ -18,7 +18,7 @@ void key_callback(int key, int action) {
 int main() {
     if (!window_init(WINDOW_WIDTH, WINDOW_HEIGHT, "Demo")) {
         printf("failed to init a window");
-        return -1;
+        return 1;
     }
 
     window_set_key_callback(&key_callback);

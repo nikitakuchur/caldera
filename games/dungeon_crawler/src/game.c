@@ -8,6 +8,7 @@
 #include <caldera/math/vec2.h>
 #include <caldera/window/window.h>
 
+#include "animator.h"
 #include "caldera/math/util.h"
 #include "caldera/window/input.h"
 
@@ -17,6 +18,8 @@ struct {
 
     int direction;
     float walk_speed;
+
+    animator animator;
 } player;
 
 typedef enum {
@@ -51,7 +54,7 @@ static direction compute_player_direction(const vec2 v) {
     const float vx = v[0];
     const float vy = v[1];
 
-    const float rad = atan2f(vy, vx); // screen Y often flipped, adjust as needed
+    const float rad = atan2f(vy, vx);
     int angle = (int) deg(rad); // to degrees
 
     if (angle < 0) angle += 360;
@@ -60,6 +63,15 @@ static direction compute_player_direction(const vec2 v) {
     //printf("angle=%d, dir=%d\n", angle, angle / 45);
 
     return angle / 60;
+}
+
+static void init_player_direction() {
+    player.direction = DIR_DOWN_LEFT;
+    const uint32_t row_offset = player.direction * 32;
+    player.sprite.texture_rect.bottom_left[1] = row_offset;
+    player.sprite.texture_rect.bottom_right[1] = row_offset;
+    player.sprite.texture_rect.top_right[1] = 32 + row_offset;
+    player.sprite.texture_rect.top_left[1] = 32 + row_offset;
 }
 
 static void update_player_direction(vec2 v) {
@@ -83,7 +95,14 @@ void game_init() {
 
     player.direction = 5;
     player.walk_speed = 30.f;
-    update_player_direction((vec2){-1, -1});
+    init_player_direction();
+    player.animator.animation = (animation){
+        .x_offset = 0,
+        .y_offset = 0,
+
+        .frame_num = 3,
+        .speed = 3.5f
+    };
 
     main_batch = renderer_batch_create();
 }
@@ -121,6 +140,8 @@ void game_update(const float delta_time) {
     player.sprite.position[0] += velocity[0];
     player.sprite.position[1] += velocity[1];
     //printf("player_x=%f, player_y=%f\n", player.sprite.position[0], player.sprite.position[1]);
+
+    animator_update_frame(&player.animator, &player.sprite, delta_time);
 }
 
 void game_draw() {
