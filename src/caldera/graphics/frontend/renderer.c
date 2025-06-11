@@ -60,6 +60,7 @@ void renderer_frame_begin() {
     renderer_backend_begin();
 }
 
+// TODO: turn it into an init function
 batch renderer_batch_create() {
     batch b = {};
 

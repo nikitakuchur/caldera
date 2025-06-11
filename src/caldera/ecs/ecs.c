@@ -1,12 +1,19 @@
 #include "ecs.h"
-
+#include "components.h"
 #include <mach/mach.h>
 
+static void register_default_components(registry *registry) {
+    ecs_register_component(registry, TRANSFORM, sizeof(transform));
+    ecs_register_component(registry, SPRITE_RENDERER, sizeof(sprite_renderer));
+    ecs_register_component(registry, SPRITE_ANIMATOR, sizeof(sprite_animator));
+}
+
 void ecs_init(registry *registry) {
-    darray_init(&registry->entity_masks, sizeof(size_t), 8);
+    darray_init(&registry->entity_masks, sizeof(bool) * MAX_COMPONENTS, 8);
     for (int i = 0; i < MAX_COMPONENTS; i++) {
         registry->registered_components[i] = false;
     }
+    register_default_components(registry);
 }
 
 void ecs_free(registry *registry) {
@@ -26,9 +33,9 @@ void ecs_register_component(registry *registry, const size_t component_type, con
 
 size_t ecs_create_entity(registry *registry) {
     const size_t entity_id = registry->entity_masks.size;
-    component_mask *mask = darray_add(&registry->entity_masks);
+    bool *mask = darray_add(&registry->entity_masks);
     for (int i = 0; i < MAX_COMPONENTS; i++) {
-        *mask[i] = false;
+        mask[i] = false;
     }
     return entity_id;
 }
@@ -37,11 +44,11 @@ void* ecs_add_component(registry *registry, const size_t entity_id, const size_t
     if (!registry->registered_components[component_type]) {
         panic("the given component has not been registered");
     }
-    component_mask *mask = darray_get(&registry->entity_masks, entity_id);
+    bool *mask = darray_get(&registry->entity_masks, entity_id);
     if (mask[component_type]) {
         panic("the entity already has the given component");
     }
-    *mask[component_type] = true;
+    mask[component_type] = true;
     return sparse_set_add(&registry->components[component_type], entity_id);
 }
 
@@ -49,7 +56,7 @@ bool ecs_has_component(const registry *registry, const size_t entity_id, const s
     if (!registry->registered_components[component_type]) {
         panic("the given component has not been registered");
     }
-    const component_mask *mask = darray_get(&registry->entity_masks, entity_id);
+    const bool *mask = darray_get(&registry->entity_masks, entity_id);
     return mask[component_type];
 }
 
@@ -57,7 +64,7 @@ void* ecs_get_component(const registry *registry, const size_t entity_id, const 
     if (!registry->registered_components[component_type]) {
         panic("the given component has not been registered");
     }
-    const component_mask *mask = darray_get(&registry->entity_masks, entity_id);
+    const bool *mask = darray_get(&registry->entity_masks, entity_id);
     if (!mask[component_type]) {
         return nullptr;
     }

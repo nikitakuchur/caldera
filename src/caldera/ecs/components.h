@@ -19,9 +19,23 @@ typedef struct sprite_renderer {
     vec4 color;
 } sprite_renderer;
 
+typedef struct animation {
+    int x_offset;
+    int y_offset;
+
+    int frame_num;
+    float speed;
+} animation;
+
+typedef struct sprite_animator {
+    animation animation;
+    float frame;
+} sprite_animator;
+
 enum component_type {
     TRANSFORM = 0,
-    SPRITE_RENDERER
+    SPRITE_RENDERER,
+    SPRITE_ANIMATOR
 };
 
 #endif //COMPONENTS_H

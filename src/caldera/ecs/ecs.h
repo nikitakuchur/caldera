@@ -5,10 +5,8 @@
 
 #define MAX_COMPONENTS 100
 
-typedef bool component_mask[MAX_COMPONENTS];
-
 typedef struct registry {
-    darray entity_masks;
+    darray entity_masks; // 2d array of bools
     bool registered_components[MAX_COMPONENTS];
     sparse_set components[MAX_COMPONENTS];
 } registry;
