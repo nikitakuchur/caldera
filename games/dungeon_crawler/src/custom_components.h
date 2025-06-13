@@ -18,6 +18,8 @@ typedef struct facing_direction {
 
 typedef struct player_controller {
     float walk_speed;
+    float forward_speed_multiplier;
+    float backwards_speed_multiplier;
 } player_controller;
 
 enum custom_component_type {

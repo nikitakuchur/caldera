@@ -64,6 +64,8 @@ void game_init() {
 
     player_controller *controller = ecs_add_component(&r, entity_1, PLAYER_CONTROLLER);
     controller->walk_speed = 40.f;
+    controller->forward_speed_multiplier = 1.2f;
+    controller->backwards_speed_multiplier = 0.8f;
 
     const size_t entity_2 = ecs_create_entity(&r);
     transform *t2 = ecs_add_component(&r, entity_2, TRANSFORM);

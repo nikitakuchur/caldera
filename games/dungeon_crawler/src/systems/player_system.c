@@ -10,7 +10,7 @@
 #include "caldera/window/input.h"
 #include "caldera/window/window.h"
 
-static direction compute_player_direction(const vec2 v) {
+static direction vec_to_dir(const vec2 v) {
     if (v[0] == 0 && v[1] == 0) {
         return DIR_DOWN_LEFT;
     }
@@ -39,8 +39,8 @@ void player_system_update(const registry *r, float delta_time) {
         transform *t = ecs_get_component(r, *entity_id, TRANSFORM);
         if (t == nullptr) continue;
 
-        facing_direction *direction = ecs_get_component(r, *entity_id, FACING_DIRECTION);
-        if (direction == nullptr) continue;
+        facing_direction *facing_dir = ecs_get_component(r, *entity_id, FACING_DIRECTION);
+        if (facing_dir == nullptr) continue;
 
         // direction
         vec2 cursor_position;
@@ -51,7 +51,7 @@ void player_system_update(const registry *r, float delta_time) {
         vec2 dir_vector;
         vec2_sub(cursor_position, t->position, dir_vector);
 
-        direction->direction = compute_player_direction(dir_vector);
+        facing_dir->direction = vec_to_dir(dir_vector);
 
         // movement
         vec2 velocity;
@@ -71,7 +71,15 @@ void player_system_update(const registry *r, float delta_time) {
         }
 
         vec2_normalize(velocity);
-        vec2_scale(velocity, controller->walk_speed * delta_time, velocity);
+
+        float speed = controller->walk_speed;
+        if (vec2_dot(dir_vector, velocity) >= 1) {
+            speed *= controller->forward_speed_multiplier;
+        } else {
+            speed *= controller->backwards_speed_multiplier;
+        }
+
+        vec2_scale(velocity, speed * delta_time, velocity);
 
         t->position[0] += velocity[0];
         t->position[1] += velocity[1];

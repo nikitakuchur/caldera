@@ -10,7 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 set(RENDER_API "VULKAN" CACHE STRING "Choose the rendering API (VULKAN, METAL)")
 set_property(CACHE RENDER_API PROPERTY STRINGS "VULKAN" "METAL")
 
-message(STATUS "Selected Rendering API: ${RENDER_API}")
+message(STATUS "Selected rendering API: ${RENDER_API}")
 
 # Gather source files
 file(GLOB_RECURSE SOURCES "src/*.c")
@@ -19,7 +19,6 @@ list(FILTER SOURCES EXCLUDE REGEX "src/caldera/graphics/vulkan/.*")
 
 add_subdirectory(deps/glfw)
 add_subdirectory(deps/stb_image)
-add_subdirectory(games/so_far_away)
 add_subdirectory(games/dungeon_crawler)
 
 # API-specific sources
