@@ -11,11 +11,48 @@
 #include "systems/player_system.h"
 
 static texture player_texture;
+static texture items_texture;
+
 static registry r;
 
 static void register_custom_components(registry *r) {
     ecs_register_component(r, FACING_DIRECTION, sizeof(facing_direction));
     ecs_register_component(r, PLAYER_CONTROLLER, sizeof(player_controller));
+}
+
+static void create_chest(const vec2 position) {
+    const size_t chest = ecs_create_entity(&r);
+    transform *t = ecs_add_component(&r, chest, TRANSFORM);
+    *t = (transform){
+        .position = {position[0], position[1]},
+        .origin = {16, 2},
+        .scale = {1, 1},
+        .rotation = 0
+    };
+
+    sprite_renderer *sr = ecs_add_component(&r, chest, SPRITE_RENDERER);
+    *sr = (sprite_renderer){
+        .texture = items_texture,
+        .size = {20, 20},
+        .texture_rect = (irect){
+            0, 60,
+            20, 60,
+            20, 60 + 20,
+            0, 60 + 20
+        },
+        .color = {1, 1, 1, 1}
+    };
+
+    sprite_animator *sa = ecs_add_component(&r, chest, SPRITE_ANIMATOR);
+    *sa = (sprite_animator){
+        .animation = (animation){
+            .x_offset = 0,
+            .y_offset = 60,
+            .frame_num = 6,
+            .speed = 8.f
+        },
+        .frame = 0
+    };
 }
 
 void game_init() {
@@ -24,7 +61,8 @@ void game_init() {
 
     render_system_init();
 
-    player_texture = texture_create("../res/textures/character_v3.png");
+    player_texture = texture_create("../res/textures/character_idle.png");
+    items_texture = texture_create("../res/textures/items.png");
 
     const size_t entity_1 = ecs_create_entity(&r);
     transform *t1 = ecs_add_component(&r, entity_1, TRANSFORM);
@@ -60,10 +98,10 @@ void game_init() {
     };
 
     facing_direction *dir = ecs_add_component(&r, entity_1, FACING_DIRECTION);
-    dir->direction = DIR_DOWN_LEFT;
+    dir->direction = DIR_LEFT;
 
     player_controller *controller = ecs_add_component(&r, entity_1, PLAYER_CONTROLLER);
-    controller->walk_speed = 40.f;
+    controller->walk_speed = 35.f;
     controller->forward_speed_multiplier = 1.2f;
     controller->backwards_speed_multiplier = 0.8f;
 
@@ -101,7 +139,9 @@ void game_init() {
     };
 
     facing_direction *dir2 = ecs_add_component(&r, entity_2, FACING_DIRECTION);
-    dir2->direction = DIR_DOWN_RIGHT;
+    dir2->direction = DIR_DOWN;
+
+    create_chest((vec2){10, -20});
 }
 
 void game_update(const float delta_time) {

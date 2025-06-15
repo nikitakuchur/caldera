@@ -12,7 +12,7 @@
 
 static direction vec_to_dir(const vec2 v) {
     if (v[0] == 0 && v[1] == 0) {
-        return DIR_DOWN_LEFT;
+        return DIR_LEFT;
     }
 
     const float vx = v[0];
@@ -22,11 +22,11 @@ static direction vec_to_dir(const vec2 v) {
     int angle = (int) deg(rad); // to degrees
 
     if (angle < 0) angle += 360;
-    //angle = (angle + 30) % 360;
+    angle = (angle + 45) % 360;
 
     //printf("angle=%d, dir=%d\n", angle, angle / 45);
 
-    return angle / 60;
+    return angle / 90;
 }
 
 void player_system_update(const registry *r, float delta_time) {

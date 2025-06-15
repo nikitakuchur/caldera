@@ -2,14 +2,10 @@
 #define CUSTOM_COMPONENTS_H
 
 typedef enum {
-    //DIR_RIGHT = 0,
-    DIR_UP_RIGHT = 0,
+    DIR_RIGHT = 0,
     DIR_UP,
-    DIR_UP_LEFT,
-    //DIR_LEFT,
-    DIR_DOWN_LEFT,
+    DIR_LEFT,
     DIR_DOWN,
-    DIR_DOWN_RIGHT,
 } direction;
 
 typedef struct facing_direction {
