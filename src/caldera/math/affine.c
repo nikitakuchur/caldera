@@ -28,10 +28,10 @@ void rotate_x(mat4 m, float angle) {
     float c = cosf(angle);
     float s = sinf(angle);
 
-    t[1][1] =  c;
-    t[1][2] =  s;
+    t[1][1] = c;
+    t[1][2] = s;
     t[2][1] = -s;
-    t[2][2] =  c;
+    t[2][2] = c;
 
     mat4_mul(m, t, m);
 }
@@ -41,10 +41,10 @@ void rotate_y(mat4 m, float angle) {
     float c = cosf(angle);
     float s = sinf(angle);
 
-    t[0][0] =  c;
+    t[0][0] = c;
     t[0][2] = -s;
-    t[2][0] =  s;
-    t[2][2] =  c;
+    t[2][0] = s;
+    t[2][2] = c;
 
     mat4_mul(m, t, m);
 }
@@ -54,10 +54,10 @@ void rotate_z(mat4 m, float angle) {
     float c = cosf(angle);
     float s = sinf(angle);
 
-    t[0][0] =  c;
-    t[0][1] =  s;
+    t[0][0] = c;
+    t[0][1] = s;
     t[1][0] = -s;
-    t[1][1] =  c;
+    t[1][1] = c;
 
     mat4_mul(m, t, m);
 }
@@ -75,9 +75,15 @@ void rotate(mat4 m, float angle, const vec3 axis) {
     vec3_scale(axis_norm, vc[1], rot[1]);
     vec3_scale(axis_norm, vc[2], rot[2]);
 
-    rot[0][0] += c;     rot[1][0] -= vs[2]; rot[2][0] += vs[1];
-    rot[0][1] += vs[2]; rot[1][1] += c;     rot[2][1] -= vs[0];
-    rot[0][2] -= vs[1]; rot[1][2] += vs[0]; rot[2][2] += c;
+    rot[0][0] += c;
+    rot[1][0] -= vs[2];
+    rot[2][0] += vs[1];
+    rot[0][1] += vs[2];
+    rot[1][1] += c;
+    rot[2][1] -= vs[0];
+    rot[0][2] -= vs[1];
+    rot[1][2] += vs[0];
+    rot[2][2] += c;
 
     rot[0][3] = rot[1][3] = rot[2][3] = rot[3][0] = rot[3][1] = rot[3][2] = 0.0f;
     rot[3][3] = 1.0f;

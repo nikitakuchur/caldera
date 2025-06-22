@@ -2,7 +2,15 @@
 
 #include "mat4.h"
 
-void ortho(float left, float right, float bottom, float top, float nearZ, float farZ, mat4 dest) {
+void ortho(
+    float left,
+    float right,
+    float bottom,
+    float top,
+    float nearZ,
+    float farZ,
+    mat4 dest
+) {
     mat4_zero(dest);
 
     float rl = 1.0f / (right - left);

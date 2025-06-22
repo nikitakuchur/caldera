@@ -9,12 +9,12 @@
 
 static batch b;
 
-static void resize_callback(int width, int height) {
+static void resize_callback(int32_t width, int32_t height) {
     renderer_set_size(width, height, 100.f);
 }
 
 static void update_render_size() {
-    int width, height;
+    int32_t width, height;
     window_get_size(&width, &height);
     renderer_set_size(width, height, 100.f);
     window_set_resize_callback(&resize_callback);
@@ -34,7 +34,7 @@ void render_system_draw(const registry *r) {
 
     renderer_batch_begin(&b);
 
-    for (int i = 0; i < v.components.size; i++) {
+    for (size_t i = 0; i < v.components.size; i++) {
         const size_t *entity_id = darray_get(&v.entity_ids, i);
         const sprite_renderer *renderer = darray_get(&v.components, i);
 

@@ -15,10 +15,10 @@ static direction vec_to_dir(const vec2 v) {
         return DIR_LEFT;
     }
 
-    const float vx = v[0];
-    const float vy = v[1];
+    float vx = v[0];
+    float vy = v[1];
 
-    const float rad = atan2f(vy, vx);
+    float rad = atan2f(vy, vx);
     int angle = (int) deg(rad); // to degrees
 
     if (angle < 0) angle += 360;

@@ -13,8 +13,8 @@ void facing_system_update(registry *r) {
         sprite_renderer *renderer = ecs_get_component(r, *entity_id, SPRITE_RENDERER);
         if (renderer == nullptr) continue;
 
-        const uint32_t row_offset = direction->direction * 32;
-        const int height = (int) renderer->size[1];
+        uint32_t row_offset = direction->direction * 32;
+        int height = (int) renderer->size[1];
 
         renderer->texture_rect.bottom_left[1] = row_offset;
         renderer->texture_rect.bottom_right[1] = row_offset;

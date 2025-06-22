@@ -17,12 +17,19 @@ typedef struct view {
 } view;
 
 void ecs_init(registry *registry);
+
 void ecs_free(registry *registry);
+
 void ecs_register_component(registry *registry, size_t component_type, size_t component_size);
+
 size_t ecs_create_entity(registry *registry);
-void* ecs_add_component(registry *registry, size_t entity_id, size_t component_type);
+
+void *ecs_add_component(registry *registry, size_t entity_id, size_t component_type);
+
 bool ecs_has_component(const registry *registry, size_t entity_id, size_t component_type);
-void* ecs_get_component(const registry *registry, size_t entity_id, size_t component_type);
+
+void *ecs_get_component(const registry *registry, size_t entity_id, size_t component_type);
+
 view ecs_get_entities(const registry *registry, size_t component_type);
 
 #endif //ENTITY_REGISTRY_H

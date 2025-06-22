@@ -17,7 +17,7 @@ void graphics_context_init() {
     // macos specific
     create_info.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 
-    const VkResult result = vkCreateInstance(&create_info, nullptr, &instance);
+    VkResult result = vkCreateInstance(&create_info, nullptr, &instance);
 
     if (result == VK_SUCCESS) {
         printf("vulkan instance created successfully!\n");

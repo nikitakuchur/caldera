@@ -30,7 +30,7 @@ void mat4_zero(mat4 m) {
 }
 
 void mat4_identity(mat4 m) {
-    mat4 im = MAT4_IDENTITY_INIT;
+    const mat4 im = MAT4_IDENTITY_INIT;
     mat4_copy(im, m);
 }
 

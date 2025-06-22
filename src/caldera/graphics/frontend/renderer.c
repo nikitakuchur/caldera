@@ -22,13 +22,13 @@ void renderer_init() {
 }
 
 void renderer_set_size(int width, int height, float size) {
-    const float ratio = (float) width / (float) height;
+    float ratio = (float) width / (float) height;
 
-    const float ortho_height = size * 2;
-    const float ortho_width = ortho_height * ratio;
+    float ortho_height = size * 2;
+    float ortho_width = ortho_height * ratio;
 
-    const float half_width = (float) ortho_width / 2;
-    const float half_height = (float) ortho_height / 2;
+    float half_width = (float) ortho_width / 2;
+    float half_height = (float) ortho_height / 2;
 
     // saving this for later use (see renderer_screen_to_world)
     context.ortho_left = -half_width;
@@ -169,10 +169,10 @@ void renderer_screen_to_world(const vec2 source, vec2 dest) {
     int screen_width, screen_height;
     window_get_size(&screen_width, &screen_height);
 
-    const float left = context.ortho_left;
-    const float right = context.ortho_right;
-    const float bottom = context.ortho_bottom;
-    const float top = context.ortho_top;
+    float left = context.ortho_left;
+    float right = context.ortho_right;
+    float bottom = context.ortho_bottom;
+    float top = context.ortho_top;
 
     dest[0] = left + (right - left) * (source[0] / (float) screen_width);
     dest[1] = bottom + (top - bottom) * (1.f - source[1] / (float) screen_height);

@@ -19,10 +19,10 @@ void darray_init(darray *darray, size_t element_size, size_t capacity);
 void darray_free(darray *darray);
 
 // creates a new element at the end of the array and returns it
-void* darray_add(darray *darray);
+void *darray_add(darray *darray);
 
 // returns the element by its index
-void* darray_get(const darray *darray, size_t index);
+void *darray_get(const darray *darray, size_t index);
 
 // returns the last element of the array
 void *darray_get_last(const darray *darray);

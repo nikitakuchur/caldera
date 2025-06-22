@@ -8,9 +8,9 @@
 typedef float vec2[2];
 typedef float vec3[3];
 typedef float vec4[4];
-typedef vec4  mat4[4];
+typedef vec4 mat4[4];
 
-typedef uint32_t ivec2[2];
+typedef int32_t ivec2[2];
 
 typedef struct rect {
     vec2 bottom_left;

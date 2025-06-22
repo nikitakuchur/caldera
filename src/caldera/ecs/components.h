@@ -20,10 +20,10 @@ typedef struct sprite_renderer {
 } sprite_renderer;
 
 typedef struct animation {
-    int x_offset;
-    int y_offset;
+    int32_t x_offset;
+    int32_t y_offset;
 
-    int frame_num;
+    int32_t frame_num;
     float speed;
 } animation;
 

@@ -21,7 +21,7 @@ static void register_custom_components(registry *r) {
 }
 
 static void create_chest(const vec2 position) {
-    const size_t chest = ecs_create_entity(&r);
+    size_t chest = ecs_create_entity(&r);
     transform *t = ecs_add_component(&r, chest, TRANSFORM);
     *t = (transform){
         .position = {position[0], position[1]},
@@ -64,7 +64,7 @@ void game_init() {
     player_texture = texture_create("../res/textures/character_idle.png");
     items_texture = texture_create("../res/textures/items.png");
 
-    const size_t entity_1 = ecs_create_entity(&r);
+    size_t entity_1 = ecs_create_entity(&r);
     transform *t1 = ecs_add_component(&r, entity_1, TRANSFORM);
     *t1 = (transform){
         .position = {0, 0},
@@ -105,7 +105,7 @@ void game_init() {
     controller->forward_speed_multiplier = 1.2f;
     controller->backwards_speed_multiplier = 0.8f;
 
-    const size_t entity_2 = ecs_create_entity(&r);
+    size_t entity_2 = ecs_create_entity(&r);
     transform *t2 = ecs_add_component(&r, entity_2, TRANSFORM);
     *t2 = (transform){
         .position = {-40, 0},
@@ -144,7 +144,7 @@ void game_init() {
     create_chest((vec2){10, -20});
 }
 
-void game_update(const float delta_time) {
+void game_update(float delta_time) {
     player_system_update(&r, delta_time);
     animation_system_update(&r, delta_time);
     facing_system_update(&r);
