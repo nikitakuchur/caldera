@@ -22,31 +22,31 @@ add_subdirectory(deps/stb_image)
 add_subdirectory(games/dungeon_crawler)
 
 # API-specific sources
-if(RENDER_API STREQUAL "VULKAN")
+if (RENDER_API STREQUAL "VULKAN")
     file(GLOB_RECURSE GRAPHICS_SOURCES "src/caldera/graphics/vulkan/*.c")
     find_package(Vulkan REQUIRED)
-elseif(RENDER_API STREQUAL "METAL")
+elseif (RENDER_API STREQUAL "METAL")
     if (NOT APPLE)
         message(FATAL_ERROR "METAL rendering API is only supported on Apple platforms.")
-    endif()
+    endif ()
     add_subdirectory(deps/metal-cpp)
     file(GLOB_RECURSE GRAPHICS_SOURCES "src/caldera/graphics/metal/*.mm" "src/caldera/graphics/metal/*.cpp")
-else()
+else ()
     message(FATAL_ERROR "Invalid RENDER_API selected. Choose from VULKAN or METAL.")
-endif()
+endif ()
 
 # Create a static library
 add_library(caldera STATIC ${SOURCES} ${GRAPHICS_SOURCES})
 target_include_directories(caldera PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 # Link libraries based on the API
-if(RENDER_API STREQUAL "VULKAN")
+if (RENDER_API STREQUAL "VULKAN")
     target_link_libraries(caldera PRIVATE glfw stb_image Vulkan::Vulkan)
     target_compile_definitions(caldera PRIVATE USE_VULKAN)
-elseif(RENDER_API STREQUAL "METAL")
+elseif (RENDER_API STREQUAL "METAL")
     target_link_libraries(caldera PRIVATE glfw stb_image metal_cpp)
     target_compile_definitions(caldera PRIVATE USE_METAL)
-endif()
+endif ()
 
 # Testing binary
 add_executable(c_test src/test.c)
