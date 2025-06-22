@@ -6,7 +6,7 @@
 #define MAX_COMPONENTS 100
 
 typedef struct registry {
-    darray entity_masks; // 2d array of bools
+    darray entity_masks; // 2d array of bools, TODO: use bitsets here
     bool registered_components[MAX_COMPONENTS];
     sparse_set components[MAX_COMPONENTS];
 } registry;
