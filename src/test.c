@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+#include "caldera/containers/bitset.h"
 #include "caldera/containers/sparse_set.h"
 
 typedef struct component {
@@ -6,6 +8,44 @@ typedef struct component {
 } component;
 
 int main() {
+    // bitset test
+    bitset bs;
+    bitset_init(&bs, 130);
+
+    for (size_t i = 0; i < 130; i++) {
+        bool bit = bitset_get(&bs, i);
+        printf("%lu: %d, ", i, bit);
+    }
+    printf("\n\n");
+
+    bitset_set(&bs, 5, true);
+    bitset_set(&bs, 36, true);
+    bitset_set(&bs, 63, true);
+    bitset_set(&bs, 64, true);
+    bitset_set(&bs, 65, true);
+    bitset_set(&bs, 128, true);
+    bitset_set(&bs, 129, true);
+
+    for (size_t i = 0; i < 130; i++) {
+        bool bit = bitset_get(&bs, i);
+        printf("%lu: %d, ", i, bit);
+    }
+    printf("\n\n");
+
+    bitset_set(&bs, 63, false);
+    bitset_set(&bs, 128, false);
+    bitset_set(&bs, 129, false);
+
+    for (size_t i = 0; i < 130; i++) {
+        bool bit = bitset_get(&bs, i);
+        printf("%lu: %d, ", i, bit);
+    }
+    printf("\n\n");
+
+    bitset_free(&bs);
+
+
+    // sparse set test
     sparse_set set;
     sparse_set_init(&set, sizeof(component));
 

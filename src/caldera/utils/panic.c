@@ -5,5 +5,5 @@
 
 void panic(char* message) {
     fprintf(stderr, "PANIC: %s\n", message);
-    abort(); // exit with non-zero status
+    exit(EXIT_FAILURE);
 }
