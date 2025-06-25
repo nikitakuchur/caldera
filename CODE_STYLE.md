@@ -22,7 +22,7 @@ if (condition) {
 ```c
 typedef struct logger logger;
 
-void logger_init(logger *log);
+bool logger_init(logger *log);
 void logger_free(logger *log);
 
 logger *logger_create(void);

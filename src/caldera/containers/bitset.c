@@ -2,18 +2,19 @@
 
 #include <assert.h>
 #include <stdlib.h>
-#include "caldera/utils/panic.h"
 
-void bitset_init(bitset *set, size_t size) {
+bool bitset_init(bitset *set, size_t size) {
     size_t arr_size = (size + 63) / 64; // 64 bits
     set->bits = malloc(sizeof(uint64_t) * arr_size);
     if (!set->bits) {
-        panic("failed to allocate bitset");
+        // failed to allocate bitset
+        return false;
     }
     for (size_t i = 0; i < arr_size; i++) {
         set->bits[i] = 0;
     }
     set->size = size;
+    return true;
 }
 
 void bitset_set(const bitset *set, size_t index, bool value) {
@@ -46,5 +47,6 @@ void bitset_clear(const bitset *set) {
 
 void bitset_free(bitset *set) {
     free(set->bits);
+    set->bits = nullptr;
     set->size = 0;
 }

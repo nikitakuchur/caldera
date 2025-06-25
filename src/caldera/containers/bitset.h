@@ -9,7 +9,7 @@ typedef struct bitset {
     size_t size;
 } bitset;
 
-void bitset_init(bitset *set, size_t size);
+bool bitset_init(bitset *set, size_t size);
 
 void bitset_set(const bitset *set, size_t index, bool value);
 
