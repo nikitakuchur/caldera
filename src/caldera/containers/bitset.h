@@ -11,12 +11,12 @@ typedef struct bitset {
 
 bool bitset_init(bitset *set, size_t size);
 
+void bitset_free(bitset *set);
+
 void bitset_set(const bitset *set, size_t index, bool value);
 
 bool bitset_get(const bitset *set, size_t index);
 
 void bitset_clear(const bitset *set);
-
-void bitset_free(bitset *set);
 
 #endif //BITSET_H

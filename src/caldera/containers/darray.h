@@ -13,7 +13,7 @@ typedef struct darray {
 } darray;
 
 // initializes the dynamic array
-void darray_init(darray *darray, size_t element_size, size_t capacity);
+bool darray_init(darray *darray, size_t element_size, size_t capacity);
 
 // frees the dynamic array
 void darray_free(darray *darray);

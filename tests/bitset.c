@@ -14,7 +14,7 @@ bool contains(const size_t arr[], size_t size, size_t value) {
 int main() {
     bitset bs;
     bool success = bitset_init(&bs, 130);
-    assert(success == true);
+    assert(success);
 
     for (size_t i = 0; i < bs.size; i++) {
         bool bit = bitset_get(&bs, i);

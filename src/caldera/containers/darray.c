@@ -1,20 +1,21 @@
 #include "darray.h"
 
-#include "caldera/utils/panic.h"
-
-void darray_init(darray *darray, size_t element_size, size_t capacity) {
+bool darray_init(darray *darray, size_t element_size, size_t capacity) {
     darray->element_size = element_size;
     darray->capacity = capacity;
     darray->array = malloc(element_size * capacity);
     if (darray->array == nullptr) {
-        panic("failed to allocate dynamic array");
+        // failed to allocate dynamic array
+        return false;
     }
     darray->size = 0;
+    return true;
 }
 
 void darray_free(darray *darray) {
     free(darray->array);
     darray->array = nullptr;
+    darray->element_size = 0;
     darray->size = 0;
     darray->capacity = 0;
 }
@@ -26,7 +27,8 @@ void *darray_add(darray *darray) {
         size_t new_size = darray->element_size * darray->capacity;
         void *result = realloc(darray->array, new_size);
         if (result == nullptr) {
-            panic("failed to reallocate dynamic array");
+            // failed to reallocate dynamic array
+            return nullptr;
         }
 
         darray->array = result;
@@ -40,7 +42,8 @@ void *darray_add(darray *darray) {
 
 void *darray_get(const darray *darray, size_t index) {
     if (index >= darray->size) {
-        panic("index out of bounds in dynamic_array_get");
+        // index out of bounds
+        return nullptr;
     }
     return (char *) darray->array + index * darray->element_size;
 }

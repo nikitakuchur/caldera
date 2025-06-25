@@ -17,6 +17,12 @@ bool bitset_init(bitset *set, size_t size) {
     return true;
 }
 
+void bitset_free(bitset *set) {
+    free(set->bits);
+    set->bits = nullptr;
+    set->size = 0;
+}
+
 void bitset_set(const bitset *set, size_t index, bool value) {
     assert(index < set->size);
 
@@ -43,10 +49,4 @@ void bitset_clear(const bitset *set) {
     for (size_t i = 0; i < array_size; i++) {
         set->bits[i] = 0;
     }
-}
-
-void bitset_free(bitset *set) {
-    free(set->bits);
-    set->bits = nullptr;
-    set->size = 0;
 }
