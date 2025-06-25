@@ -11,7 +11,7 @@ typedef struct sparse_set {
     darray data;
 } sparse_set;
 
-void sparse_set_init(sparse_set *sparse_set, size_t element_size);
+bool sparse_set_init(sparse_set *sparse_set, size_t element_size);
 
 void sparse_set_free(sparse_set *sparse_set);
 

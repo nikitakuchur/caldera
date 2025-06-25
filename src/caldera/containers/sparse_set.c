@@ -4,12 +4,13 @@
 
 #define NULL_INDEX (-1)
 
-void sparse_set_init(sparse_set *sparse_set, size_t element_size) {
+bool sparse_set_init(sparse_set *sparse_set, size_t element_size) {
     for (size_t i = 0; i < SPARSE_MAX_SIZE; i++) {
         sparse_set->sparse_array[i] = NULL_INDEX;
     }
-    darray_init(&sparse_set->dense_array, sizeof(size_t), 8);
-    darray_init(&sparse_set->data, element_size, 8);
+    bool success = darray_init(&sparse_set->dense_array, sizeof(size_t), 8);
+    if (!success) return false;
+    return darray_init(&sparse_set->data, element_size, 8);
 }
 
 void sparse_set_free(sparse_set *sparse_set) {
