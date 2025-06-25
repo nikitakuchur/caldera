@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.29)
 project(caldera LANGUAGES C CXX)
 
+enable_testing()
+
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
 # Define a single option for choosing the rendering API
@@ -20,6 +21,7 @@ list(FILTER SOURCES EXCLUDE REGEX "src/caldera/graphics/vulkan/.*")
 add_subdirectory(deps/glfw)
 add_subdirectory(deps/stb_image)
 add_subdirectory(games/dungeon_crawler)
+add_subdirectory(tests)
 
 # API-specific sources
 if (RENDER_API STREQUAL "VULKAN")
@@ -48,12 +50,3 @@ elseif (RENDER_API STREQUAL "METAL")
     target_compile_definitions(caldera PRIVATE USE_METAL)
 endif ()
 
-# Testing binary
-add_executable(c_test src/test.c)
-target_link_libraries(c_test PRIVATE caldera)
-
-# Enable testing functionality
-enable_testing()
-
-# Define tests
-add_test(NAME c_test COMMAND $<TARGET_FILE:c_test>)
