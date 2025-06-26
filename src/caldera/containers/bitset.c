@@ -4,49 +4,54 @@
 #include <stdlib.h>
 
 bool bitset_init(bitset *set, size_t size) {
-    size_t arr_size = (size + 63) / 64; // 64 bits
-    set->bits = malloc(sizeof(uint64_t) * arr_size);
-    if (!set->bits) {
+    size_t num_words = bitset_num_words(size); // 64 bits
+    set->words = malloc(sizeof(uint64_t) * num_words);
+    if (!set->words) {
         // failed to allocate bitset
         return false;
     }
-    for (size_t i = 0; i < arr_size; i++) {
-        set->bits[i] = 0;
+    for (size_t i = 0; i < num_words; i++) {
+        set->words[i] = 0;
     }
     set->size = size;
     return true;
 }
 
 void bitset_free(bitset *set) {
-    free(set->bits);
-    set->bits = nullptr;
+    free(set->words);
+    set->words = nullptr;
     set->size = 0;
 }
 
 void bitset_set(const bitset *set, size_t index, bool value) {
     assert(index < set->size);
 
-    size_t arr_index = index / 64;
+    size_t word_index = index / 64;
 
     uint64_t mask = (uint64_t) 1 << (index % 64);
     if (value) {
-        set->bits[arr_index] |= mask;
+        set->words[word_index] |= mask;
     } else {
         mask = ~mask;
-        set->bits[arr_index] &= mask;
+        set->words[word_index] &= mask;
     }
 }
 
 bool bitset_get(const bitset *set, size_t index) {
     assert(index < set->size);
-    size_t arr_index = index / 64;
+    size_t word_index = index / 64;
     uint64_t mask = (uint64_t) 1 << (index % 64);
-    return (set->bits[arr_index] & mask) != 0;
+    return (set->words[word_index] & mask) != 0;
 }
 
 void bitset_clear(const bitset *set) {
-    size_t array_size = (set->size + 63) / 64;
-    for (size_t i = 0; i < array_size; i++) {
-        set->bits[i] = 0;
+    size_t num_words = bitset_num_words(set->size);
+    for (size_t i = 0; i < num_words; i++) {
+        set->words[i] = 0;
     }
+}
+
+// calculates the number of 64-bit words needed to store the given number of bits
+size_t bitset_num_words(size_t size) {
+    return (size + 63) / 64;
 }

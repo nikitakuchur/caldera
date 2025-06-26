@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 typedef struct bitset {
-    uint64_t *bits;
+    uint64_t *words;
     size_t size;
 } bitset;
 
