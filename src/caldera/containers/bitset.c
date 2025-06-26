@@ -3,6 +3,11 @@
 #include <assert.h>
 #include <stdlib.h>
 
+// calculates the number of 64-bit words needed to store the given number of bits
+size_t bitset_num_words(size_t size) {
+    return (size + 63) / 64;
+}
+
 bool bitset_init(bitset *set, size_t size) {
     size_t num_words = bitset_num_words(size); // 64 bits
     set->words = malloc(sizeof(uint64_t) * num_words);
@@ -49,9 +54,4 @@ void bitset_clear(const bitset *set) {
     for (size_t i = 0; i < num_words; i++) {
         set->words[i] = 0;
     }
-}
-
-// calculates the number of 64-bit words needed to store the given number of bits
-size_t bitset_num_words(size_t size) {
-    return (size + 63) / 64;
 }
