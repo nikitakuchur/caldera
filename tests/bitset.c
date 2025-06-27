@@ -64,6 +64,6 @@ int main() {
     }
 
     bitset_free(&bs);
-    assert(bs.bits == nullptr);
+    assert(bs.words == nullptr);
     assert(bs.size == 0);
 }

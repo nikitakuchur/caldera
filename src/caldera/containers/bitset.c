@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 // calculates the number of 64-bit words needed to store the given number of bits
-size_t bitset_num_words(size_t size) {
+static size_t bitset_num_words(size_t size) {
     return (size + 63) / 64;
 }
 

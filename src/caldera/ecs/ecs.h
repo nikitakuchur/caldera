@@ -1,14 +1,21 @@
 #ifndef ENTITY_REGISTRY_H
 #define ENTITY_REGISTRY_H
 
+#include "caldera/containers/bitset.h"
 #include "caldera/containers/sparse_set.h"
 
 #define MAX_COMPONENTS 100
 
 typedef struct registry {
-    darray entity_masks; // 2d array of bools, TODO: use bitsets here
+    size_t entity_count;
+
+    // Each entity can have up to 'MAX_COMPONENTS' components.
+    // We store this information in one large bitset.
+    // To access the next entity, add an offset of MAX_COMPONENTS.
+    bitset component_masks;
+
     bool registered_components[MAX_COMPONENTS];
-    sparse_set components[MAX_COMPONENTS];
+    sparse_set component_sets[MAX_COMPONENTS];
 } registry;
 
 typedef struct view {
