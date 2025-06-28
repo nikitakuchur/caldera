@@ -144,6 +144,13 @@ void game_init() {
     create_chest((vec2){10, -20});
 }
 
+void game_free() {
+    texture_free(&player_texture);
+    texture_free(&items_texture);
+    render_system_free();
+    ecs_free(&r);
+}
+
 void game_update(float delta_time) {
     player_system_update(&r, delta_time);
     animation_system_update(&r, delta_time);
@@ -152,11 +159,4 @@ void game_update(float delta_time) {
 
 void game_draw() {
     render_system_draw(&r);
-}
-
-void game_destroy() {
-    texture_free(&player_texture);
-    texture_free(&items_texture);
-    render_system_destroy();
-    ecs_free(&r);
 }

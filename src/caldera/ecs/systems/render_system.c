@@ -26,6 +26,11 @@ void render_system_init() {
     renderer_batch_init(&b);
 }
 
+void render_system_free() {
+    renderer_batch_free(&b);
+    renderer_free();
+}
+
 void render_system_draw(const registry *r) {
     const view v = ecs_get_entities(r, SPRITE_RENDERER);
 
@@ -60,9 +65,4 @@ void render_system_draw(const registry *r) {
     renderer_batch_end(&b);
 
     renderer_frame_end();
-}
-
-void render_system_destroy() {
-    renderer_batch_free(&b);
-    renderer_free();
 }

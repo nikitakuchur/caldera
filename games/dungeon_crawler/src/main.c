@@ -33,7 +33,7 @@ int main() {
     while (!window_is_closed()) {
         // Calculate delta time in seconds
         double current_frame_time = get_current_time();
-        float delta_time = current_frame_time - last_frame_time;
+        float delta_time = (float) (current_frame_time - last_frame_time);
         last_frame_time = current_frame_time;
 
         frame_count++;
@@ -51,7 +51,7 @@ int main() {
         window_poll_events();
     }
 
-    game_destroy();
+    game_free();
     window_free();
 
     return 0;
