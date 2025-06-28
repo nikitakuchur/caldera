@@ -3,6 +3,6 @@
 
 #include "caldera/ecs/ecs.h"
 
-void facing_system_update(world *r);
+void facing_system_update(const world *r);
 
 #endif //FACING_SYSTEM_H

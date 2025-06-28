@@ -4,8 +4,8 @@
 #include <caldera/graphics/backend/graphics_context.h>
 #include <caldera/graphics/backend/renderer_backend.h>
 #include <caldera/math/cam.h>
-#include <caldera/math/mat4.h>
 
+#include "caldera/math/vec2.h"
 #include "caldera/window/window.h"
 
 static struct {
@@ -40,15 +40,13 @@ void renderer_set_size(int width, int height, float size) {
     context.ortho_bottom = -half_height;
     context.ortho_top = half_height;
 
-    mat4 proj_mat;
-    ortho(
+    mat4 proj_mat = ortho(
         context.ortho_left,
         context.ortho_right,
         context.ortho_bottom,
         context.ortho_top,
-        0,
-        1,
-        proj_mat
+        0.f,
+        1.f
     );
 
     renderer_backend_set_proj_mat(proj_mat);
@@ -93,9 +91,6 @@ void renderer_batch_end(batch *b) {
     vertex_buffer_set(&b->vb, b->vertices, b->vertex_count * sizeof(vertex));
     index_buffer_set(&b->ib, b->indices, b->index_count);
 
-    mat4 identity_mat;
-    mat4_identity(identity_mat);
-
     renderer_backend_submit(b->vb, b->ib, b->index_count, b->textures, b->texture_count);
 }
 
@@ -128,27 +123,27 @@ void renderer_batch_submit(batch *b, sprite s) {
     rect r = sprite_to_rect(&s);
 
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {r.bottom_left[0], r.bottom_left[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {s.texture_rect.bottom_left[0], s.texture_rect.bottom_left[1]},
+        .pos = {r.bottom_left.x, r.bottom_left.y},
+        .color = {s.color.r, s.color.g, s.color.b, s.color.a},
+        .tex_coords = {s.texture_rect.bottom_left.x, s.texture_rect.bottom_left.y},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {r.bottom_right[0], r.bottom_right[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {s.texture_rect.bottom_right[0], s.texture_rect.bottom_right[1]},
+        .pos = {r.bottom_right.x, r.bottom_right.y},
+        .color = {s.color.r, s.color.g, s.color.b, s.color.a},
+        .tex_coords = {s.texture_rect.bottom_right.x, s.texture_rect.bottom_right.y},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {r.top_right[0], r.top_right[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {s.texture_rect.top_right[0], s.texture_rect.top_right[1]},
+        .pos = {r.top_right.x, r.top_right.y},
+        .color = {s.color.r, s.color.g, s.color.b, s.color.a},
+        .tex_coords = {s.texture_rect.top_right.x, s.texture_rect.top_right.y},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
-        .pos = {r.top_left[0], r.top_left[1]},
-        .color = {s.color[0], s.color[1], s.color[2], s.color[3]},
-        .tex_coords = {s.texture_rect.top_left[0], s.texture_rect.top_left[1]},
+        .pos = {r.top_left.x, r.top_left.y},
+        .color = {s.color.r, s.color.g, s.color.b, s.color.a},
+        .tex_coords = {s.texture_rect.top_left.x, s.texture_rect.top_left.y},
         .tex_index = tex_index
     };
 
@@ -160,15 +155,16 @@ void renderer_batch_submit(batch *b, sprite s) {
     b->indices[b->index_count++] = index_offset + 0;
 }
 
-void renderer_screen_to_world(const vec2 source, vec2 dest) {
-    int screen_width, screen_height;
-    window_get_size(&screen_width, &screen_height);
+vec2 renderer_screen_to_world(vec2 position) {
+    ivec2 window_size = window_get_size();
 
     float left = context.ortho_left;
     float right = context.ortho_right;
     float bottom = context.ortho_bottom;
     float top = context.ortho_top;
 
-    dest[0] = left + (right - left) * (source[0] / (float) screen_width);
-    dest[1] = bottom + (top - bottom) * (1.f - source[1] / (float) screen_height);
+    return vec2_new(
+        left + (right - left) * (position.x / (float) window_size.x),
+        bottom + (top - bottom) * (1.f - position.y / (float) window_size.y)
+    );
 }

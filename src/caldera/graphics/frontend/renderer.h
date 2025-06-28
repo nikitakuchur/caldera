@@ -66,6 +66,6 @@ void renderer_batch_end(batch *b);
 
 void renderer_batch_submit(batch *b, sprite s);
 
-void renderer_screen_to_world(const vec2 source, vec2 dest);
+vec2 renderer_screen_to_world(vec2 position);
 
 #endif //RENDERER_H

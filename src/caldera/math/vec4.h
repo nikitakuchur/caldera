@@ -3,12 +3,12 @@
 
 #include "types.h"
 
-void vec4_zero(vec4 v);
+vec4 vec4_new(float x, float y, float z, float w);
 
-void vec4_copy(vec4 v1, const vec4 v2);
+vec4 vec4_zero();
 
-void vec4_add(const vec4 a, const vec4 b, vec4 dest);
+vec4 vec4_add(vec4 a, vec4 b);
 
-void vec4_scale(const vec4 v, float s, vec4 dest);
+vec4 vec4_scale(vec4 v, float s);
 
 #endif //MATH_VEC4_H

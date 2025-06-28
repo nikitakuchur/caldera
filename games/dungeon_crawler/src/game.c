@@ -20,11 +20,11 @@ static void register_custom_components(world *r) {
     ecs_register_component(r, PLAYER_CONTROLLER, sizeof(player_controller));
 }
 
-static void create_chest(const vec2 position) {
+static void create_chest(vec2 position) {
     size_t chest = ecs_create_entity(&w);
     transform *t = ecs_add_component(&w, chest, TRANSFORM);
     *t = (transform){
-        .position = {position[0], position[1]},
+        .position = {position.x, position.y},
         .origin = {16, 2},
         .scale = {1, 1},
         .rotation = 0

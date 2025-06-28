@@ -14,9 +14,8 @@ static void resize_callback(int32_t width, int32_t height) {
 }
 
 static void update_render_size() {
-    int32_t width, height;
-    window_get_size(&width, &height);
-    renderer_set_size(width, height, 100.f);
+    ivec2 window_size = window_get_size();
+    renderer_set_size(window_size.x, window_size.y, 100.f);
     window_set_resize_callback(&resize_callback);
 }
 
@@ -47,17 +46,17 @@ void render_system_draw(const world *r) {
         if (t == nullptr) continue;
 
         sprite s;
-        vec2_copy(s.size, renderer->size);
-        vec4_copy(s.color, renderer->color);
+        s.size = renderer->size;
+        s.color = renderer->color;
 
-        vec2_copy(s.position, t->position);
+        s.position = t->position;
         s.rotation = t->rotation;
-        vec2_copy(s.scale, t->scale);
+        s.scale = t->scale;
 
-        vec2_copy(s.origin, t->origin);
+        s.origin = t->origin;
 
         s.texture = renderer->texture;
-        memcpy(&s.texture_rect, &renderer->texture_rect, sizeof(irect));
+        s.texture_rect = renderer->texture_rect;
 
         renderer_batch_submit(&b, s);
     }

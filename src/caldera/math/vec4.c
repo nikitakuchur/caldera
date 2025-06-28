@@ -1,26 +1,17 @@
 #include "vec4.h"
 
-void vec4_zero(vec4 v) {
-    v[0] = v[1] = v[2] = v[3] = 0.0f;
+vec4 vec4_new(float x, float y, float z, float w) {
+    return (vec4){x, y, z, w};
 }
 
-void vec4_copy(vec4 v1, const vec4 v2) {
-    v1[0] = v2[0];
-    v1[1] = v2[1];
-    v1[2] = v2[2];
-    v1[3] = v2[3];
+vec4 vec4_zero() {
+    return vec4_new(0.f, 0.f, 0.f, 0.f);
 }
 
-void vec4_add(const vec4 a, const vec4 b, vec4 dest) {
-    dest[0] = a[0] + b[0];
-    dest[1] = a[1] + b[1];
-    dest[2] = a[2] + b[2];
-    dest[3] = a[3] + b[3];
+vec4 vec4_add(vec4 a, vec4 b) {
+    return vec4_new(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
 }
 
-void vec4_scale(const vec4 v, float s, vec4 dest) {
-    dest[0] = v[0] * s;
-    dest[1] = v[1] * s;
-    dest[2] = v[2] * s;
-    dest[3] = v[3] * s;
+vec4 vec4_scale(vec4 v, float s) {
+    return vec4_new(v.x * s, v.y * s, v.z * s, v.w * s);
 }

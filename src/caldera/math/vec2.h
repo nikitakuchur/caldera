@@ -3,24 +3,24 @@
 
 #include "types.h"
 
-void vec2_zero(vec2 v);
+vec2 vec2_new(float x, float y);
 
-void vec2_copy(vec2 v1, const vec2 v2);
+vec2 vec2_zero();
 
-float vec2_dot(const vec2 a, const vec2 b);
+vec2 vec2_add(vec2 a, vec2 b);
 
-float vec2_len(const vec2 v);
+vec2 vec2_sub(vec2 a, vec2 b);
 
-void vec2_normalize(vec2 v);
+vec2 vec2_scale(vec2 v, float s);
 
-void vec2_add(const vec2 a, const vec2 b, vec2 dest);
+vec2 vec2_mul(vec2 a, vec2 b);
 
-void vec2_sub(const vec2 a, const vec2 b, vec2 dest);
+float vec2_dot(vec2 a, vec2 b);
 
-void vec2_scale(const vec2 v, float s, vec2 dest);
+float vec2_len(vec2 v);
 
-void vec2_rotate(vec2 v, float angle);
+vec2 vec2_normalize(vec2 v);
 
-void vec2_mul(const vec2 a, const vec2 b, vec2 dest);
+vec2 vec2_rotate(vec2 v, float angle);
 
 #endif //MATH_VEC2_H

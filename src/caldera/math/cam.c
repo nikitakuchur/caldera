@@ -2,26 +2,19 @@
 
 #include "mat4.h"
 
-void ortho(
-    float left,
-    float right,
-    float bottom,
-    float top,
-    float nearZ,
-    float farZ,
-    mat4 dest
-) {
-    mat4_zero(dest);
+mat4 ortho(float left, float right, float bottom, float top, float near_z, float far_z) {
+    float rl = 1.f / (right - left);
+    float tb = 1.f / (top - bottom);
+    float fn = 1.f / (far_z - near_z);
 
-    float rl = 1.0f / (right - left);
-    float tb = 1.0f / (top - bottom);
-    float fn = 1.0f / (farZ - nearZ);
+    mat4 r = mat4_zero();
+    r.m00 = 2.f * rl;
+    r.m11 = 2.f * tb;
+    r.m22 = fn;
+    r.m30 = -(right + left) * rl;
+    r.m31 = -(top + bottom) * tb;
+    r.m32 = -near_z * fn;
+    r.m33 = 1.f;
 
-    dest[0][0] = 2.0f * rl;
-    dest[1][1] = 2.0f * tb;
-    dest[2][2] = fn;
-    dest[3][0] = -(right + left) * rl;
-    dest[3][1] = -(top + bottom) * tb;
-    dest[3][2] = -nearZ * fn;
-    dest[3][3] = 1.0f;
+    return r;
 }

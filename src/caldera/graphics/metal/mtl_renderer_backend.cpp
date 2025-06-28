@@ -8,7 +8,6 @@ extern "C" {
 #include <caldera/utils/files.h>
 #include <caldera/math/cam.h>
 #include <caldera/math/mat4.h>
-#include <caldera/math/vec4.h>
 }
 
 static struct {
@@ -142,9 +141,9 @@ void renderer_backend_init() {
         false
     );
 
-    mat4_identity(context.uniforms.model_mat);
-    mat4_identity(context.uniforms.view_mat);
-    ortho(-1, 1, -1, 1, 0, 1, context.uniforms.proj_mat);
+    context.uniforms.model_mat = mat4_identity();
+    context.uniforms.view_mat = mat4_identity();
+    context.uniforms.proj_mat = ortho(-1.f, 1.f, -1.f, 1.f, 0.f, 1.f);
 }
 
 void renderer_backend_free() {
@@ -171,7 +170,7 @@ void renderer_backend_begin() {
     color_attachment->setTexture(context.g_buffer);
     color_attachment->setLoadAction(MTL::LoadActionClear);
     auto clear_color = context.clear_color;
-    color_attachment->setClearColor(MTL::ClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
+    color_attachment->setClearColor(MTL::ClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a));
     color_attachment->setStoreAction(MTL::StoreActionStore);
 
     context.batch_encoder = context.command_buffer->renderCommandEncoder(render_pass);
@@ -215,15 +214,15 @@ void renderer_backend_end() {
 }
 
 void renderer_backend_set_model_mat(mat4 model_mat) {
-    mat4_copy(model_mat, context.uniforms.model_mat);
+    context.uniforms.model_mat = model_mat;
 }
 
 void renderer_backend_set_view_mat(mat4 view_mat) {
-    mat4_copy(view_mat, context.uniforms.view_mat);
+    context.uniforms.view_mat = view_mat;
 }
 
 void renderer_backend_set_proj_mat(mat4 proj_mat) {
-    mat4_copy(proj_mat, context.uniforms.proj_mat);
+    context.uniforms.proj_mat = proj_mat;
 }
 
 void renderer_backend_set_screen_size(int width, int height) {
@@ -236,7 +235,7 @@ void renderer_backend_set_pixel_size(int width, int height) {
 }
 
 void renderer_backend_set_clear_color(vec4 clear_color) {
-    vec4_copy(context.clear_color, clear_color);
+    context.clear_color = clear_color;
 }
 
 void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_count, texture textures[], uint32_t texture_count) {

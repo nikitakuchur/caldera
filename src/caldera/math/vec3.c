@@ -2,67 +2,67 @@
 
 #include <math.h>
 
-void vec3_zero(vec3 v) {
-    v[0] = v[1] = v[2] = 0.0f;
+vec3 vec3_new(float x, float y, float z) {
+    return (vec3){x, y, z};
 }
 
-void vec3_copy(vec3 v1, const vec3 v2) {
-    v1[0] = v2[0];
-    v1[1] = v2[1];
-    v1[2] = v2[2];
+vec3 vec3_zero() {
+    return vec3_new(0.f, 0.f, 0.f);
 }
 
-float vec3_dot(const vec3 a, const vec3 b) {
-    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+vec3 vec3_add(vec3 a, vec3 b) {
+    return vec3_new(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-float vec3_len(const vec3 v) {
+vec3 vec3_sub(vec3 a, vec3 b) {
+    return vec3_new(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+vec3 vec3_scale(vec3 v, float s) {
+    return vec3_new(v.x * s, v.y * s, v.z * s);
+}
+
+vec3 vec3_mul(vec3 a, vec3 b) {
+    return vec3_new(a.x * b.x, a.y * b.y, a.z * b.z);
+}
+
+vec3 vec3_cross(vec3 a, vec3 b) {
+    return vec3_new(
+        a.y * b.z - a.z * b.y,
+        a.z * b.x - a.x * b.z,
+        a.x * b.y - a.y * b.x
+    );
+}
+
+float vec3_dot(vec3 a, vec3 b) {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+float vec3_len(vec3 v) {
     return sqrtf(vec3_dot(v, v));
 }
 
-void vec3_cross(const vec3 a, const vec3 b, vec3 dest) {
-    dest[0] = a[1] * b[2] - a[2] * b[1];
-    dest[1] = a[2] * b[0] - a[0] * b[2];
-    dest[2] = a[0] * b[1] - a[1] * b[0];
+vec3 vec3_normalize(vec3 v) {
+    float len = vec3_len(v);
+    if (len == 0.f) {
+        return vec3_zero();
+    }
+    return vec3_scale(v, 1.f / len);
 }
 
-void vec3_add(const vec3 a, const vec3 b, vec3 dest) {
-    dest[0] = a[0] + b[0];
-    dest[1] = a[1] + b[1];
-    dest[2] = a[2] + b[2];
-}
-
-void vec3_scale(const vec3 v, float s, vec3 dest) {
-    dest[0] = v[0] * s;
-    dest[1] = v[1] * s;
-    dest[2] = v[2] * s;
-}
-
-void vec3_rotate(vec3 v, float angle, vec3 axis) {
-    vec3 v1, v2, k;
+vec3 vec3_rotate(vec3 v, float angle, vec3 axis) {
+    vec3 k = vec3_normalize(axis);
 
     float c = cosf(angle);
     float s = sinf(angle);
 
-    vec3_normalize_to(axis, k);
+    vec3 v1 = vec3_scale(v, c);
 
-    vec3_scale(v, c, v1);
+    vec3 v2 = vec3_cross(k, v);
+    v2 = vec3_scale(v2, s);
 
-    vec3_cross(k, v, v2);
-    vec3_scale(v2, s, v2);
+    v1 = vec3_add(v1, v2);
 
-    vec3_add(v1, v2, v1);
-
-    vec3_scale(k, vec3_dot(k, v) * (1.0f - c), v2);
-    vec3_add(v1, v2, v);
-}
-
-void vec3_normalize_to(const vec3 v, vec3 dest) {
-    float len = vec3_len(v);
-
-    if (len == 0.0f) {
-        vec3_zero(dest);
-        return;
-    }
-    vec3_scale(v, 1.0f / len, dest);
+    v2 = vec3_scale(k, vec3_dot(k, v) * (1.f - c));
+    return vec3_add(v1, v2);
 }

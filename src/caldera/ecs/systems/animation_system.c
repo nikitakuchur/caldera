@@ -15,8 +15,8 @@ void animation_system_update(const world *r, float delta_time) {
         animation animation = animator->animation;
         int32_t actual_frame = (int32_t) animator->frame % animation.frame_num;
 
-        int32_t width = (int32_t) renderer->size[0];
-        int32_t height = (int32_t) renderer->size[1];
+        int32_t width = (int32_t) renderer->size.x;
+        int32_t height = (int32_t) renderer->size.y;
 
         renderer->texture_rect = (irect) {
             .bottom_left = {animation.x_offset + actual_frame * width, animation.y_offset},

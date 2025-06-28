@@ -3,21 +3,17 @@
 
 #include "types.h"
 
-#define MAT4_IDENTITY_INIT  {{1.0f, 0.0f, 0.0f, 0.0f},\
-                             {0.0f, 1.0f, 0.0f, 0.0f},\
-                             {0.0f, 0.0f, 1.0f, 0.0f},\
-                             {0.0f, 0.0f, 0.0f, 1.0f}}
+#define MAT4_IDENTITY_INIT  {{1.f, 0.f, 0.f, 0.f},\
+                             {0.f, 1.f, 0.f, 0.f},\
+                             {0.f, 0.f, 1.f, 0.f},\
+                             {0.f, 0.f, 0.f, 1.f}}
 
-void mat4_copy(const mat4 m, mat4 dest);
+mat4 mat4_identity();
 
-void mat4_zero(mat4 m);
+mat4 mat4_zero();
 
-void mat4_identity(mat4 m);
+mat4 mat4_mul(mat4 a, mat4 b);
 
-void mat4_mul(const mat4 m1, const mat4 m2, mat4 dest);
-
-void mat4_mulv(const mat4 m, const vec4 v, vec4 dest);
-
-void mat4_inv(mat4 mat, mat4 dest);
+vec4 mat4_mulv(mat4 m, vec4 v);
 
 #endif //MATH_MAT4_H

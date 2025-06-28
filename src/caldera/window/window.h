@@ -21,11 +21,11 @@ void window_set_mouse_btn_callback(window_mouse_btn_callback callback);
 
 int window_get_key(int key);
 
-void window_get_cursor_position(vec2 dest);
+vec2 window_get_cursor_position();
 
 void window_poll_events();
 
-void window_get_size(int *width, int *height);
+ivec2 window_get_size();
 
 bool window_is_closed();
 

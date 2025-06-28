@@ -3,8 +3,6 @@
 
 #include "types.h"
 
-void ortho(float left, float right, float bottom, float top, float nearZ, float farZ, mat4 dest);
-
-void perspective(float fov_y, float aspect, float near_z, float far_z, mat4 dest);
+mat4 ortho(float left, float right, float bottom, float top, float near_z, float far_z);
 
 #endif //MATH_CAM_H

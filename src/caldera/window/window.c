@@ -2,6 +2,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include "caldera/math/ivec2.h"
+#include "caldera/math/vec2.h"
+
 static struct {
     GLFWwindow *window;
 
@@ -81,19 +84,20 @@ int window_get_key(int key) {
     return glfwGetKey(context.window, key);
 }
 
-void window_get_cursor_position(vec2 dest) {
+vec2 window_get_cursor_position() {
     double x, y;
     glfwGetCursorPos(context.window, &x, &y);
-    dest[0] = (float) x;
-    dest[1] = (float) y;
+    return vec2_new((float) x, (float) y);
 }
 
 void window_poll_events() {
     glfwPollEvents();
 }
 
-void window_get_size(int *width, int *height) {
-    glfwGetWindowSize(context.window, width, height);
+ivec2 window_get_size() {
+    int width, height;
+    glfwGetWindowSize(context.window, &width, &height);
+    return ivec2_new(width, height);
 }
 
 bool window_is_closed() {
@@ -104,6 +108,6 @@ void window_close() {
     glfwSetWindowShouldClose(context.window, GLFW_TRUE);
 }
 
-void* window_get_native_window() {
+void *window_get_native_window() {
     return context.window;
 }
