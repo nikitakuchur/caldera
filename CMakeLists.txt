@@ -49,4 +49,3 @@ elseif (RENDER_API STREQUAL "METAL")
     target_link_libraries(caldera PRIVATE glfw stb_image metal_cpp)
     target_compile_definitions(caldera PRIVATE USE_METAL)
 endif ()
-

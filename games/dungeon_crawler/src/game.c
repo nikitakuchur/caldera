@@ -61,8 +61,8 @@ void game_init() {
 
     render_system_init();
 
-    player_texture = texture_create("../res/textures/character_idle.png");
-    items_texture = texture_create("../res/textures/items.png");
+    texture_init(&player_texture, "../res/textures/character_idle.png");
+    texture_init(&items_texture, "../res/textures/items.png");
 
     size_t entity_1 = ecs_create_entity(&r);
     transform *t1 = ecs_add_component(&r, entity_1, TRANSFORM);
@@ -155,7 +155,8 @@ void game_draw() {
 }
 
 void game_destroy() {
-    texture_destroy(player_texture);
+    texture_free(&player_texture);
+    texture_free(&items_texture);
     render_system_destroy();
     ecs_free(&r);
 }

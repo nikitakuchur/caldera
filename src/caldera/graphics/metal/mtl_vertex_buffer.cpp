@@ -4,17 +4,18 @@ extern "C" {
 
 #include "mtl_graphics_context.hpp"
 
-vertex_buffer vertex_buffer_create(uint32_t size) {
-    MTL::Buffer *buffer = graphics_context.device->newBuffer(size, MTL::StorageModeShared);
-    return {buffer};
+void vertex_buffer_init(vertex_buffer *buffer, uint32_t size) {
+    buffer->platform_buffer = graphics_context.device->newBuffer(size, MTL::StorageModeShared);
 }
 
-void vertex_buffer_set(vertex_buffer vb, const void *data, uint32_t size) {
-    auto *buffer = static_cast<MTL::Buffer *>(vb.platform_buffer);
-    memcpy(buffer->contents(), data, size);
+void vertex_buffer_free(vertex_buffer *buffer) {
+    auto *platform_buffer = static_cast<MTL::Buffer *>(buffer->platform_buffer);
+    platform_buffer->release();
+
+    buffer->platform_buffer = nullptr;
 }
 
-void vertex_buffer_destroy(vertex_buffer vb) {
-    auto *buffer = static_cast<MTL::Buffer *>(vb.platform_buffer);
-    buffer->release();
+void vertex_buffer_set(vertex_buffer *buffer, const void *data, uint32_t size) {
+    auto *platform_buffer = static_cast<MTL::Buffer *>(buffer->platform_buffer);
+    memcpy(platform_buffer->contents(), data, size);
 }

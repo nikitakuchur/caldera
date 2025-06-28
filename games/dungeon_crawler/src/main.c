@@ -52,7 +52,7 @@ int main() {
     }
 
     game_destroy();
-    window_destroy();
+    window_free();
 
     return 0;
 }

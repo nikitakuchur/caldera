@@ -147,29 +147,9 @@ void renderer_backend_init() {
     ortho(-1, 1, -1, 1, 0, 1, context.uniforms.proj_mat);
 }
 
-void renderer_backend_set_model_mat(mat4 model_mat) {
-    mat4_copy(model_mat, context.uniforms.model_mat);
-}
-
-void renderer_backend_set_view_mat(mat4 view_mat) {
-    mat4_copy(view_mat, context.uniforms.view_mat);
-}
-
-void renderer_backend_set_proj_mat(mat4 proj_mat) {
-    mat4_copy(proj_mat, context.uniforms.proj_mat);
-}
-
-void renderer_backend_set_screen_size(int width, int height) {
-    graphics_context.mtl_layer->setDrawableSize({(float) width, (float) height});
-}
-
-void renderer_backend_set_pixel_size(int width, int height) {
-    context.g_buffer_width = width;
-    context.g_buffer_height = height;
-}
-
-void renderer_backend_set_clear_color(vec4 clear_color) {
-    vec4_copy(context.clear_color, clear_color);
+void renderer_backend_free() {
+    context.g_buffer_render_pipeline->release();
+    context.final_render_pipeline->release();
 }
 
 void renderer_backend_begin() {
@@ -196,26 +176,6 @@ void renderer_backend_begin() {
 
     context.batch_encoder = context.command_buffer->renderCommandEncoder(render_pass);
     context.batch_encoder->setRenderPipelineState(context.g_buffer_render_pipeline);
-}
-
-void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_count, texture textures[], uint32_t texture_count) {
-    MTL::RenderCommandEncoder *encoder = context.batch_encoder;
-
-    encoder->setVertexBuffer(static_cast<MTL::Buffer *>(vb.platform_buffer), 0, 0);
-    encoder->setVertexBytes(&context.uniforms, sizeof(context.uniforms), 1);
-
-    for (int i = 0; i < texture_count; i++) {
-        encoder->setFragmentTexture(static_cast<MTL::Texture *>(textures[i].platform_texture), i);
-    }
-
-    encoder->drawIndexedPrimitives(
-        MTL::PrimitiveType::PrimitiveTypeTriangle,
-        index_count,
-        MTL::IndexType::IndexTypeUInt32,
-        static_cast<MTL::Buffer *>(ib.platform_buffer),
-        0,
-        1
-    );
 }
 
 static void renderer_draw_final() {
@@ -254,7 +214,47 @@ void renderer_backend_end() {
     context.pool->release();
 }
 
-void renderer_backend_destroy() {
-    context.g_buffer_render_pipeline->release();
-    context.final_render_pipeline->release();
+void renderer_backend_set_model_mat(mat4 model_mat) {
+    mat4_copy(model_mat, context.uniforms.model_mat);
+}
+
+void renderer_backend_set_view_mat(mat4 view_mat) {
+    mat4_copy(view_mat, context.uniforms.view_mat);
+}
+
+void renderer_backend_set_proj_mat(mat4 proj_mat) {
+    mat4_copy(proj_mat, context.uniforms.proj_mat);
+}
+
+void renderer_backend_set_screen_size(int width, int height) {
+    graphics_context.mtl_layer->setDrawableSize({(float) width, (float) height});
+}
+
+void renderer_backend_set_pixel_size(int width, int height) {
+    context.g_buffer_width = width;
+    context.g_buffer_height = height;
+}
+
+void renderer_backend_set_clear_color(vec4 clear_color) {
+    vec4_copy(context.clear_color, clear_color);
+}
+
+void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_count, texture textures[], uint32_t texture_count) {
+    MTL::RenderCommandEncoder *encoder = context.batch_encoder;
+
+    encoder->setVertexBuffer(static_cast<MTL::Buffer *>(vb.platform_buffer), 0, 0);
+    encoder->setVertexBytes(&context.uniforms, sizeof(context.uniforms), 1);
+
+    for (int i = 0; i < texture_count; i++) {
+        encoder->setFragmentTexture(static_cast<MTL::Texture *>(textures[i].platform_texture), i);
+    }
+
+    encoder->drawIndexedPrimitives(
+        MTL::PrimitiveType::PrimitiveTypeTriangle,
+        index_count,
+        MTL::IndexType::IndexTypeUInt32,
+        static_cast<MTL::Buffer *>(ib.platform_buffer),
+        0,
+        1
+    );
 }

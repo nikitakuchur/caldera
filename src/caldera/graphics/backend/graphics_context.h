@@ -3,6 +3,6 @@
 
 void graphics_context_init();
 
-void graphics_context_destroy();
+void graphics_context_free();
 
 #endif //GRAPHICS_CONTEXT_H

@@ -8,11 +8,14 @@ extern "C" {
 
 #include "mtl_graphics_context.hpp"
 
-texture texture_create_empty() {
-    return {-1, 0, 0, nullptr};
+void texture_init_empty(texture *texture) {
+    texture->id = -1;
+    texture->width = 0;
+    texture->height = 0;
+    texture->platform_texture = nullptr;
 }
 
-texture texture_create(const char *filename) {
+void texture_init(texture *texture, const char *filename) {
     static int id = -1;
     id++;
 
@@ -20,8 +23,9 @@ texture texture_create(const char *filename) {
     stbi_set_flip_vertically_on_load(1);
     uint8_t *data = stbi_load(filename, &width, &height, &channels, 0);
     if (!data) {
-        printf("failed to load a texture\n");
-        return {};
+        printf("failed to load a texture %s\n", filename);
+        texture_init_empty(texture);
+        return;
     }
 
     auto texture_descriptor = MTL::TextureDescriptor::texture2DDescriptor(
@@ -38,9 +42,13 @@ texture texture_create(const char *filename) {
 
     stbi_image_free(data);
 
-    return (texture){id, width, height, mtl_texture};
+    texture->id = id;
+    texture->width = width;
+    texture->height = height;
+    texture->platform_texture = mtl_texture;
 }
 
-void texture_destroy(texture texture) {
-    static_cast<MTL::Texture *>(texture.platform_texture)->release();
+void texture_free(texture *texture) {
+    static_cast<MTL::Texture *>(texture->platform_texture)->release();
+    texture_init_empty(texture);
 }

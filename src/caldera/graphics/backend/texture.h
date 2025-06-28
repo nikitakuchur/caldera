@@ -8,10 +8,10 @@ typedef struct texture {
     void *platform_texture;
 } texture;
 
-texture texture_create_empty();
+void texture_init_empty(texture *texture);
 
-texture texture_create(const char *filename);
+void texture_init(texture *texture, const char *filename);
 
-void texture_destroy(texture texture);
+void texture_free(texture *texture);
 
 #endif //TEXTURE_H

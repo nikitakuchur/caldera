@@ -27,7 +27,7 @@ void graphics_context_init() {
     graphics_context.command_queue = graphics_context.device->newCommandQueue()->retain();
 }
 
-void graphics_context_destroy() {
+void graphics_context_free() {
     graphics_context.command_queue->release();
     graphics_context.mtl_layer->release();
     graphics_context.ns_window->release();

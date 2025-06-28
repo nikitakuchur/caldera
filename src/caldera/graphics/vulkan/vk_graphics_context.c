@@ -26,6 +26,6 @@ void graphics_context_init() {
     }
 }
 
-void graphics_context_destroy() {
-    printf("graphics_context_destroy not supported");
+void graphics_context_free() {
+    printf("graphics_context_free not supported\n");
 }

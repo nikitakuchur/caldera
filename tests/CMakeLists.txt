@@ -6,7 +6,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
 link_libraries(caldera)
 
-file(GLOB TEST_SOURCES CONFIGURE_DEPENDS "*.c")
+file(GLOB_RECURSE TEST_SOURCES "*.c")
 
 foreach(TEST_FILE ${TEST_SOURCES})
     # Get filename without extension

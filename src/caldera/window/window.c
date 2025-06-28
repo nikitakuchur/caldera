@@ -53,6 +53,18 @@ bool window_init(int width, int height, const char *title) {
     return true;
 }
 
+void window_free() {
+    if (!context.window) {
+        glfwTerminate();
+
+        context.window = nullptr;
+
+        context.resize_callback_func = nullptr;
+        context.key_callback_func = nullptr;
+        context.mouse_btn_callback_func = nullptr;
+    }
+}
+
 void window_set_resize_callback(window_resize_callback callback) {
     context.resize_callback_func = callback;
 }
@@ -90,13 +102,6 @@ bool window_is_closed() {
 
 void window_close() {
     glfwSetWindowShouldClose(context.window, GLFW_TRUE);
-}
-
-void window_destroy() {
-    if (!context.window) {
-        glfwTerminate();
-        context.window = nullptr;
-    }
 }
 
 void* window_get_native_window() {

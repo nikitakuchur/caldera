@@ -35,6 +35,8 @@ typedef struct batch {
 
 void renderer_init();
 
+void renderer_free();
+
 /**
 * Updates the projection matrix based on the screen dimensions and a reference size.
 *
@@ -52,19 +54,17 @@ void renderer_set_clear_color(vec4 color);
 
 void renderer_frame_begin();
 
-batch renderer_batch_create();
+void renderer_frame_end();
+
+void renderer_batch_init(batch *b);
+
+void renderer_batch_free(batch *b);
 
 void renderer_batch_begin(batch *b);
 
-void renderer_batch_submit(batch *b, sprite s);
-
 void renderer_batch_end(batch *b);
 
-void renderer_batch_destroy(batch *b);
-
-void renderer_frame_end();
-
-void renderer_destroy();
+void renderer_batch_submit(batch *b, sprite s);
 
 void renderer_screen_to_world(const vec2 source, vec2 dest);
 

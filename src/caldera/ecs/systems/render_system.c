@@ -23,7 +23,7 @@ static void update_render_size() {
 void render_system_init() {
     renderer_init();
     update_render_size();
-    b = renderer_batch_create();
+    renderer_batch_init(&b);
 }
 
 void render_system_draw(const registry *r) {
@@ -63,6 +63,6 @@ void render_system_draw(const registry *r) {
 }
 
 void render_system_destroy() {
-    renderer_batch_destroy(&b);
-    renderer_destroy();
+    renderer_batch_free(&b);
+    renderer_free();
 }
