@@ -29,7 +29,7 @@ static direction vec_to_dir(const vec2 v) {
     return angle / 90;
 }
 
-void player_system_update(const registry *r, float delta_time) {
+void player_system_update(const world *r, float delta_time) {
     const view v = ecs_get_entities(r, PLAYER_CONTROLLER);
 
     for (int i = 0; i < v.components.size; i++) {

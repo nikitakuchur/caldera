@@ -3,7 +3,7 @@
 #include "../custom_components.h"
 #include "caldera/ecs/components.h"
 
-void facing_system_update(registry *r) {
+void facing_system_update(world *r) {
     const view v = ecs_get_entities(r, FACING_DIRECTION);
 
     for (int i = 0; i < v.components.size; i++) {

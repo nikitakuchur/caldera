@@ -31,7 +31,7 @@ void render_system_free() {
     renderer_free();
 }
 
-void render_system_draw(const registry *r) {
+void render_system_draw(const world *r) {
     const view v = ecs_get_entities(r, SPRITE_RENDERER);
 
     renderer_frame_begin();

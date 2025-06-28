@@ -2,7 +2,7 @@
 
 #include "caldera/ecs/components.h"
 
-void animation_system_update(const registry *r, float delta_time) {
+void animation_system_update(const world *r, float delta_time) {
     const view v = ecs_get_entities(r, SPRITE_ANIMATOR);
 
     for (size_t i = 0; i < v.components.size; i++) {
