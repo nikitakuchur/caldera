@@ -4,7 +4,7 @@
 #include "caldera/containers/bitset.h"
 #include "caldera/containers/sparse_set.h"
 
-#define MAX_COMPONENTS 100
+#define MAX_COMPONENTS 128
 
 typedef struct world {
     u32 entity_count;

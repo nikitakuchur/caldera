@@ -6,6 +6,7 @@
 #include <caldera/math/cam.h>
 
 #include "caldera/math/vec2.h"
+#include "caldera/utils/time.h"
 #include "caldera/window/window.h"
 
 static struct {
@@ -62,8 +63,46 @@ void renderer_frame_begin() {
     renderer_backend_begin();
 }
 
-void renderer_frame_end() {
+frame_info renderer_frame_end() {
+    static b8 is_first_frame = true;
+    static f64 last_frame_time = 0.f;
+
+    static u32 frame_count = 0;
+    static f32 elapsed_time = 0.f;
+    static u32 fps = 0;
+
+    // finalise rendering and poll events
     renderer_backend_end();
+    window_poll_events();
+
+    f64 current_frame_time = get_current_time();
+
+    f32 delta_time = 0.f;
+    if (!is_first_frame) {
+        delta_time = (f32)(current_frame_time - last_frame_time);
+        if (delta_time < 0.0f) {
+            delta_time = 0.0f; // safety clamp
+        }
+    } else {
+        is_first_frame = false;
+    }
+
+    last_frame_time = current_frame_time;
+
+    frame_count++;
+    elapsed_time += delta_time;
+
+    // update FPS every second
+    if (elapsed_time >= 1.f) {
+        fps = frame_count;
+        frame_count = 0;
+        elapsed_time = 0.f;
+    }
+
+    return (frame_info){
+        .delta_time = delta_time,
+        .fps = fps,
+    };
 }
 
 void renderer_batch_init(batch *b) {

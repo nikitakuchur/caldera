@@ -33,6 +33,11 @@ typedef struct batch {
     u32 texture_count;
 } batch;
 
+typedef struct frame_info {
+    f32 delta_time;
+    u32 fps;
+} frame_info;
+
 void renderer_init();
 
 void renderer_free();
@@ -60,7 +65,7 @@ void renderer_set_clear_color(vec4 color);
 
 void renderer_frame_begin();
 
-void renderer_frame_end();
+frame_info renderer_frame_end();
 
 void renderer_batch_init(batch *b);
 

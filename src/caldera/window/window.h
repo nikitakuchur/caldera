@@ -28,7 +28,7 @@ void window_poll_events();
 
 ivec2 window_get_size();
 
-b8 window_is_closed();
+b8 window_should_close();
 
 void window_close();
 

@@ -100,7 +100,7 @@ ivec2 window_get_size() {
     return ivec2_new(width, height);
 }
 
-b8 window_is_closed() {
+b8 window_should_close() {
     return glfwWindowShouldClose(context.window);
 }
 

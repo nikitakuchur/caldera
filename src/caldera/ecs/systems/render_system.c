@@ -30,9 +30,6 @@ void render_system_free() {
 void render_system_draw(const world *w) {
     const view v = ecs_get_entities(w, SPRITE_RENDERER);
 
-    renderer_frame_begin();
-    renderer_set_clear_color((vec4){0.11f, 0.1f, 0.15f, 1.0f});
-
     renderer_batch_begin(&b);
 
     for (u32 i = 0; i < v.components.size; i++) {
@@ -59,6 +56,4 @@ void render_system_draw(const world *w) {
     }
 
     renderer_batch_end(&b);
-
-    renderer_frame_end();
 }

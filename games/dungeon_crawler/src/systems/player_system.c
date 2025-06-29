@@ -29,17 +29,17 @@ static direction vec_to_dir(vec2 v) {
     return angle / 90;
 }
 
-void player_system_update(const world *r, f32 delta_time) {
-    const view v = ecs_get_entities(r, PLAYER_CONTROLLER);
+void player_system_update(const world *w, f32 delta_time) {
+    const view v = ecs_get_entities(w, PLAYER_CONTROLLER);
 
     for (u32 i = 0; i < v.components.size; i++) {
         const u32 *entity_id = darray_get(&v.entity_ids, i);
         const player_controller *controller = darray_get(&v.components, i);
 
-        transform *t = ecs_get_component(r, *entity_id, TRANSFORM);
+        transform *t = ecs_get_component(w, *entity_id, TRANSFORM);
         if (t == nullptr) continue;
 
-        facing_direction *facing_dir = ecs_get_component(r, *entity_id, FACING_DIRECTION);
+        facing_direction *facing_dir = ecs_get_component(w, *entity_id, FACING_DIRECTION);
         if (facing_dir == nullptr) continue;
 
         // direction
@@ -67,16 +67,8 @@ void player_system_update(const world *r, f32 delta_time) {
             velocity.x += 1.f;
         }
 
-        vec2_normalize(velocity);
-
-        f32 speed = controller->walk_speed;
-        if (vec2_dot(dir_vector, velocity) >= 1) {
-            speed *= controller->forward_speed_multiplier;
-        } else {
-            speed *= controller->backwards_speed_multiplier;
-        }
-
-        velocity = vec2_scale(velocity, speed * delta_time);
+        velocity = vec2_normalize(velocity);
+        velocity = vec2_scale(velocity, controller->walk_speed * delta_time);
 
         t->position.x += velocity.x;
         t->position.y += velocity.y;

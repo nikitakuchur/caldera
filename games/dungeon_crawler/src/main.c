@@ -3,7 +3,6 @@
 #include <caldera/window/window.h>
 
 #include "caldera/window/input.h"
-#include "caldera/utils/time.h"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -25,30 +24,8 @@ i32 main() {
 
     game_init();
 
-    f64 last_frame_time = get_current_time();
-
-    u32 frame_count = 0;
-    f32 elapsed_time = 0.0f;
-
-    while (!window_is_closed()) {
-        // Calculate delta time in seconds
-        f64 current_frame_time = get_current_time();
-        f32 delta_time = (f32) (current_frame_time - last_frame_time);
-        last_frame_time = current_frame_time;
-
-        frame_count++;
-        elapsed_time += delta_time;
-
-        if (elapsed_time >= 1.0f) {
-            printf("FPS: %d\n", frame_count);
-            frame_count = 0;
-            elapsed_time = 0.0f;
-        }
-
-        game_update(delta_time);
+    while (!window_should_close()) {
         game_draw();
-
-        window_poll_events();
     }
 
     game_free();
