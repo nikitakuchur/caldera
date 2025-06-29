@@ -11,7 +11,9 @@ typedef struct texture {
 
 void texture_init_empty(texture *texture);
 
-void texture_init(texture *texture, const char *filename);
+void texture_init(texture *texture, u8 *bitmap, u32 width, u32 height);
+
+b8 texture_load_from_file(texture *texture, const char *filename);
 
 void texture_free(texture *texture);
 

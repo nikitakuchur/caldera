@@ -4,6 +4,7 @@ project(caldera LANGUAGES C CXX)
 enable_testing()
 
 set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
@@ -19,7 +20,7 @@ list(FILTER SOURCES EXCLUDE REGEX "src/caldera/graphics/metal/.*")
 list(FILTER SOURCES EXCLUDE REGEX "src/caldera/graphics/vulkan/.*")
 
 add_subdirectory(deps/glfw)
-add_subdirectory(deps/stb_image)
+add_subdirectory(deps/stb)
 add_subdirectory(games/dungeon_crawler)
 add_subdirectory(tests)
 
@@ -41,11 +42,13 @@ endif ()
 add_library(caldera STATIC ${SOURCES} ${GRAPHICS_SOURCES})
 target_include_directories(caldera PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
+target_link_libraries(caldera PRIVATE glfw stb)
+
 # Link libraries based on the API
 if (RENDER_API STREQUAL "VULKAN")
-    target_link_libraries(caldera PRIVATE glfw stb_image Vulkan::Vulkan)
+    target_link_libraries(caldera PRIVATE Vulkan::Vulkan)
     target_compile_definitions(caldera PRIVATE USE_VULKAN)
 elseif (RENDER_API STREQUAL "METAL")
-    target_link_libraries(caldera PRIVATE glfw stb_image metal_cpp)
+    target_link_libraries(caldera PRIVATE metal_cpp)
     target_compile_definitions(caldera PRIVATE USE_METAL)
 endif ()

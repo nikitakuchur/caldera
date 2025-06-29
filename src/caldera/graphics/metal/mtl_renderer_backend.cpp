@@ -78,7 +78,7 @@ static void configure_vertex_descriptor(MTL::VertexDescriptor *vertex_descriptor
 static MTL::RenderPipelineState *build_pipeline(const char *filename, const char *vertex, const char *fragment, b8 use_vertex_descriptor) {
     mtl_graphics_context ctx = graphics_context;
 
-    char *str = read_file(filename);
+    char *str = read_text_file(filename);
     if (!str) {
         printf("failed to read the metal shader: %s\n", filename);
         return nullptr;

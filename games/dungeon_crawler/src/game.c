@@ -7,12 +7,14 @@
 #include "caldera/ecs/systems/render_system.h"
 #include "caldera/ecs/systems/animation_system.h"
 #include "custom_components.h"
+#include "caldera/graphics/frontend/font.h"
 #include "caldera/graphics/frontend/renderer.h"
 #include "systems/facing_system.h"
 #include "systems/player_system.h"
 
 static texture player_texture;
 static texture items_texture;
+static font main_font;
 
 static world w;
 
@@ -138,8 +140,31 @@ void game_init() {
 
     render_system_init();
 
-    texture_init(&player_texture, "../res/textures/character_idle.png");
-    texture_init(&items_texture, "../res/textures/items.png");
+    texture_load_from_file(&player_texture, "../res/textures/character_idle.png");
+    texture_load_from_file(&items_texture, "../res/textures/items.png");
+
+    font_init(&main_font, "../res/fonts/uni 05_53.ttf");
+    u32 text_entity = ecs_create_entity(&w);
+    transform *t = ecs_add_component(&w, text_entity, TRANSFORM);
+    *t = (transform){
+        .position = {-100.f, -80.f},
+        .origin = {0.f, 0.f},
+        .scale = {1.f, 1.f},
+        .rotation = 0.f
+    };
+
+    sprite_renderer *sr = ecs_add_component(&w, text_entity, SPRITE_RENDERER);
+    *sr = (sprite_renderer){
+        .texture = main_font.atlas,
+        .size = main_font.size,
+        .texture_rect = {
+            0, 0,
+            512, 0,
+            512, 512,
+            0, 512
+        },
+        .color = {1.f, 1.f, 1.f, 1.f}
+    };
 
     create_player();
     create_npc((vec2){-40.f, 40.f}, DIR_DOWN);
@@ -150,6 +175,7 @@ void game_init() {
 void game_free() {
     texture_free(&player_texture);
     texture_free(&items_texture);
+    font_free(&main_font);
     render_system_free();
     ecs_free(&w);
 }
