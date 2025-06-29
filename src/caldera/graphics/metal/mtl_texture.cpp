@@ -10,18 +10,17 @@ extern "C" {
 
 void texture_init_empty(texture *texture) {
     texture->id = -1;
-    texture->width = 0;
-    texture->height = 0;
+    texture->size = {0, 0};
     texture->platform_texture = nullptr;
 }
 
 void texture_init(texture *texture, const char *filename) {
-    static int id = -1;
+    static i32 id = -1;
     id++;
 
-    int width, height, channels;
+    i32 width, height, channels;
     stbi_set_flip_vertically_on_load(1);
-    uint8_t *data = stbi_load(filename, &width, &height, &channels, 0);
+    u8 *data = stbi_load(filename, &width, &height, &channels, 0);
     if (!data) {
         printf("failed to load a texture %s\n", filename);
         texture_init_empty(texture);
@@ -37,14 +36,13 @@ void texture_init(texture *texture, const char *filename) {
     auto mtl_texture = graphics_context.device->newTexture(texture_descriptor);
 
     MTL::Region region = MTL::Region::Make2D(0, 0, width, height);
-    size_t bytes_per_row = width * 4; // 4 bytes per pixel (RGBA)
+    u32 bytes_per_row = width * 4; // 4 bytes per pixel (RGBA)
     mtl_texture->replaceRegion(region, 0, data, bytes_per_row);
 
     stbi_image_free(data);
 
     texture->id = id;
-    texture->width = width;
-    texture->height = height;
+    texture->size = {width, height};
     texture->platform_texture = mtl_texture;
 }
 

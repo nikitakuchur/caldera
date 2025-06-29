@@ -13,25 +13,25 @@ static struct {
     window_mouse_btn_callback mouse_btn_callback_func;
 } context;
 
-static void size_callback(GLFWwindow *window, int width, int height) {
+static void size_callback(GLFWwindow *window, i32 width, i32 height) {
     if (context.resize_callback_func) {
         context.resize_callback_func(width, height);
     }
 }
 
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+static void key_callback(GLFWwindow *window, i32 key, i32 scancode, i32 action, i32 mods) {
     if (context.key_callback_func) {
         context.key_callback_func(key, action);
     }
 }
 
-static void mouse_btn_callback(GLFWwindow *window, int button, int action, int mods) {
+static void mouse_btn_callback(GLFWwindow *window, i32 button, i32 action, i32 mods) {
     if (context.mouse_btn_callback_func) {
         context.mouse_btn_callback_func(button, action);
     }
 }
 
-bool window_init(int width, int height, const char *title) {
+b8 window_init(u32 width, u32 height, const char *title) {
     // don't create a new window again
     if (context.window) {
         return true;
@@ -42,7 +42,7 @@ bool window_init(int width, int height, const char *title) {
     }
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    context.window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    context.window = glfwCreateWindow((i32) width, (i32) height, title, nullptr, nullptr);
 
     if (!context.window) {
         glfwTerminate();
@@ -80,14 +80,14 @@ void window_set_mouse_btn_callback(window_mouse_btn_callback callback) {
     context.mouse_btn_callback_func = callback;
 }
 
-int window_get_key(int key) {
+i32 window_get_key(i32 key) {
     return glfwGetKey(context.window, key);
 }
 
 vec2 window_get_cursor_position() {
-    double x, y;
+    f64 x, y;
     glfwGetCursorPos(context.window, &x, &y);
-    return vec2_new((float) x, (float) y);
+    return vec2_new((f32) x, (f32) y);
 }
 
 void window_poll_events() {
@@ -95,12 +95,12 @@ void window_poll_events() {
 }
 
 ivec2 window_get_size() {
-    int width, height;
+    i32 width, height;
     glfwGetWindowSize(context.window, &width, &height);
     return ivec2_new(width, height);
 }
 
-bool window_is_closed() {
+b8 window_is_closed() {
     return glfwWindowShouldClose(context.window);
 }
 

@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-mat4 ortho(float left, float right, float bottom, float top, float near_z, float far_z);
+mat4 ortho(f32 left, f32 right, f32 bottom, f32 top, f32 near_z, f32 far_z);
 
 #endif //MATH_CAM_H

@@ -3,21 +3,21 @@
 #include <stdio.h>
 
 typedef struct component {
-    float x, y;
+    f32 x, y;
 } component;
 
-void print_all(const sparse_set *set, size_t size) {
-    for (size_t i = 0; i < size; i++) {
+void print_all(const sparse_set *set, u32 size) {
+    for (u32 i = 0; i < size; i++) {
         const component *c = sparse_set_get(set, i);
         if (c == nullptr) {
-            printf("%lu: NULL\n", i);
+            printf("%u: NULL\n", i);
             continue;
         }
-        printf("%lu: component_x=%f, component_y=%f\n", i, c->x, c->y);
+        printf("%u: component_x=%f, component_y=%f\n", i, c->x, c->y);
     }
 }
 
-int main() {
+i32 main() {
     sparse_set set;
     sparse_set_init(&set, sizeof(component));
 

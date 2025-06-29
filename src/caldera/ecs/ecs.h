@@ -7,14 +7,14 @@
 #define MAX_COMPONENTS 100
 
 typedef struct world {
-    size_t entity_count;
+    u32 entity_count;
 
     // Each entity can have up to 'MAX_COMPONENTS' components.
     // We store this information in one large bitset.
     // To access the next entity, add an offset of MAX_COMPONENTS.
     bitset component_masks;
 
-    bool registered_components[MAX_COMPONENTS];
+    bitset registered_components;
     sparse_set component_sets[MAX_COMPONENTS];
 } world;
 
@@ -23,20 +23,20 @@ typedef struct view {
     darray components;
 } view;
 
-void ecs_init(world *w);
+b8 ecs_init(world *w);
 
 void ecs_free(world *w);
 
-void ecs_register_component(world *w, size_t component_type, size_t component_size);
+void ecs_register_component(world *w, u32 component_type, u32 component_size);
 
-size_t ecs_create_entity(world *w);
+u32 ecs_create_entity(world *w);
 
-void *ecs_add_component(world *w, size_t entity_id, size_t component_type);
+void *ecs_add_component(world *w, u32 entity_id, u32 component_type);
 
-bool ecs_has_component(const world *w, size_t entity_id, size_t component_type);
+b8 ecs_has_component(const world *w, u32 entity_id, u32 component_type);
 
-void *ecs_get_component(const world *w, size_t entity_id, size_t component_type);
+void *ecs_get_component(const world *w, u32 entity_id, u32 component_type);
 
-view ecs_get_entities(const world *w, size_t component_type);
+view ecs_get_entities(const world *w, u32 component_type);
 
 #endif //ECS_H

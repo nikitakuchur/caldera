@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-ivec2 ivec2_new(int32_t x, int32_t y);
+ivec2 ivec2_new(i32 x, i32 y);
 
 ivec2 ivec2_zero();
 

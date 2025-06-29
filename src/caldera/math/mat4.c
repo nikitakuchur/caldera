@@ -3,12 +3,12 @@
 #include "vec4.h"
 
 mat4 mat4_identity() {
-    return (mat4){MAT4_IDENTITY_INIT};
+    return (mat4){.raw = MAT4_IDENTITY_INIT};
 }
 
 mat4 mat4_zero() {
     return (mat4){
-        {
+        .raw = {
             vec4_zero(),
             vec4_zero(),
             vec4_zero(),
@@ -20,8 +20,8 @@ mat4 mat4_zero() {
 mat4 mat4_mul(mat4 a, mat4 b) {
     mat4 r;
 
-    for (int i = 0; i < 4; ++i) {
-        vec4 col = b.raw[i];  // b's i-th column
+    for (u32 i = 0; i < 4; ++i) {
+        vec4 col = b.raw[i]; // b's i-th column
         r.raw[i].x = a.m00 * col.x + a.m01 * col.y + a.m02 * col.z + a.m03 * col.w;
         r.raw[i].y = a.m10 * col.x + a.m11 * col.y + a.m12 * col.z + a.m13 * col.w;
         r.raw[i].z = a.m20 * col.x + a.m21 * col.y + a.m22 * col.z + a.m23 * col.w;

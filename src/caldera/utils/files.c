@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "caldera/defines.h"
+
 char* read_file(const char* filename) {
     FILE *file = fopen(filename, "r");
 
@@ -11,7 +13,7 @@ char* read_file(const char* filename) {
     }
 
     fseek(file, 0, SEEK_END);
-    long length = ftell(file);
+    i64 length = ftell(file);
     fseek(file, 0, SEEK_SET);
 
     char *str = malloc((length + 1) * sizeof(char));

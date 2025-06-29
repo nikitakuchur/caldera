@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-vec3 vec3_new(float x, float y, float z) {
+vec3 vec3_new(f32 x, f32 y, f32 z) {
     return (vec3){x, y, z};
 }
 
@@ -18,7 +18,7 @@ vec3 vec3_sub(vec3 a, vec3 b) {
     return vec3_new(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-vec3 vec3_scale(vec3 v, float s) {
+vec3 vec3_scale(vec3 v, f32 s) {
     return vec3_new(v.x * s, v.y * s, v.z * s);
 }
 
@@ -34,27 +34,27 @@ vec3 vec3_cross(vec3 a, vec3 b) {
     );
 }
 
-float vec3_dot(vec3 a, vec3 b) {
+f32 vec3_dot(vec3 a, vec3 b) {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-float vec3_len(vec3 v) {
+f32 vec3_len(vec3 v) {
     return sqrtf(vec3_dot(v, v));
 }
 
 vec3 vec3_normalize(vec3 v) {
-    float len = vec3_len(v);
+    f32 len = vec3_len(v);
     if (len == 0.f) {
         return vec3_zero();
     }
     return vec3_scale(v, 1.f / len);
 }
 
-vec3 vec3_rotate(vec3 v, float angle, vec3 axis) {
+vec3 vec3_rotate(vec3 v, f32 angle, vec3 axis) {
     vec3 k = vec3_normalize(axis);
 
-    float c = cosf(angle);
-    float s = sinf(angle);
+    f32 c = cosf(angle);
+    f32 s = sinf(angle);
 
     vec3 v1 = vec3_scale(v, c);
 

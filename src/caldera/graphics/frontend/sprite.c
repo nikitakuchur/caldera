@@ -1,8 +1,9 @@
 #include <caldera/graphics/frontend/sprite.h>
+
 #include <caldera/math/vec2.h>
 #include <caldera/math/vec4.h>
 
-void sprite_init(sprite *s, vec2 size, texture t) {
+void sprite_init(sprite *s, ivec2 size, texture t) {
     s->size = size;
     s->color = vec4_new(1.f, 1.f, 1.f, 1.f);
     s->position = vec2_zero();
@@ -12,13 +13,13 @@ void sprite_init(sprite *s, vec2 size, texture t) {
     s->texture = t;
     s->texture_rect = (irect){
         0, 0,
-        t.width, 0,
-        t.width, t.height,
-        0, t.height
+        t.size.x, 0,
+        t.size.x, t.size.y,
+        0, t.size.y
     };
 }
 
-static rect rotate_rect(rect r, float angle) {
+static rect rotate_rect(rect r, f32 angle) {
     r.bottom_left = vec2_rotate(r.bottom_left, angle);
     r.bottom_right = vec2_rotate(r.bottom_right, angle);
     r.top_right = vec2_rotate(r.top_right, angle);
@@ -42,12 +43,12 @@ static rect scale_rect(rect r, vec2 v) {
     return r;
 }
 
-rect sprite_to_rect(sprite *s) {
+rect sprite_to_rect(const sprite *s) {
     rect result = (rect){
         0.f, 0.f,
-        s->size.x, 0.f,
-        s->size.x, s->size.y,
-        0.f, s->size.y
+        (f32) s->size.x, 0.f,
+        (f32) s->size.x, (f32) s->size.y,
+        0.f, (f32) s->size.y
     };
 
     // apply transformations

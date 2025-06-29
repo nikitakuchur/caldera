@@ -3,26 +3,26 @@
 #include <stdio.h>
 
 void print_all(const darray *arr) {
-    for (size_t i = 0; i < arr->size; i++) {
-        int *element = darray_get(arr, i);
-        printf("arr[%lu]=%d ", i, *element);
+    for (u32 i = 0; i < arr->size; i++) {
+        i32 *element = darray_get(arr, i);
+        printf("arr[%u]=%d ", i, *element);
     }
 }
 
-int main() {
+i32 main() {
     darray arr;
-    bool success = darray_init(&arr, sizeof(int), 2);
+    b8 success = darray_init(&arr, sizeof(i32), 2);
     assert(success);
     assert(arr.array != nullptr);
     assert(arr.size == 0);
-    assert(arr.element_size == sizeof(int));
+    assert(arr.element_size == sizeof(i32));
     assert(arr.capacity == 2);
 
     assert(darray_get(&arr, 2) == nullptr);
     assert(darray_get_last(&arr) == nullptr);
 
     // add new elements
-    int *element = darray_add(&arr);
+    i32 *element = darray_add(&arr);
     assert(element != nullptr);
     *element = 5;
 
@@ -49,7 +49,7 @@ int main() {
     printf("\n");
 
     // remove last elements
-    int *last = darray_get_last(&arr);
+    i32 *last = darray_get_last(&arr);
     assert(*last == 42);
 
     darray_remove_last(&arr);

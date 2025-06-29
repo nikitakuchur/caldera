@@ -1,22 +1,21 @@
 #ifndef BITSET_H
 #define BITSET_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include "caldera/defines.h"
 
 typedef struct bitset {
-    uint64_t *words;
-    size_t size;
+    u64 *words;
+    u32 size;
 } bitset;
 
-bool bitset_init(bitset *set, size_t size);
+b8 bitset_init(bitset *set, u32 size);
 
 void bitset_free(bitset *set);
 
-void bitset_set(const bitset *set, size_t index, bool value);
+void bitset_set(bitset *set, u32 index, b8 value);
 
-bool bitset_get(const bitset *set, size_t index);
+b8 bitset_get(const bitset *set, u32 index);
 
-void bitset_clear(const bitset *set);
+void bitset_clear(bitset *set);
 
 #endif //BITSET_H

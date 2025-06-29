@@ -3,6 +3,6 @@
 
 #include "caldera/ecs/ecs.h"
 
-void animation_system_update(const world *r, float delta_time);
+void animation_system_update(const world *w, f32 delta_time);
 
 #endif //ANIMATION_SYSTEM_H

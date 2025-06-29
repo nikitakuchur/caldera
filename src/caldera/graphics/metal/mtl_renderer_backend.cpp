@@ -13,8 +13,8 @@ extern "C" {
 static struct {
     MTL::RenderPipelineState *g_buffer_render_pipeline;
 
-    int g_buffer_width;
-    int g_buffer_height;
+    u32 g_buffer_width;
+    u32 g_buffer_height;
 
     vec4 clear_color;
 
@@ -75,7 +75,7 @@ static void configure_vertex_descriptor(MTL::VertexDescriptor *vertex_descriptor
     layoutDescriptor->setStride(36);
 }
 
-static MTL::RenderPipelineState *build_pipeline(const char *filename, const char *vertex, const char *fragment, bool use_vertex_descriptor) {
+static MTL::RenderPipelineState *build_pipeline(const char *filename, const char *vertex, const char *fragment, b8 use_vertex_descriptor) {
     mtl_graphics_context ctx = graphics_context;
 
     char *str = read_file(filename);
@@ -213,23 +213,23 @@ void renderer_backend_end() {
     context.pool->release();
 }
 
-void renderer_backend_set_model_mat(mat4 model_mat) {
-    context.uniforms.model_mat = model_mat;
+void renderer_backend_set_model_mat(const mat4 *model_mat) {
+    context.uniforms.model_mat = *model_mat;
 }
 
-void renderer_backend_set_view_mat(mat4 view_mat) {
-    context.uniforms.view_mat = view_mat;
+void renderer_backend_set_view_mat(const mat4 *view_mat) {
+    context.uniforms.view_mat = *view_mat;
 }
 
-void renderer_backend_set_proj_mat(mat4 proj_mat) {
-    context.uniforms.proj_mat = proj_mat;
+void renderer_backend_set_proj_mat(const mat4 *proj_mat) {
+    context.uniforms.proj_mat = *proj_mat;
 }
 
-void renderer_backend_set_screen_size(int width, int height) {
-    graphics_context.mtl_layer->setDrawableSize({(float) width, (float) height});
+void renderer_backend_set_screen_size(u32 width, u32 height) {
+    graphics_context.mtl_layer->setDrawableSize({static_cast<f32>(width), static_cast<f32>(height)});
 }
 
-void renderer_backend_set_pixel_size(int width, int height) {
+void renderer_backend_set_pixel_size(u32 width, u32 height) {
     context.g_buffer_width = width;
     context.g_buffer_height = height;
 }
@@ -238,13 +238,13 @@ void renderer_backend_set_clear_color(vec4 clear_color) {
     context.clear_color = clear_color;
 }
 
-void renderer_backend_submit(vertex_buffer vb, index_buffer ib, uint32_t index_count, texture textures[], uint32_t texture_count) {
+void renderer_backend_submit(vertex_buffer vb, index_buffer ib, u32 index_count, texture textures[], u32 texture_count) {
     MTL::RenderCommandEncoder *encoder = context.batch_encoder;
 
     encoder->setVertexBuffer(static_cast<MTL::Buffer *>(vb.platform_buffer), 0, 0);
     encoder->setVertexBytes(&context.uniforms, sizeof(context.uniforms), 1);
 
-    for (int i = 0; i < texture_count; i++) {
+    for (u32 i = 0; i < texture_count; i++) {
         encoder->setFragmentTexture(static_cast<MTL::Texture *>(textures[i].platform_texture), i);
     }
 

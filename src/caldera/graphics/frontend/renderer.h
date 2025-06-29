@@ -16,21 +16,21 @@ typedef struct vertex {
     vec2 pos;           // 8 bytes
     vec4 color;         // 16 bytes
     vec2 tex_coords;    // 8 bytes
-    int32_t tex_index;  // 4 bytes
+    i32 tex_index;  // 4 bytes
 } vertex;
 
 typedef struct batch {
     vertex vertices[VERTEX_MAX_COUNT];
-    uint32_t vertex_count;
+    u32 vertex_count;
 
-    uint32_t indices[INDEX_MAX_COUNT];
-    uint32_t index_count;
+    u32 indices[INDEX_MAX_COUNT];
+    u32 index_count;
 
     vertex_buffer vb;
     index_buffer ib;
 
     texture textures[TEXTURE_MAX_COUNT];
-    uint32_t texture_count;
+    u32 texture_count;
 } batch;
 
 void renderer_init();
@@ -38,12 +38,18 @@ void renderer_init();
 void renderer_free();
 
 /**
-* Updates the projection matrix based on the screen dimensions and a reference size.
+* Updates the orthographic projection matrix based on the screen dimensions
+* and a reference vertical size.
+*
+* This function sets up an orthographic camera where the `size` parameter
+* defines half of the vertical viewing area in world units. The horizontal
+* extent is automatically calculated based on the screen's aspect ratio.
 *
 * @param width  the width of the screen in pixels
 * @param height the height of the screen in pixels
+* @param size   the vertical half-size of the orthographic view in world units
 */
-void renderer_set_size(int width, int height, float size);
+void renderer_set_size(u32 width, u32 height, f32 size);
 
 /**
 * Sets the color that will be used to clear the screen.

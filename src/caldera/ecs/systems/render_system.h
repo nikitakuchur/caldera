@@ -7,6 +7,6 @@ void render_system_init();
 
 void render_system_free();
 
-void render_system_draw(const world *r);
+void render_system_draw(const world *w);
 
 #endif //RENDER_SYSTEM_H

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void panic(char* message) {
+void panic(const char* message) {
     fprintf(stderr, "PANIC: %s\n", message);
     exit(EXIT_FAILURE);
 }

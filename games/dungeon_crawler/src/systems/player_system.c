@@ -15,11 +15,11 @@ static direction vec_to_dir(vec2 v) {
         return DIR_LEFT;
     }
 
-    float vx = v.x;
-    float vy = v.y;
+    f32 vx = v.x;
+    f32 vy = v.y;
 
-    float rad = atan2f(vy, vx);
-    int angle = (int) deg(rad); // to degrees
+    f32 rad = atan2f(vy, vx);
+    i32 angle = (i32) deg(rad); // to degrees
 
     if (angle < 0) angle += 360;
     angle = (angle + 45) % 360;
@@ -29,11 +29,11 @@ static direction vec_to_dir(vec2 v) {
     return angle / 90;
 }
 
-void player_system_update(const world *r, float delta_time) {
+void player_system_update(const world *r, f32 delta_time) {
     const view v = ecs_get_entities(r, PLAYER_CONTROLLER);
 
-    for (int i = 0; i < v.components.size; i++) {
-        const size_t *entity_id = darray_get(&v.entity_ids, i);
+    for (u32 i = 0; i < v.components.size; i++) {
+        const u32 *entity_id = darray_get(&v.entity_ids, i);
         const player_controller *controller = darray_get(&v.components, i);
 
         transform *t = ecs_get_component(r, *entity_id, TRANSFORM);
@@ -69,7 +69,7 @@ void player_system_update(const world *r, float delta_time) {
 
         vec2_normalize(velocity);
 
-        float speed = controller->walk_speed;
+        f32 speed = controller->walk_speed;
         if (vec2_dot(dir_vector, velocity) >= 1) {
             speed *= controller->forward_speed_multiplier;
         } else {

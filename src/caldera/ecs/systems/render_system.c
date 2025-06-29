@@ -2,14 +2,11 @@
 
 #include "caldera/ecs/components.h"
 #include "caldera/graphics/frontend/renderer.h"
-#include "caldera/math/vec2.h"
-#include "caldera/math/vec4.h"
 #include "caldera/window/window.h"
-#include <string.h>
 
 static batch b;
 
-static void resize_callback(int32_t width, int32_t height) {
+static void resize_callback(u32 width, u32 height) {
     renderer_set_size(width, height, 100.f);
 }
 
@@ -30,19 +27,19 @@ void render_system_free() {
     renderer_free();
 }
 
-void render_system_draw(const world *r) {
-    const view v = ecs_get_entities(r, SPRITE_RENDERER);
+void render_system_draw(const world *w) {
+    const view v = ecs_get_entities(w, SPRITE_RENDERER);
 
     renderer_frame_begin();
     renderer_set_clear_color((vec4){0.11f, 0.1f, 0.15f, 1.0f});
 
     renderer_batch_begin(&b);
 
-    for (size_t i = 0; i < v.components.size; i++) {
-        const size_t *entity_id = darray_get(&v.entity_ids, i);
+    for (u32 i = 0; i < v.components.size; i++) {
+        const u32 *entity_id = darray_get(&v.entity_ids, i);
         const sprite_renderer *renderer = darray_get(&v.components, i);
 
-        const transform *t = ecs_get_component(r, *entity_id, TRANSFORM);
+        const transform *t = ecs_get_component(w, *entity_id, TRANSFORM);
         if (t == nullptr) continue;
 
         sprite s;

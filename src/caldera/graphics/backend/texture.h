@@ -1,10 +1,11 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+#include "caldera/math/ivec2.h"
+
 typedef struct texture {
-    int id;
-    int width;
-    int height;
+    i32 id;
+    ivec2 size;
     void *platform_texture;
 } texture;
 

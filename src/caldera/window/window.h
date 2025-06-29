@@ -1,15 +1,16 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include "caldera/defines.h"
 #include "caldera/math/types.h"
 
-typedef void (*window_resize_callback)(int width, int height);
+typedef void (*window_resize_callback)(u32 width, u32 height);
 
-typedef void (*window_key_callback)(int key, int action);
+typedef void (*window_key_callback)(i32 key, i32 action);
 
-typedef void (*window_mouse_btn_callback)(int key, int action);
+typedef void (*window_mouse_btn_callback)(i32 key, i32 action);
 
-bool window_init(int width, int height, const char *title);
+b8 window_init(u32 width, u32 height, const char *title);
 
 void window_free();
 
@@ -19,7 +20,7 @@ void window_set_key_callback(window_key_callback callback);
 
 void window_set_mouse_btn_callback(window_mouse_btn_callback callback);
 
-int window_get_key(int key);
+i32 window_get_key(i32 key);
 
 vec2 window_get_cursor_position();
 
@@ -27,7 +28,7 @@ void window_poll_events();
 
 ivec2 window_get_size();
 
-bool window_is_closed();
+b8 window_is_closed();
 
 void window_close();
 

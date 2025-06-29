@@ -1,6 +1,8 @@
 #include "darray.h"
 
-bool darray_init(darray *darray, size_t element_size, size_t capacity) {
+#include <stdlib.h>
+
+b8 darray_init(darray *darray, u32 element_size, u32 capacity) {
     darray->element_size = element_size;
     darray->capacity = capacity;
     darray->array = malloc(element_size * capacity);
@@ -24,7 +26,7 @@ void *darray_add(darray *darray) {
     if (darray->size >= darray->capacity) {
         darray->capacity *= 2;
 
-        size_t new_size = darray->element_size * darray->capacity;
+        u32 new_size = darray->element_size * darray->capacity;
         void *result = realloc(darray->array, new_size);
         if (result == nullptr) {
             // failed to reallocate dynamic array
@@ -34,18 +36,18 @@ void *darray_add(darray *darray) {
         darray->array = result;
     }
 
-    size_t index = darray->size;
+    u32 index = darray->size;
     darray->size++;
 
-    return (char *) darray->array + index * darray->element_size;
+    return (i8 *) darray->array + index * darray->element_size;
 }
 
-void *darray_get(const darray *darray, size_t index) {
+void *darray_get(const darray *darray, u32 index) {
     if (index >= darray->size) {
         // index out of bounds
         return nullptr;
     }
-    return (char *) darray->array + index * darray->element_size;
+    return (i8 *) darray->array + index * darray->element_size;
 }
 
 void *darray_get_last(const darray *darray) {

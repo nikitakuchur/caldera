@@ -5,6 +5,8 @@
 #define CALDERA_PRESS                  1
 #define CALDERA_REPEAT                 2
 
+#define CALDERA_KEY_UNKNOWN            -1
+
 /* Printable keys */
 #define CALDERA_KEY_SPACE              32
 #define CALDERA_KEY_APOSTROPHE         39  /* ' */

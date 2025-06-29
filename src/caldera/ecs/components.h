@@ -6,7 +6,7 @@
 
 typedef struct transform {
     vec2 position;
-    float rotation;
+    f32 rotation;
     vec2 scale;
 
     vec2 origin;
@@ -14,22 +14,21 @@ typedef struct transform {
 
 typedef struct sprite_renderer {
     texture texture;
-    vec2 size;
+    ivec2 size;
     irect texture_rect;
     vec4 color;
 } sprite_renderer;
 
 typedef struct animation {
-    int32_t x_offset;
-    int32_t y_offset;
+    ivec2 offset;
 
-    int32_t frame_num;
-    float speed;
+    i32 frame_num;
+    f32 speed;
 } animation;
 
 typedef struct sprite_animator {
     animation animation;
-    float frame;
+    f32 current_frame;
 } sprite_animator;
 
 enum component_type {

@@ -1,6 +1,8 @@
 #ifndef TIME_H
 #define TIME_H
 
-double get_current_time();
+#include "caldera/defines.h"
+
+f64 get_current_time();
 
 #endif //TIME_H

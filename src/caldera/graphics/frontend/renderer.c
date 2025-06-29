@@ -9,10 +9,10 @@
 #include "caldera/window/window.h"
 
 static struct {
-    float ortho_left;
-    float ortho_right;
-    float ortho_bottom;
-    float ortho_top;
+    f32 ortho_left;
+    f32 ortho_right;
+    f32 ortho_bottom;
+    f32 ortho_top;
 } context;
 
 void renderer_init() {
@@ -25,14 +25,14 @@ void renderer_free() {
     graphics_context_free();
 }
 
-void renderer_set_size(int width, int height, float size) {
-    float ratio = (float) width / (float) height;
+void renderer_set_size(u32 width, u32 height, f32 size) {
+    f32 ratio = (f32) width / (f32) height;
 
-    float ortho_height = size * 2;
-    float ortho_width = ortho_height * ratio;
+    f32 ortho_height = size * 2;
+    f32 ortho_width = ortho_height * ratio;
 
-    float half_width = ortho_width / 2;
-    float half_height = ortho_height / 2;
+    f32 half_width = ortho_width / 2;
+    f32 half_height = ortho_height / 2;
 
     // saving this for later use (see renderer_screen_to_world)
     context.ortho_left = -half_width;
@@ -49,7 +49,7 @@ void renderer_set_size(int width, int height, float size) {
         1.f
     );
 
-    renderer_backend_set_proj_mat(proj_mat);
+    renderer_backend_set_proj_mat(&proj_mat);
     renderer_backend_set_screen_size(width, height);
     renderer_backend_set_pixel_size(width, height);
 }
@@ -104,46 +104,46 @@ void renderer_batch_submit(batch *b, sprite s) {
         return;
     }
 
-    int tex_index = -1;
+    i32 tex_index = -1;
     if (s.texture.id != -1) {
-        for (int i = 0; i < b->texture_count; i++) {
+        for (i32 i = 0; i < b->texture_count; i++) {
             if (b->textures[i].id == s.texture.id) {
                 tex_index = i;
                 break;
             }
         }
         if (tex_index == -1) {
-            tex_index = b->texture_count++;
+            tex_index = (i32) b->texture_count++;
             b->textures[tex_index] = s.texture;
         }
     }
 
-    uint32_t index_offset = b->vertex_count;
+    u32 index_offset = b->vertex_count;
 
     rect r = sprite_to_rect(&s);
 
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.bottom_left.x, r.bottom_left.y},
         .color = {s.color.r, s.color.g, s.color.b, s.color.a},
-        .tex_coords = {s.texture_rect.bottom_left.x, s.texture_rect.bottom_left.y},
+        .tex_coords = {(f32) s.texture_rect.bottom_left.x, (f32) s.texture_rect.bottom_left.y},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.bottom_right.x, r.bottom_right.y},
         .color = {s.color.r, s.color.g, s.color.b, s.color.a},
-        .tex_coords = {s.texture_rect.bottom_right.x, s.texture_rect.bottom_right.y},
+        .tex_coords = {(f32) s.texture_rect.bottom_right.x, (f32) s.texture_rect.bottom_right.y},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.top_right.x, r.top_right.y},
         .color = {s.color.r, s.color.g, s.color.b, s.color.a},
-        .tex_coords = {s.texture_rect.top_right.x, s.texture_rect.top_right.y},
+        .tex_coords = {(f32) s.texture_rect.top_right.x, (f32) s.texture_rect.top_right.y},
         .tex_index = tex_index
     };
     b->vertices[b->vertex_count++] = (vertex){
         .pos = {r.top_left.x, r.top_left.y},
         .color = {s.color.r, s.color.g, s.color.b, s.color.a},
-        .tex_coords = {s.texture_rect.top_left.x, s.texture_rect.top_left.y},
+        .tex_coords = {(f32) s.texture_rect.top_left.x, (f32) s.texture_rect.top_left.y},
         .tex_index = tex_index
     };
 
@@ -158,13 +158,13 @@ void renderer_batch_submit(batch *b, sprite s) {
 vec2 renderer_screen_to_world(vec2 position) {
     ivec2 window_size = window_get_size();
 
-    float left = context.ortho_left;
-    float right = context.ortho_right;
-    float bottom = context.ortho_bottom;
-    float top = context.ortho_top;
+    f32 left = context.ortho_left;
+    f32 right = context.ortho_right;
+    f32 bottom = context.ortho_bottom;
+    f32 top = context.ortho_top;
 
     return vec2_new(
-        left + (right - left) * (position.x / (float) window_size.x),
-        bottom + (top - bottom) * (1.f - position.y / (float) window_size.y)
+        left + (right - left) * (position.x / (f32) window_size.x),
+        bottom + (top - bottom) * (1.f - position.y / (f32) window_size.y)
     );
 }

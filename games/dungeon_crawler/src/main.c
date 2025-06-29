@@ -9,13 +9,13 @@
 #define WINDOW_HEIGHT 720
 #define RENDER_SIZE 200
 
-void key_callback(int key, int action) {
+void key_callback(i32 key, i32 action) {
     if (key == CALDERA_KEY_ESCAPE && action == CALDERA_PRESS) {
         window_close();
     }
 }
 
-int main() {
+i32 main() {
     if (!window_init(WINDOW_WIDTH, WINDOW_HEIGHT, "Demo")) {
         printf("failed to init a window");
         return 1;
@@ -25,15 +25,15 @@ int main() {
 
     game_init();
 
-    double last_frame_time = get_current_time();
+    f64 last_frame_time = get_current_time();
 
-    int frame_count = 0;
-    float elapsed_time = 0.0f;
+    u32 frame_count = 0;
+    f32 elapsed_time = 0.0f;
 
     while (!window_is_closed()) {
         // Calculate delta time in seconds
-        double current_frame_time = get_current_time();
-        float delta_time = (float) (current_frame_time - last_frame_time);
+        f64 current_frame_time = get_current_time();
+        f32 delta_time = (f32) (current_frame_time - last_frame_time);
         last_frame_time = current_frame_time;
 
         frame_count++;
