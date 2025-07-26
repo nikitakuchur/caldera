@@ -5,7 +5,9 @@
 #include <caldera/graphics/backend/vertex_buffer.h>
 #include <caldera/math/types.h>
 
+#include "font.h"
 #include "sprite.h"
+#include "text.h"
 
 #define SPRITE_MAX_COUNT 8192
 #define VERTEX_MAX_COUNT (SPRITE_MAX_COUNT * 4)
@@ -16,7 +18,7 @@ typedef struct vertex {
     vec2 pos;           // 8 bytes
     vec4 color;         // 16 bytes
     vec2 tex_coords;    // 8 bytes
-    i32 tex_index;  // 4 bytes
+    i32 tex_index;      // 4 bytes
 } vertex;
 
 typedef struct batch {
@@ -75,7 +77,9 @@ void renderer_batch_begin(batch *b);
 
 void renderer_batch_end(batch *b);
 
-void renderer_batch_submit(batch *b, sprite s);
+void renderer_batch_submit_sprite(batch *b, sprite s);
+
+void renderer_batch_submit_text(batch *b, font f, text t);
 
 vec2 renderer_screen_to_world(vec2 position);
 

@@ -36,7 +36,7 @@ void player_system_update(const world *w, f32 delta_time) {
         const u32 *entity_id = darray_get(&v.entity_ids, i);
         const player_controller *controller = darray_get(&v.components, i);
 
-        transform *t = ecs_get_component(w, *entity_id, TRANSFORM);
+        ec_transform *t = ecs_get_component(w, *entity_id, EC_TRANSFORM);
         if (t == nullptr) continue;
 
         facing_direction *facing_dir = ecs_get_component(w, *entity_id, FACING_DIRECTION);

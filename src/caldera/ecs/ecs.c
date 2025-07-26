@@ -1,12 +1,13 @@
 #include "ecs.h"
 
 #include "components.h"
-#include "caldera/utils/panic.h"
+#include "caldera/utils/log.h"
 
 static void register_default_components(world *w) {
-    ecs_register_component(w, TRANSFORM, sizeof(transform));
-    ecs_register_component(w, SPRITE_RENDERER, sizeof(sprite_renderer));
-    ecs_register_component(w, SPRITE_ANIMATOR, sizeof(sprite_animator));
+    ecs_register_component(w, EC_TRANSFORM, sizeof(ec_transform));
+    ecs_register_component(w, EC_SPRITE, sizeof(ec_sprite));
+    ecs_register_component(w, EC_ANIMATOR, sizeof(ec_animator));
+    ecs_register_component(w, EC_TEXT, sizeof(ec_text));
 }
 
 b8 ecs_init(world *w) {
@@ -14,12 +15,12 @@ b8 ecs_init(world *w) {
 
     b8 success = bitset_init(&w->component_masks, MAX_COMPONENTS * SPARSE_MAX_SIZE);
     if (!success) {
-        panic("failed to initialize ecs component masks");
+        fatalf("failed to initialize ecs component masks");
     }
 
     success = bitset_init(&w->registered_components, MAX_COMPONENTS);
     if (!success) {
-        panic("failed to initialize ecs registered components");
+        fatalf("failed to initialize ecs registered components");
     }
 
     register_default_components(w);
@@ -50,12 +51,12 @@ static u32 calculate_bitset_index(u32 entity_id, u32 component_type) {
 
 void *ecs_add_component(world *w, u32 entity_id, u32 component_type) {
     if (!bitset_get(&w->registered_components, component_type)) {
-        panic("the given component has not been registered");
+        fatalf("the given component has not been registered");
     }
 
     u32 index = calculate_bitset_index(entity_id, component_type);
     if (bitset_get(&w->component_masks, index)) {
-        panic("the entity already has the given component");
+        fatalf("the entity already has the given component");
     }
 
     bitset_set(&w->component_masks, index, true);
@@ -64,7 +65,7 @@ void *ecs_add_component(world *w, u32 entity_id, u32 component_type) {
 
 b8 ecs_has_component(const world *w, u32 entity_id, u32 component_type) {
     if (!bitset_get(&w->registered_components, component_type)) {
-        panic("the given component has not been registered");
+        fatalf("the given component has not been registered");
     }
     u32 index = calculate_bitset_index(entity_id, component_type);
     return bitset_get(&w->component_masks, index);
@@ -72,7 +73,7 @@ b8 ecs_has_component(const world *w, u32 entity_id, u32 component_type) {
 
 void *ecs_get_component(const world *w, u32 entity_id, u32 component_type) {
     if (!bitset_get(&w->registered_components, component_type)) {
-        panic("the given component has not been registered");
+        fatalf("the given component has not been registered");
     }
     u32 index = calculate_bitset_index(entity_id, component_type);
     if (!bitset_get(&w->component_masks, index)) {
@@ -83,7 +84,7 @@ void *ecs_get_component(const world *w, u32 entity_id, u32 component_type) {
 
 view ecs_get_entities(const world *w, u32 component_type) {
     if (!bitset_get(&w->registered_components, component_type)) {
-        panic("the given component has not been registered");
+        fatalf("the given component has not been registered");
     }
     sparse_set set = w->component_sets[component_type];
     return (view){

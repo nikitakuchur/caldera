@@ -10,7 +10,7 @@ void facing_system_update(const world *w) {
         const u32 *entity_id = darray_get(&v.entity_ids, i);
         const facing_direction *direction = darray_get(&v.components, i);
 
-        sprite_renderer *renderer = ecs_get_component(w, *entity_id, SPRITE_RENDERER);
+        ec_sprite *renderer = ecs_get_component(w, *entity_id, EC_SPRITE);
         if (renderer == nullptr) continue;
 
         u32 row_offset = direction->direction * 32;

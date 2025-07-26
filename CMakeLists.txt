@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
 # Define a single option for choosing the rendering API
-set(RENDER_API "VULKAN" CACHE STRING "Choose the rendering API (VULKAN, METAL)")
+set(RENDER_API "METAL" CACHE STRING "Choose the rendering API (VULKAN, METAL)")
 set_property(CACHE RENDER_API PROPERTY STRINGS "VULKAN" "METAL")
 
 message(STATUS "Selected rendering API: ${RENDER_API}")

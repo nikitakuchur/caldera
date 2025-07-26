@@ -2,6 +2,7 @@
 
 #include "caldera/ecs/components.h"
 #include "caldera/graphics/frontend/renderer.h"
+#include "caldera/graphics/frontend/text.h"
 #include "caldera/window/window.h"
 
 static batch b;
@@ -27,33 +28,61 @@ void render_system_free() {
     renderer_free();
 }
 
-void render_system_draw(const world *w) {
-    const view v = ecs_get_entities(w, SPRITE_RENDERER);
-
-    renderer_batch_begin(&b);
+static void render_sprites(const world *w) {
+    const view v = ecs_get_entities(w, EC_SPRITE);
 
     for (u32 i = 0; i < v.components.size; i++) {
         const u32 *entity_id = darray_get(&v.entity_ids, i);
-        const sprite_renderer *renderer = darray_get(&v.components, i);
+        const ec_sprite *ec_sprite = darray_get(&v.components, i);
 
-        const transform *t = ecs_get_component(w, *entity_id, TRANSFORM);
-        if (t == nullptr) continue;
+        const ec_transform *transform = ecs_get_component(w, *entity_id, EC_TRANSFORM);
+        if (transform == nullptr) continue;
 
         sprite s;
-        s.size = renderer->size;
-        s.color = renderer->color;
+        s.size = ec_sprite->size;
+        s.color = ec_sprite->color;
 
-        s.position = t->position;
-        s.rotation = t->rotation;
-        s.scale = t->scale;
+        s.position = transform->position;
+        s.rotation = transform->rotation;
+        s.scale = transform->scale;
 
-        s.origin = t->origin;
+        s.origin = transform->origin;
 
-        s.texture = renderer->texture;
-        s.texture_rect = renderer->texture_rect;
+        s.texture = ec_sprite->texture;
+        s.texture_rect = ec_sprite->texture_rect;
 
-        renderer_batch_submit(&b, s);
+        renderer_batch_submit_sprite(&b, s);
     }
+}
 
+void render_ui(const world *w) {
+    const view v = ecs_get_entities(w, EC_TEXT);
+
+    for (u32 i = 0; i < v.components.size; i++) {
+        const u32 *entity_id = darray_get(&v.entity_ids, i);
+        const ec_text *ec_text = darray_get(&v.components, i);
+
+        const ec_transform *transform = ecs_get_component(w, *entity_id, EC_TRANSFORM);
+        if (transform == nullptr) continue;
+
+        text t = {
+            .str = ec_text->str,
+            .color = ec_text->color,
+
+            .position = transform->position,
+            .rotation = transform->rotation,
+            .scale = transform->scale,
+
+            .origin = transform->origin,
+        };
+
+        renderer_batch_submit_text(&b, ec_text->font, t);
+    }
+}
+
+void render_system_draw(const world *w) {
+    renderer_batch_begin(&b);
+    render_sprites(w);
+    render_ui(w);
     renderer_batch_end(&b);
 }

@@ -1,7 +1,7 @@
-#include <stdio.h>
 #include "game.h"
 #include <caldera/window/window.h>
 
+#include "caldera/utils/log.h"
 #include "caldera/window/input.h"
 
 #define WINDOW_WIDTH 1280
@@ -16,7 +16,7 @@ void key_callback(i32 key, i32 action) {
 
 i32 main() {
     if (!window_init(WINDOW_WIDTH, WINDOW_HEIGHT, "Demo")) {
-        printf("failed to init a window");
+        fatalf("failed to init a window");
         return 1;
     }
 

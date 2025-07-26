@@ -20,6 +20,4 @@ typedef struct sprite {
 
 void sprite_init(sprite *s, ivec2 size, texture t);
 
-rect sprite_to_rect(const sprite *s);
-
 #endif //SPRITE_H

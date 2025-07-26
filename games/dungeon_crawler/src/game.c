@@ -12,6 +12,7 @@
 #include "systems/facing_system.h"
 #include "systems/player_system.h"
 
+static texture empty_texture;
 static texture player_texture;
 static texture items_texture;
 static font main_font;
@@ -25,16 +26,16 @@ static void register_custom_components(world *w) {
 
 static void create_player() {
     u32 player = ecs_create_entity(&w);
-    transform *player_transform = ecs_add_component(&w, player, TRANSFORM);
-    *player_transform = (transform){
+    ec_transform *player_transform = ecs_add_component(&w, player, EC_TRANSFORM);
+    *player_transform = (ec_transform){
         .position = {0.f, 0.f},
-        .origin = {16.f, 2.f},
+        .origin = {16.f, 5.f},
         .scale = {1.f, 1.f},
         .rotation = 0.f
     };
 
-    sprite_renderer *player_renderer = ecs_add_component(&w, player, SPRITE_RENDERER);
-    *player_renderer = (sprite_renderer){
+    ec_sprite *player_sprite = ecs_add_component(&w, player, EC_SPRITE);
+    *player_sprite = (ec_sprite){
         .texture = player_texture,
         .size = {32, 32},
         .texture_rect = {
@@ -46,8 +47,8 @@ static void create_player() {
         .color = {1.f, 1.f, 1.f, 1.f}
     };
 
-    sprite_animator *player_animator = ecs_add_component(&w, player, SPRITE_ANIMATOR);
-    *player_animator = (sprite_animator){
+    ec_animator *player_animator = ecs_add_component(&w, player, EC_ANIMATOR);
+    *player_animator = (ec_animator){
         .animation = {
             .offset = {0, 0},
             .frame_num = 3,
@@ -65,16 +66,16 @@ static void create_player() {
 
 static void create_npc(vec2 position, direction dir) {
     u32 npc = ecs_create_entity(&w);
-    transform *npc_transform = ecs_add_component(&w, npc, TRANSFORM);
-    *npc_transform = (transform){
+    ec_transform *npc_transform = ecs_add_component(&w, npc, EC_TRANSFORM);
+    *npc_transform = (ec_transform){
         .position = position,
-        .origin = {0.f, 0.f},
+        .origin = {16.f, 5.f},
         .scale = {1.f, 1.f},
         .rotation = 0.f
     };
 
-    sprite_renderer *npc_renderer = ecs_add_component(&w, npc, SPRITE_RENDERER);
-    *npc_renderer = (sprite_renderer){
+    ec_sprite *npc_sprite = ecs_add_component(&w, npc, EC_SPRITE);
+    *npc_sprite = (ec_sprite){
         .texture = player_texture,
         .size = {32, 32},
         .texture_rect = {
@@ -86,8 +87,8 @@ static void create_npc(vec2 position, direction dir) {
         .color = {1.f, 1.f, 1.f, 1.f}
     };
 
-    sprite_animator *npc_animator = ecs_add_component(&w, npc, SPRITE_ANIMATOR);
-    *npc_animator = (sprite_animator){
+    ec_animator *npc_animator = ecs_add_component(&w, npc, EC_ANIMATOR);
+    *npc_animator = (ec_animator){
         .animation = {
             .offset = {0, 0},
             .frame_num = 3,
@@ -102,16 +103,16 @@ static void create_npc(vec2 position, direction dir) {
 
 static void create_chest(vec2 position) {
     u32 chest = ecs_create_entity(&w);
-    transform *t = ecs_add_component(&w, chest, TRANSFORM);
-    *t = (transform){
+    ec_transform *t = ecs_add_component(&w, chest, EC_TRANSFORM);
+    *t = (ec_transform){
         .position = position,
         .origin = {16.f, 2.f},
         .scale = {1.f, 1.f},
         .rotation = 0.f
     };
 
-    sprite_renderer *sr = ecs_add_component(&w, chest, SPRITE_RENDERER);
-    *sr = (sprite_renderer){
+    ec_sprite *sprite = ecs_add_component(&w, chest, EC_SPRITE);
+    *sprite = (ec_sprite){
         .texture = items_texture,
         .size = {20, 20},
         .texture_rect = {
@@ -123,8 +124,8 @@ static void create_chest(vec2 position) {
         .color = {1.f, 1.f, 1.f, 1.f}
     };
 
-    sprite_animator *sa = ecs_add_component(&w, chest, SPRITE_ANIMATOR);
-    *sa = (sprite_animator){
+    ec_animator *animator = ecs_add_component(&w, chest, EC_ANIMATOR);
+    *animator = (ec_animator){
         .animation = {
             .offset = {0, 60},
             .frame_num = 6,
@@ -140,30 +141,47 @@ void game_init() {
 
     render_system_init();
 
+    texture_init_empty(&empty_texture);
     texture_load_from_file(&player_texture, "../res/textures/character_idle.png");
     texture_load_from_file(&items_texture, "../res/textures/items.png");
 
-    font_init(&main_font, "../res/fonts/uni 05_53.ttf");
-    u32 text_entity = ecs_create_entity(&w);
-    transform *t = ecs_add_component(&w, text_entity, TRANSFORM);
-    *t = (transform){
-        .position = {-100.f, -80.f},
+    u32 red_square = ecs_create_entity(&w);
+    ec_transform *red_square_transform = ecs_add_component(&w, red_square, EC_TRANSFORM);
+    *red_square_transform = (ec_transform){
+        .position = {0.f, 0.f},
         .origin = {0.f, 0.f},
         .scale = {1.f, 1.f},
         .rotation = 0.f
     };
 
-    sprite_renderer *sr = ecs_add_component(&w, text_entity, SPRITE_RENDERER);
-    *sr = (sprite_renderer){
-        .texture = main_font.atlas,
-        .size = main_font.size,
+    ec_sprite *red_square_sprite = ecs_add_component(&w, red_square, EC_SPRITE);
+    *red_square_sprite = (ec_sprite){
+        .texture = empty_texture,
+        .size = {32, 32},
         .texture_rect = {
             0, 0,
-            512, 0,
-            512, 512,
-            0, 512
+            1, 0,
+            1, 1,
+            0, 1
         },
-        .color = {1.f, 1.f, 1.f, 1.f}
+        .color = {1.f, 0.f, 0.f, 1.f}
+    };
+
+    font_init(&main_font, "../res/fonts/uni05_53.ttf");
+    u32 text_entity = ecs_create_entity(&w);
+    ec_transform *t = ecs_add_component(&w, text_entity, EC_TRANSFORM);
+    *t = (ec_transform){
+        .position = {-100.f, 0.f},
+        .origin = {0.f, 0.f},
+        .scale = {1.f, 1.f},
+        .rotation = 15.f
+    };
+
+    ec_text *text = ecs_add_component(&w, text_entity, EC_TEXT);
+    *text = (ec_text){
+        .font = main_font,
+        .str = "Hello world! Привет мир!",
+        .color = {1.f, 1.f, 1.f, 1.f},
     };
 
     create_player();
