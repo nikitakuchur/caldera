@@ -245,6 +245,10 @@ void renderer_batch_submit_text(batch *b, font f, text text) {
     i32 texture_index = resolve_texture_index(b, f.atlas);
 
     char *p = text.str;
+    if (p == nullptr) {
+        return;
+    }
+
     vec2 glyph_position = vec2_zero();
 
     darray vertices;
@@ -326,6 +330,8 @@ void renderer_batch_submit_text(batch *b, font f, text text) {
     for (u32 i = 0; i < vertices.size / 4; i++) {
         submit_quad(b, &((vertex*)vertices.array)[i * 4]);
     }
+
+    darray_free(&vertices);
 }
 
 vec2 renderer_screen_to_world(vec2 position) {
