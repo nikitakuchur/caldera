@@ -3,4 +3,6 @@
 
 void fatalf(const char* format, ...);
 
+void debugf(const char *format, ...);
+
 #endif //PANIC_H

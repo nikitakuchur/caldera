@@ -4,9 +4,10 @@ project(caldera LANGUAGES C CXX)
 enable_testing()
 
 set(CMAKE_C_STANDARD 23)
-set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+
+add_compile_definitions($<$<CONFIG:Debug>:DEBUG>)
 
 # Define a single option for choosing the rendering API
 set(RENDER_API "METAL" CACHE STRING "Choose the rendering API (VULKAN, METAL)")

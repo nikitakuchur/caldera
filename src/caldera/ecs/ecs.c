@@ -1,7 +1,5 @@
 #include "ecs.h"
 
-#include <stdio.h>
-
 #include "components.h"
 #include "caldera/utils/log.h"
 
@@ -40,7 +38,6 @@ static void call_destructors(world *w, u32 component_type) {
         for (u32 i = 0; i < components.size; i++) {
             void *component = darray_get(&components, i);
             destructor(component);
-            printf("the component has been freed!");
         }
     }
 }
@@ -54,6 +51,7 @@ void ecs_free(world *w) {
             // call destructors
             call_destructors(w, i);
             sparse_set_free(&w->component_sets[i]);
+            debugf("Freed component type: ID=%u, destructor=%s", i, w->component_destructors[i] ? "called" : "none");
         }
     }
 
@@ -64,6 +62,10 @@ void ecs_register_component(world *w, u32 component_type, u32 component_size, ec
     sparse_set_init(&w->component_sets[component_type], component_size);
     bitset_set(&w->registered_components, component_type, true);
     w->component_destructors[component_type] = destructor;
+    debugf("Registered new component type: ID=%u, size=%u bytes, destructor=%s",
+           component_type,
+           component_size,
+           destructor ? "yes" : "no");
 }
 
 u32 ecs_create_entity(world *w) {

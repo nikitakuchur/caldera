@@ -31,8 +31,8 @@ typedef struct char_set {
 } char_set;
 
 typedef struct font {
-    texture atlas;
     ivec2 size;
+    texture atlas;
 
     char_set char_sets[CHAR_SETS_COUNT];
     char_set specials;
