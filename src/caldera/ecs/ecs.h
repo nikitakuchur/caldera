@@ -6,6 +6,8 @@
 
 #define MAX_COMPONENTS 64
 
+typedef void (*ec_destructor_fn)(void *);
+
 typedef struct world {
     u32 entity_count;
 
@@ -15,6 +17,7 @@ typedef struct world {
     bitset component_masks;
 
     bitset registered_components;
+    ec_destructor_fn component_destructors[MAX_COMPONENTS];
     sparse_set component_sets[MAX_COMPONENTS];
 } world;
 
@@ -27,7 +30,7 @@ b8 ecs_init(world *w);
 
 void ecs_free(world *w);
 
-void ecs_register_component(world *w, u32 component_type, u32 component_size);
+void ecs_register_component(world *w, u32 component_type, u32 component_size, ec_destructor_fn destructor);
 
 u32 ecs_create_entity(world *w);
 

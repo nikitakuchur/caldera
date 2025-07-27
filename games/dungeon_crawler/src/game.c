@@ -19,9 +19,11 @@ static font main_font;
 
 static world w;
 
+u32 fps_counter;
+
 static void register_custom_components(world *w) {
-    ecs_register_component(w, FACING_DIRECTION, sizeof(facing_direction));
-    ecs_register_component(w, PLAYER_CONTROLLER, sizeof(player_controller));
+    ecs_register_component(w, FACING_DIRECTION, sizeof(facing_direction), nullptr);
+    ecs_register_component(w, PLAYER_CONTROLLER, sizeof(player_controller), nullptr);
 }
 
 static void create_player() {
@@ -135,6 +137,26 @@ static void create_chest(vec2 position) {
     };
 }
 
+u32 create_fps_counter() {
+    u32 entity = ecs_create_entity(&w);
+    ec_transform *t = ecs_add_component(&w, entity, EC_TRANSFORM);
+    *t = (ec_transform){
+        .position = {0.f, 0.f},
+        .origin = {0.f, 0.f},
+        .scale = {1.f, 1.f},
+        .rotation = 0.f
+    };
+
+    ec_text *text = ecs_add_component(&w, fps_counter, EC_TEXT);
+    *text = (ec_text){
+        .font = main_font,
+        .str = nullptr,
+        .color = {1.f, 1.f, 1.f, 1.f},
+    };
+
+    return entity;
+}
+
 void game_init() {
     ecs_init(&w);
     register_custom_components(&w);
@@ -145,44 +167,8 @@ void game_init() {
     texture_load_from_file(&player_texture, "../res/textures/character_idle.png");
     texture_load_from_file(&items_texture, "../res/textures/items.png");
 
-    u32 red_square = ecs_create_entity(&w);
-    ec_transform *red_square_transform = ecs_add_component(&w, red_square, EC_TRANSFORM);
-    *red_square_transform = (ec_transform){
-        .position = {0.f, 0.f},
-        .origin = {0.f, 0.f},
-        .scale = {1.f, 1.f},
-        .rotation = 0.f
-    };
-
-    ec_sprite *red_square_sprite = ecs_add_component(&w, red_square, EC_SPRITE);
-    *red_square_sprite = (ec_sprite){
-        .texture = empty_texture,
-        .size = {32, 32},
-        .texture_rect = {
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1
-        },
-        .color = {1.f, 0.f, 0.f, 1.f}
-    };
-
     font_init(&main_font, "../res/fonts/uni05_53.ttf");
-    u32 text_entity = ecs_create_entity(&w);
-    ec_transform *t = ecs_add_component(&w, text_entity, EC_TRANSFORM);
-    *t = (ec_transform){
-        .position = {-100.f, 0.f},
-        .origin = {0.f, 0.f},
-        .scale = {1.f, 1.f},
-        .rotation = 15.f
-    };
-
-    ec_text *text = ecs_add_component(&w, text_entity, EC_TEXT);
-    *text = (ec_text){
-        .font = main_font,
-        .str = "Hello world! Привет мир!",
-        .color = {1.f, 1.f, 1.f, 1.f},
-    };
+    fps_counter = create_fps_counter();
 
     create_player();
     create_npc((vec2){-40.f, 40.f}, DIR_DOWN);
@@ -212,5 +198,7 @@ void game_draw() {
 
     frame_info info = renderer_frame_end();
     delta_time = info.delta_time;
-    printf("FPS: %d\n", info.fps);
+
+    ec_text *fps_text = ecs_get_component(&w, fps_counter, EC_TEXT);
+    ec_text_printf(fps_text, "%u FPS", info.fps);
 }

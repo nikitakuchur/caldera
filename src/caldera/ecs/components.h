@@ -1,6 +1,9 @@
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "caldera/graphics/backend/texture.h"
 #include "caldera/graphics/frontend/font.h"
 #include "caldera/math/types.h"
@@ -37,6 +40,10 @@ typedef struct ec_text {
     char *str;
     vec4 color;
 } ec_text;
+
+void ec_text_printf(ec_text *text, const char *fmt, ...);
+
+void ec_text_free(void *text);
 
 enum component_type {
     EC_TRANSFORM = 0,
