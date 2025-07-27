@@ -137,6 +137,9 @@ void renderer_batch_end(batch *b) {
 }
 
 static i32 resolve_texture_index(batch *b, texture texture) {
+    if (texture.id == -1) {
+        return -1;
+    }
     for (i32 i = 0; i < b->texture_count; i++) {
         if (b->textures[i].id == texture.id) {
             return i;
